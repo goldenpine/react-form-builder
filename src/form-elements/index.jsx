@@ -684,6 +684,7 @@ class Camera extends React.Component {
                   className="image-upload"
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
+                  disabled={this.props.read_only}
                 />
                 <div className="image-upload-control">
                   <div className="btn btn-default">
@@ -803,6 +804,7 @@ class FileUpload extends React.Component {
                   className='image-upload'
                   onChange={this.displayFileUpload}
                   data-clearlabel={this.props.data.label_after_file_clear_icon}
+                  disabled={this.props.read_only}
                 />
                 <div className='image-upload-control'>
                   <div className='btn btn-default'>
