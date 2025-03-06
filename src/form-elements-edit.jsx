@@ -266,8 +266,36 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
+        {this.state.element.element === 'Camera' && (
+          <div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="LabelAfterCameraIcon"><IntlMessages id="display-label-after-camera-icon" />:</label>
+              <input id="LabelAfterCameraIcon" type="text" className="form-control" defaultValue={this.props.element.label_after_camera_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'label_after_camera_icon', 'value')} />
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="MessageUnderCameraIcon"><IntlMessages id="display-message-under-camera-icon" />:</label>
+              <input id="MessageUnderCameraIcon" type="text" className="form-control" defaultValue={this.props.element.message_under_camera_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'message_under_camera_icon', 'value')} />
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="LabelAfterPhotoClearIcon"><IntlMessages id="display-label-after-photo-clear-icon" />:</label>
+              <input id="LabelAfterPhotoClearIcon" type="text" className="form-control" defaultValue={this.props.element.label_after_photo_clear_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'label_after_photo_clear_icon', 'value')} />
+            </div>
+          </div>
+        )}
         {this.state.element.element === 'FileUpload' && (
           <div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="LabelAfterFileIcon"><IntlMessages id="display-label-after-file-icon" />:</label>
+              <input id="LabelAfterFileIcon" type="text" className="form-control" defaultValue={this.props.element.label_after_file_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'label_after_file_icon', 'value')} />
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="MessageUnderFileIcon"><IntlMessages id="display-message-under-file-icon" />:</label>
+              <input id="MessageUnderFileIcon" type="text" className="form-control" defaultValue={this.props.element.message_under_file_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'message_under_file_icon', 'value')} />
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="LabelAfterFileClearIcon"><IntlMessages id="display-label-after-file-clear-icon" />:</label>
+              <input id="LabelAfterFileClearIcon" type="text" className="form-control" defaultValue={this.props.element.label_after_file_clear_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'label_after_file_clear_icon', 'value')} />
+            </div>
             <div className='form-group'>
               <label className='control-label' htmlFor='fileType'>
                 <IntlMessages id='choose-file-type' />:

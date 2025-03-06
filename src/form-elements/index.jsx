@@ -686,9 +686,9 @@ class Camera extends React.Component {
                 />
                 <div className="image-upload-control">
                   <div className="btn btn-default">
-                    <i className="fas fa-camera"></i> Upload Photo
+                    <i className="fas fa-camera"></i> {this.props.data.label_after_camera_icon}
                   </div>
-                  <p>Select an image from your computer or device.</p>
+                  <p>{this.props.data.message_under_camera_icon}</p>
                 </div>
               </div>
 
@@ -705,7 +705,7 @@ class Camera extends React.Component {
                     className="btn btn-image-clear"
                     onClick={this.clearImage}
                   >
-                    <i className="fas fa-times"></i> Clear Photo
+                    <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
                   </div>
                 </div>
               )}
@@ -804,9 +804,9 @@ class FileUpload extends React.Component {
                 />
                 <div className='image-upload-control'>
                   <div className='btn btn-default'>
-                    <i className='fas fa-file'></i> Upload File
+                    <i className='fas fa-file'></i> {this.props.data.label_after_file_icon}
                   </div>
-                  <p>Select a file from your computer or device.</p>
+                  <p>{this.props.data.message_under_file_icon}</p>
                 </div>
               </div>
 
@@ -816,14 +816,14 @@ class FileUpload extends React.Component {
                     <div
                       style={{ display: 'inline-block', marginRight: '5px' }}
                     >
-                      {`Name: ${this.state.fileUpload.name}`}
+                      {this.state.fileUpload.name}
                     </div>
                     <div style={{ display: 'inline-block', marginLeft: '5px' }}>
                       {this.state.fileUpload.size.length > 6
-                        ? `Size:  ${Math.ceil(
+                        ? `  ${Math.ceil(
                             this.state.fileUpload.size / (1024 * 1024)
                           )} mb`
-                        : `Size:  ${Math.ceil(
+                        : `  ${Math.ceil(
                             this.state.fileUpload.size / 1024
                           )} kb`}
                     </div>
@@ -833,7 +833,7 @@ class FileUpload extends React.Component {
                     className='btn btn-file-upload-clear'
                     onClick={this.clearFileUpload}
                   >
-                    <i className='fas fa-times'></i> Clear File
+                    <i className='fas fa-times'></i> {this.props.data.label_after_file_clear_icon}
                   </div>
                 </div>
               )}
