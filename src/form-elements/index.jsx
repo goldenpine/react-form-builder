@@ -683,6 +683,7 @@ class Camera extends React.Component {
                   capture="camera"
                   className="image-upload"
                   onChange={this.displayImage}
+                  data-clearlabel={this.props.data.label_after_photo_clear_icon}
                 />
                 <div className="image-upload-control">
                   <div className="btn btn-default">
@@ -801,6 +802,7 @@ class FileUpload extends React.Component {
                   accept={this.props.data.fileType || '*'}
                   className='image-upload'
                   onChange={this.displayFileUpload}
+                  data-clearlabel={this.props.data.label_after_file_clear_icon}
                 />
                 <div className='image-upload-control'>
                   <div className='btn btn-default'>
