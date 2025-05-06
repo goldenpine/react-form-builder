@@ -1,6 +1,6 @@
 {
   "name": "react-form-builder2",
-  "version": "0.18.4",
+  "version": "0.18.5",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -106,7 +106,7 @@
     "copy:dist": "copyfiles -f \"./dist/*\" \"./public/dist\"",
     "prepublishOnly": "npm run clean && NODE_OPTIONS=--openssl-legacy-provider npm run build:lib && NODE_OPTIONS=--openssl-legacy-provider npm run build",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --hot --mode development",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --hot --mode development",
     "serve:api": "node server/index.js",
     "pretranspile": "rimraf lib",
     "transpile": "babel --out-dir lib src --copy-files"
