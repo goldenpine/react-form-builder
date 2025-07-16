@@ -5,7 +5,8 @@ import DemoBar from './demobar';
 import * as variables from './variables';
 import { get, post } from './requests';
 
-const getUrl = (cid) => `https://safe-springs-35306.herokuapp.com/api/formdata?cid=${cid}`;
+//const getUrl = (cid) => `https://safe-springs-35306.herokuapp.com/api/formdata?cid=${cid}`;
+const getUrl = (cid) => `http://127.0.0.1:5005/api/formdata?cid=${cid}`;
 
 const TestComponent = () => <h2>Hello</h2>;
 

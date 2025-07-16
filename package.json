@@ -1,13 +1,16 @@
 {
-  "name": "react-form-builder2",
-  "version": "0.18.4",
+  "name": "@goldenpine/react-form-builder2",
+  "version": "0.18.4-patch.1",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kiho/react-form-builder.git"
+    "url": "git+https://github.com/goldenpine/react-form-builder.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "lib",
@@ -37,9 +40,10 @@
   "dependencies": {
     "beedle": "^0.8.1",
     "classnames": "^2.2.6",
+    "cors": "^2.8.5",
     "date-fns": "^2.16.1",
     "draft-js": "^0.11.7",
-    "draftjs-to-html": "^0.8.4",
+    "draftjs-to-html": "^0.9.1",
     "es6-promise": "^4.2.8",
     "fbemitter": "^3.0.0",
     "file-saver": "^2.0.5",
@@ -62,7 +66,7 @@
     "react-dom": ">=16.8.6"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
+    "@babel/cli": "^7.26.4",
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-json-strings": "^7.12.1",
@@ -70,7 +74,7 @@
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.17.10",
     "@babel/preset-env": "^7.12.11",
-    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-react": "^7.26.3",
     "@babel/runtime-corejs2": "^7.12.5",
     "add": "^2.0.6",
     "babel-eslint": "^10.1.0",
@@ -96,8 +100,8 @@
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "build": "webpack --mode production --config webpack.production.config.js",
-    "build:dev": "webpack --mode development",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production --config webpack.production.config.js",
+    "build:dev": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode development",
     "build:umd": "webpack --mode development --config webpack.production.config.js",
     "build:style": "sass ./scss/application.scss dist/app.css --style compressed",
     "build:lib": "npm run transpile && npm run build:style",
@@ -106,7 +110,7 @@
     "copy:dist": "copyfiles -f \"./dist/*\" \"./public/dist\"",
     "prepublishOnly": "npm run clean && NODE_OPTIONS=--openssl-legacy-provider npm run build:lib && NODE_OPTIONS=--openssl-legacy-provider npm run build",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --hot --mode development",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --hot --mode development",
     "serve:api": "node server/index.js",
     "pretranspile": "rimraf lib",
     "transpile": "babel --out-dir lib src --copy-files"
