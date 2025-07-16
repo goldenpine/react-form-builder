@@ -1,13 +1,16 @@
 {
-  "name": "react-form-builder2",
-  "version": "0.20.3",
+  "name": "@goldenpine/react-form-builder2",
+  "version": "0.20.3-build.1",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kiho/react-form-builder.git"
+    "url": "git+https://github.com/goldenpine/react-form-builder.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "lib",
@@ -89,7 +92,7 @@
     "webpack-dev-server": "^5.2.1"
   },
   "scripts": {
-    "build": "webpack --mode production --config webpack.production.config.js",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production --config webpack.production.config.js",
     "build:dev": "webpack --mode development",
     "build:umd": "webpack --mode development --config webpack.production.config.js",
     "build:style": "sass ./scss/application.scss dist/app.css --style compressed",
