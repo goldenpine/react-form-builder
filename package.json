@@ -1,13 +1,13 @@
 {
   "name": "react-form-builder2",
-  "version": "0.18.4",
+  "version": "0.20.3",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kiho/react-form-builder.git"
+    "url": "git+https://github.com/Kiho/react-form-builder.git"
   },
   "files": [
     "lib",
@@ -24,16 +24,9 @@
     "drop"
   ],
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.0.0"
   },
   "author": "Kiho Chang",
-  "contributors": [
-    {
-      "name": "Zach Robichaud",
-      "email": "zach2825@gmail.com",
-      "url": "https://turtlebytes.com"
-    }
-  ],
   "dependencies": {
     "beedle": "^0.8.1",
     "classnames": "^2.2.6",
@@ -46,20 +39,20 @@
     "immutability-helper": "^3.1.1",
     "isomorphic-fetch": "^3.0.0",
     "prop-types": "^15.7.2",
-    "react-bootstrap-slider": "^2.2.3",
-    "react-datepicker": "^3.4.1",
-    "react-dnd": "^11.1.3",
-    "react-dnd-html5-backend": "^11.1.3",
-    "react-draft-wysiwyg": "^1.14.7",
-    "react-intl": "^5.24.3",
-    "react-select": "^3.2.0",
-    "react-signature-canvas": "^1.0.3",
-    "react-textarea-autosize": "^7.1.2",
+    "react-bootstrap-slider": "^3.0.0",
+    "react-datepicker": "^8.3.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-draft-wysiwyg": "^1.15.0",
+    "react-intl": "^7.1.11",
+    "react-select": "^5.10.1",
+    "react-signature-canvas": "^1.1.0-alpha.2",
+    "react-textarea-autosize": "^8.5.9",
     "xss": "^1.0.8"
   },
   "peerDependencies": {
-    "react": ">=16.8.6",
-    "react-dom": ">=16.8.6"
+    "react": ">=18.3.1",
+    "react-dom": ">=18.3.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
@@ -85,15 +78,15 @@
     "eslint-plugin-react": "^7.22.0",
     "express": "^4.17.1",
     "multer": "^1.4.2",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rimraf": "^3.0.2",
-    "sass": "^1.52.3",
-    "sass-loader": "^10.0.0",
-    "style-loader": "^1.3.0",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.2"
+    "sass": "^1.88.0",
+    "sass-loader": "^16.0.5",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.99.8",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1"
   },
   "scripts": {
     "build": "webpack --mode production --config webpack.production.config.js",
@@ -106,7 +99,7 @@
     "copy:dist": "copyfiles -f \"./dist/*\" \"./public/dist\"",
     "prepublishOnly": "npm run clean && NODE_OPTIONS=--openssl-legacy-provider npm run build:lib && NODE_OPTIONS=--openssl-legacy-provider npm run build",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --hot --mode development",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --hot --mode development",
     "serve:api": "node server/index.js",
     "pretranspile": "rimraf lib",
     "transpile": "babel --out-dir lib src --copy-files"
