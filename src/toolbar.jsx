@@ -487,7 +487,7 @@ class Toolbar extends React.Component {
               // so later you can set height relative to the boundary to use scrollable bar.
               top: this.state.isPinned ? '10%' : '',
               bottom: this.state.isPinned ? '10%' : '',
-              right: this.state.isPinned ? '5%' : '',
+              right: this.state.isPinned ? '3%' : '',
             }}>
           <div style={{ display: 'flex' }}>
             <button onClick={this.togglePin} style={{
