@@ -52,6 +52,7 @@ class Toolbar extends React.Component {
     const items = buildItems(props.items, this._defaultItems(intl));
     this.state = {
       items,
+      isPinned: false,
     };
     this.create = this.create.bind(this);
   }
@@ -328,6 +329,9 @@ class Toolbar extends React.Component {
         icon: 'fas fa-camera',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'camera_',
+        label_after_camera_icon: intl.formatMessage({ id: 'place-holder-display-label-after-camera-icon' }),
+        message_under_camera_icon: intl.formatMessage({ id: 'place-holder-display-message-under-camera-icon' }),
+        label_after_photo_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-photo-clear-icon' }),
       },
       {
         key: 'FileUpload',
@@ -335,13 +339,16 @@ class Toolbar extends React.Component {
         icon: 'fas fa-file',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'file_upload_',
+        label_after_file_icon: intl.formatMessage({ id: 'place-holder-display-label-after-file-icon' }),
+        message_under_file_icon: intl.formatMessage({ id: 'place-holder-display-message-under-file-icon' }),
+        label_after_file_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-file-clear-icon' }),
       },
     ];
   }
 
   addCustomOptions(item, elementOptions) {
     if (item.type === 'custom') {
-      const customOptions = Object.assign({}, item, elementOptions);
+      const customOptions = { ...item, ...elementOptions };
       customOptions.custom = true;
       customOptions.component = item.component || null;
       customOptions.custom_options = item.custom_options || [];
@@ -424,6 +431,18 @@ class Toolbar extends React.Component {
       elementOptions.max_label = item.max_label;
     }
 
+    if (elementKey === 'Camera') {
+      elementOptions.label_after_camera_icon = item.label_after_camera_icon;
+      elementOptions.message_under_camera_icon = item.message_under_camera_icon;
+      elementOptions.label_after_photo_clear_icon = item.label_after_photo_clear_icon;
+    }
+
+    if (elementKey === 'FileUpload') {
+      elementOptions.label_after_file_icon = item.label_after_file_icon;
+      elementOptions.message_under_file_icon = item.message_under_file_icon;
+      elementOptions.label_after_file_clear_icon = item.label_after_file_clear_icon;
+    }
+
     if (item.element === 'MultiColumnRow') {
       elementOptions.col_count = item.col_count;
     }
@@ -452,11 +471,40 @@ class Toolbar extends React.Component {
 
   renderItem = (item) => (<ToolbarItem data={item} key={item.key} onClick={this._onClick.bind(this, item)} onCreate={this.create} />)
 
+  togglePin = () => {
+    this.setState((prevState) => ({
+      isPinned: !prevState.isPinned,
+    }));
+  };
+
   render() {
     const { items, grouped, groupKeys } = buildGroupItems(this.state.items);
     return (
-      <div className="col-md-3 react-form-builder-toolbar float-right">
-        <h4>{this.props.intl.formatMessage({ id: 'toolbox' })}</h4>
+      <div className="col-md-3 react-form-builder-toolbar float-right"
+            style={{
+              position: this.state.isPinned ? 'fixed' : '',
+              // set up the vertical boundary by top/bottom,
+              // so later you can set height relative to the boundary to use scrollable bar.
+              top: this.state.isPinned ? '10%' : '',
+              bottom: this.state.isPinned ? '10%' : '',
+              right: this.state.isPinned ? '3%' : '',
+            }}>
+          <div style={{ display: 'flex' }}>
+            <button onClick={this.togglePin} style={{
+                    marginBottom: '5px',
+                    background: 'none',
+                    outline: 'none', // ✅ Removes the border when clicked
+                    border: 'none',
+                    transform: this.state.isPinned ? 'rotate(-45deg)' : 'rotate(90deg)', // Rotates downward when pinned
+                    transition: 'transform 0.2s ease-in-out',
+                    }}>📌</button>
+            <h4>{this.props.intl.formatMessage({ id: 'toolbox' })}</h4>
+          </div>
+        <div
+          style={{
+            overflowY: this.state.isPinned ? 'scroll' : '',
+            height: this.state.isPinned ? '90%' : '',
+          }}>
         <ul>
           {
             items.map(this.renderItem)
@@ -465,6 +513,7 @@ class Toolbar extends React.Component {
             groupKeys.map(k => <ToolbarGroupItem key={k} name={k} group={grouped.get(k)} renderItem={this.renderItem} />)
           }
         </ul>
+        </div>
       </div>
     );
   }

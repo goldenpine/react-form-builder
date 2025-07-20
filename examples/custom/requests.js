@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 
 const headers = {
   Accept: 'application/json',
-  'Content-Type': 'application/json; charset=utf-8',
+  'Content-Type': 'application/json',
   OPTIONS: '',
 };
 
