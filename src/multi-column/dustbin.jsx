@@ -53,7 +53,9 @@ function isContainer(item) {
         return true;
       }
       if (data.field_name) {
-        return data.field_name.indexOf('_col_row') > -1;
+        // Check if the field name indicates a container
+        // Fix a runtime error when dropping a fieldset inside a multi-column row - which dropping seems not supported
+        return data.field_name.indexOf('_col_row') > -1 || data.field_name.indexOf('fieldset') > -1;
       }
     }
   }
