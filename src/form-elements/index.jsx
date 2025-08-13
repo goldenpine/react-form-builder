@@ -1057,8 +1057,8 @@ class Range extends React.Component {
           <ComponentLabel {...this.props} />
           <div className="range">
             <div className="clearfix">
-              <span className="float-left">{this.props.data.min_label}</span>
-              <span className="float-right">{this.props.data.max_label}</span>
+              <span className="float-start">{this.props.data.min_label}</span>
+              <span className="float-end">{this.props.data.max_label}</span>
             </div>
             <ReactBootstrapSlider {...props} />
           </div>

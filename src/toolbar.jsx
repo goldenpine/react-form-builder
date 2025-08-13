@@ -480,7 +480,7 @@ class Toolbar extends React.Component {
   render() {
     const { items, grouped, groupKeys } = buildGroupItems(this.state.items);
     return (
-      <div className="col-md-3 react-form-builder-toolbar float-right"
+      <div className="col-md-3 react-form-builder-toolbar float-end"
             style={{
               position: this.state.isPinned ? 'fixed' : '',
               // set up the vertical boundary by top/bottom,
