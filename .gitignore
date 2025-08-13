@@ -45,6 +45,8 @@ lib/
 public/app.*
 public/uploads/
 public/temp
+public/0.*
+public/src_*
 
 # bundles
 bundle.js
