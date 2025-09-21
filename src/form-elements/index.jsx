@@ -632,9 +632,8 @@ class Image extends React.Component {
         <ComponentHeader {...this.props} />
         {this.props.data.src && (
           <img
-            src={this.props.data.src}
-            width={this.props.data.width}
-            height={this.props.data.height}
+            src={this.props.data.src}            
+            style={{ height: this.props.data.height, width: this.props.data.width, display: 'inline' }}
           />
         )}
         {!this.props.data.src && <div className="no-image">No Image</div>}
