@@ -766,7 +766,12 @@ class Camera extends React.Component {
 
   render() {
     const imageStyle = {
-      objectFit: 'scale-down',
+      // 2025/11/11
+      // 'scale-down' looks to keep the original size of image on form-builder-generator.
+      // and sometimes the image is too small. Supposeing admin want to show the image in bigger size,
+      // so adjust it "contain" to make it bigger if possible. 
+      // "contain" is supposed to "Preserves the aspect ratio, and fits the image inside the container, without cutting"
+      objectFit: 'contain', 
       objectPosition: this.props.data.center ? 'center' : 'left',
     };
     let baseClasses = 'SortableItem rfb-item';
