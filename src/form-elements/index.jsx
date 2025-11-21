@@ -632,9 +632,8 @@ class Image extends React.Component {
         <ComponentHeader {...this.props} />
         {this.props.data.src && (
           <img
-            src={this.props.data.src}
-            width={this.props.data.width}
-            height={this.props.data.height}
+            src={this.props.data.src}            
+            style={{ height: this.props.data.height, width: this.props.data.width, display: 'inline' }}
           />
         )}
         {!this.props.data.src && <div className="no-image">No Image</div>}
@@ -767,7 +766,12 @@ class Camera extends React.Component {
 
   render() {
     const imageStyle = {
-      objectFit: 'scale-down',
+      // 2025/11/11
+      // 'scale-down' looks to keep the original size of image on form-builder-generator.
+      // and sometimes the image is too small. Supposeing admin want to show the image in bigger size,
+      // so adjust it "contain" to make it bigger if possible. 
+      // "contain" is supposed to "Preserves the aspect ratio, and fits the image inside the container, without cutting"
+      objectFit: 'contain', 
       objectPosition: this.props.data.center ? 'center' : 'left',
     };
     let baseClasses = 'SortableItem rfb-item';
@@ -1057,8 +1061,8 @@ class Range extends React.Component {
           <ComponentLabel {...this.props} />
           <div className="range">
             <div className="clearfix">
-              <span className="float-left">{this.props.data.min_label}</span>
-              <span className="float-right">{this.props.data.max_label}</span>
+              <span className="float-start">{this.props.data.min_label}</span>
+              <span className="float-end">{this.props.data.max_label}</span>
             </div>
             <ReactBootstrapSlider {...props} />
           </div>
