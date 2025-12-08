@@ -892,7 +892,6 @@ class FileUpload extends React.Component {
       responseType: 'blob',
     });
     const dispositionHeader = response.headers.get('Content-Disposition');
-    console.log(dispositionHeader);
     const resBlob = await response.blob();
     // eslint-disable-next-line no-undef
     const blob = new Blob([resBlob], {
@@ -900,11 +899,9 @@ class FileUpload extends React.Component {
     });
     if (dispositionHeader && dispositionHeader.indexOf(';filename=') > -1) {
       const fileName = dispositionHeader.split(';filename=')[1];
-      console.log("dispositionHeader is valid, fileName is " + fileName);
       saveAs(blob, fileName);
     } else {
       const fileName = sourceUrl.substring(sourceUrl.lastIndexOf('/') + 1);
-      console.log("Can't find filename in dispositionHeader, get it from sourceURL: " + fileName);
       saveAs(blob, fileName);
     }
   };
