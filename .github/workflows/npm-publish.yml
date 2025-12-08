@@ -7,9 +7,6 @@ on:
   release:
     types: [created]
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
 
 permissions:
   id-token: write  # Required for OIDC
@@ -24,8 +21,9 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
+          always-auth: false   # 👈 This removes the warning
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest          
       - run: npm ci --legacy-peer-deps
-      - run: npm publish --tag next
+      - run: npm publish --tag next # Use 'next' tag for prerelease versions instead of 'latest' as defined in the release version
