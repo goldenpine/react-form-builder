@@ -902,7 +902,7 @@ class FileUpload extends React.Component {
       saveAs(blob, fileName);
     } else {
       const fileName = sourceUrl.substring(sourceUrl.lastIndexOf('/') + 1);
-      saveAs(blob, fileName);
+      saveAs(response.url, fileName);
     }
   };
 
