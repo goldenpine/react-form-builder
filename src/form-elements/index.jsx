@@ -764,6 +764,13 @@ class Camera extends React.Component {
     return imgProps;
   }
 
+  /* 
+    Originally Image/File upload elments don't count the heights of all visible controls which is layered on top of <input>,
+    which makes the element possibly overlaps on the next element on a narrow screen. 
+    It's caused by "position: absolue" of .image-upload-control.
+    The fix is to add inline style "position: relative" to the container div of .image-upload-control, and use <label> tag
+    and "for"/"id" to trigger to the file input dialog.
+  */
   render() {
     const imageStyle = {
       // 2025/11/11
@@ -820,12 +827,14 @@ class Camera extends React.Component {
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
                   disabled={this.props.read_only}
+                  id={name}
+                  hidden
                 />
-                <div className="image-upload-control">
-                  <div className="btn btn-default">
+                <div className="image-upload-control" style={{ position: 'relative' }}>
+                  <label className="btn btn-default" htmlFor={name}>
                     <i className="fas fa-camera"></i> {this.props.data.label_after_camera_icon}
-                  </div>
-                  <p>{this.props.data.message_under_camera_icon}</p>
+                  </label>
+                  <div>{this.props.data.message_under_camera_icon}</div>
                 </div>
               </div>
 
@@ -937,12 +946,14 @@ class FileUpload extends React.Component {
                   onChange={this.displayFileUpload}
                   data-clearlabel={this.props.data.label_after_file_clear_icon}
                   disabled={this.props.read_only}
+                  id={name}
+                  hidden
                 />
-                <div className="image-upload-control">
-                  <div className="btn btn-default">
+                <div className="image-upload-control" style={{ position: 'relative' }}>
+                  <label className="btn btn-default" htmlFor={name}>
                     <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
-                  </div>
-                  <p>{this.props.data.message_under_file_icon}</p>
+                  </label>
+                  <div>{this.props.data.message_under_file_icon}</div>
                 </div>
               </div>
 
