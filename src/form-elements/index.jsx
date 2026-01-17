@@ -823,12 +823,11 @@ class Camera extends React.Component {
                   type="file"
                   accept="image/*"
                   capture="camera"
-                  className="image-upload"
+                  className="image-upload visually-hidden"
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
                   disabled={this.props.read_only}
                   id={name}
-                  hidden
                 />
                 <div className="image-upload-control" style={{ position: 'relative' }}>
                   <label className="btn btn-default" htmlFor={name}>
@@ -942,12 +941,11 @@ class FileUpload extends React.Component {
                   name={name}
                   type="file"
                   accept={this.props.data.fileType || '*'}
-                  className="image-upload"
+                  className="image-upload visually-hidden"
                   onChange={this.displayFileUpload}
                   data-clearlabel={this.props.data.label_after_file_clear_icon}
                   disabled={this.props.read_only}
                   id={name}
-                  hidden
                 />
                 <div className="image-upload-control" style={{ position: 'relative' }}>
                   <label className="btn btn-default" htmlFor={name}>
