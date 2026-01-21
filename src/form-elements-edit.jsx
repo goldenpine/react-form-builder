@@ -186,6 +186,30 @@ export default class FormElementsEdit extends React.Component {
               <IntlMessages id="required" />
               </label>
             </div>
+            { this_checked && this.state.element.element === 'Checkboxes' &&
+                <div className="d-flex align-items-center gap-2">
+                  <label
+                    className="form-label mb-0"
+                    htmlFor="checkbox-required-checks"
+                  >
+                    <IntlMessages id="minimum-number-of-selections" />:
+                  </label>
+                  <input
+                    id="checkbox-required-checks"
+                    type="number"
+                    min="1"
+                    className="form-control d-inline-block"
+                    style={{ width: '8ch' }}
+                    value={this.props.element.checkbox_required_checks ?? '1'}
+                    onBlur={this.updateElement.bind(this)}
+                    onChange={this.editElementProp.bind(
+                      this,
+                      'checkbox_required_checks',
+                      'value'
+                    )}
+                  />
+                </div>
+            }
             { this.props.element.hasOwnProperty('readOnly') &&
               <div className="custom-control custom-checkbox">
                 <input id="is-read-only" className="custom-control-input" type="checkbox" checked={this_read_only} value={true} onChange={this.editElementProp.bind(this, 'readOnly', 'checked')} />

@@ -31,6 +31,7 @@
   "description": "توضیحات",
   "correct-answer": "پاسخ صحیح",
   "populate-options-from-api": "پر کردن گزینه‌ها از API",
+  "minimum-number-of-selections" : "حداقل تعداد گزینه‌هایی که مشتری باید انتخاب کند",
   "populate": "پر کردن",
   "pdf": "PDF",
   "word": "Word",

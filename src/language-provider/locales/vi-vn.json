@@ -29,6 +29,7 @@
   "description": "Mô tả",
   "correct-answer": "Lựa chọn đúng",
   "populate-options-from-api": "Lấy dữ liệu từ API",
+  "minimum-number-of-selections" : "Số lượng lựa chọn tối thiểu mà khách hàng phải chọn",
   "populate": "Thực hiện",
   "display-label-after-camera-icon" : "Hiển thị nhãn sau biểu tượng máy ảnh",
   "place-holder-display-label-after-camera-icon" : "Tải ảnh lên",

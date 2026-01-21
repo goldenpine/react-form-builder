@@ -534,6 +534,7 @@ class Checkboxes extends React.Component {
                       self.options[`child_ref_${option.key}`] = c;
                     }
                   }}
+                  data-required-checks={this.props.data.checkbox_required_checks ? this.props.data.checkbox_required_checks : '1'}
                   {...props}
                 />
                 <label
