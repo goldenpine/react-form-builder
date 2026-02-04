@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import React from 'react';
 import Select from 'react-select';
 import SignaturePad from 'react-signature-canvas';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
+import ReactBootstrapSlider from '@goldenpine/react-bootstrap-slider';
 
 import StarRating from './star-rating';
 import DatePicker from './date-picker';
