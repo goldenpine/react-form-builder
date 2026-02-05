@@ -130,19 +130,18 @@ const useDragAndDrop = (props) => {
 
 // Modern approach using a functional component wrapper instead of HOC
 const DraggableCard = (props) => {
+  // ✅ Move the default value directly into destructuring
   const {
     index,
     id,
     moveCard,
-    seq = -1,
+    seq = -1, // Default value set here
+    component: ComposedComponent, // Destructure component here for cleaner usage
     ...restProps
   } = props;
 
   const { ref, previewRef, isDragging } = useDragAndDrop(props);
   const opacity = isDragging ? 0 : 1;
-
-  // Use the ComposedComponent passed in props
-  const ComposedComponent = props.component;
 
   return (
     <div ref={previewRef}>
@@ -169,9 +168,10 @@ DraggableCard.propTypes = {
   seq: PropTypes.number,
 };
 
-DraggableCard.defaultProps = {
-  seq: -1,
-};
+// ❌ REMOVE THIS BLOCK ENTIRELY
+// DraggableCard.defaultProps = {
+//   seq: -1,
+// };
 
 // This replaces the HOC pattern with a component that takes the component as a prop
 export default function createDraggableCard(ComposedComponent) {
