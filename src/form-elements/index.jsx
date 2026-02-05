@@ -1016,9 +1016,9 @@ class Range extends React.Component {
 
     props.type = 'range';
     props.list = `tickmarks_${name}`;
-    props.min = this.props.data.min_value;
-    props.max = this.props.data.max_value;
-    props.step = this.props.data.step;
+    props.min = Number(this.props.data.min_value);
+    props.max = Number(this.props.data.max_value);
+    props.step = Number(this.props.data.step) || 1;
 
     props.value = this.state.value;
     props.change = this.changeValue;
