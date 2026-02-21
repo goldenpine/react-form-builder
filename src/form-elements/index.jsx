@@ -63,7 +63,7 @@ class Paragraph extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <p
+        <div
           className={classNames}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
