@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import React from 'react';
 import Select from 'react-select';
 import SignaturePad from 'react-signature-canvas';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
+import ReactBootstrapSlider from '@goldenpine/react-bootstrap-slider';
 
 import StarRating from './star-rating';
 import DatePicker from './date-picker';
@@ -63,7 +63,7 @@ class Paragraph extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <p
+        <div
           className={classNames}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
@@ -534,6 +534,7 @@ class Checkboxes extends React.Component {
                       self.options[`child_ref_${option.key}`] = c;
                     }
                   }}
+                  data-required-checks={this.props.data.checkbox_required_checks ? this.props.data.checkbox_required_checks : '1'}
                   {...props}
                 />
                 <label
@@ -1015,9 +1016,9 @@ class Range extends React.Component {
 
     props.type = 'range';
     props.list = `tickmarks_${name}`;
-    props.min = this.props.data.min_value;
-    props.max = this.props.data.max_value;
-    props.step = this.props.data.step;
+    props.min = Number(this.props.data.min_value);
+    props.max = Number(this.props.data.max_value);
+    props.step = Number(this.props.data.step) || 1;
 
     props.value = this.state.value;
     props.change = this.changeValue;

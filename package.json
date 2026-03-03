@@ -1,6 +1,6 @@
 {
   "name": "@goldenpine/react-form-builder2",
-  "version": "0.20.3-build.11",
+  "version": "0.20.3-build.16",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -29,7 +29,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "author": "Kiho Chang",
+  "author": "Golden Pine",
   "dependencies": {
     "beedle": "^0.8.1",
     "classnames": "^2.2.6",
@@ -43,7 +43,7 @@
     "immutability-helper": "^3.1.1",
     "isomorphic-fetch": "^3.0.0",
     "prop-types": "^15.7.2",
-    "react-bootstrap-slider": "^3.0.0",
+    "@goldenpine/react-bootstrap-slider": "^3.0.1",
     "react-datepicker": "^8.3.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",

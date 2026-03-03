@@ -25,5 +25,5 @@ jobs:
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest          
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
       - run: npm publish --tag next # Use 'next' tag for prerelease versions instead of 'latest' as defined in the release version
