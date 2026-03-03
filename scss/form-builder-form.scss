@@ -49,12 +49,11 @@ input[type="date"] {
       display: block !important;
     }
 
-    .form-group {
-      .option-inline {
+    .mb-3 {
+      .form-check-inline {
         display: inline-block !important;
         margin-right: 10px;
       }
-
       a {
         cursor: pointer;
       }

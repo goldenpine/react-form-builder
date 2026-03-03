@@ -62,7 +62,7 @@ export default class FormValidator extends React.Component {
               </ul>
             </div>
             <div className="clearfix">
-              <a className="float-end btn btn-default btn-sm btn-danger" onClick={this.dismissModal.bind(this)}><IntlMessages id="dismiss" /></a>
+              <a className="float-end btn btn-secondary btn-sm btn-danger" onClick={this.dismissModal.bind(this)}><IntlMessages id="dismiss" /></a>
             </div>
           </div>
         }

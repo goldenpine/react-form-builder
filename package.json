@@ -1,6 +1,6 @@
 {
   "name": "@goldenpine/react-form-builder2",
-  "version": "0.20.3-build.16",
+  "version": "0.20.3-build.17",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
