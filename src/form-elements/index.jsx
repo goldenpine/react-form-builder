@@ -1077,7 +1077,10 @@ class Range extends React.Component {
             <ReactBootstrapSlider {...props} />
           </div>
           <div className="visible_marks">{visible_marks}</div>
-          <input name={name} value={this.state.value} type="hidden" />
+          <input name={name} value={this.state.value} type="hidden" 
+                data-min-value={props.min}
+                data-max-value={props.max}
+                data-step={props.step} />
           <datalist id={props.list}>{_datalist}</datalist>
         </div>
       </div>
