@@ -781,6 +781,9 @@ class Camera extends React.Component {
       // "contain" is supposed to "Preserves the aspect ratio, and fits the image inside the container, without cutting"
       objectFit: 'contain', 
       objectPosition: this.props.data.center ? 'center' : 'left',
+      // Move width and height from element style to inline style of image, to make it work the same way as 'Image' element.
+      width: this.props.data.width,
+      height: this.props.data.height,
     };
     let baseClasses = 'SortableItem rfb-item';
     const name = this.props.data.field_name;
@@ -813,7 +816,7 @@ class Camera extends React.Component {
               <img
                 style={imageStyle}
                 src={sourceDataURL}
-                {...this.getImageSizeProps(this.props.data)}
+                // {...this.getImageSizeProps(this.props.data)} // move width and height from element style to inline style of image, to make it work the same way as 'Image' element.
               />
             </div>
           ) : (
@@ -823,7 +826,7 @@ class Camera extends React.Component {
                   name={name}
                   type="file"
                   accept="image/*"
-                  capture="camera"
+                  //capture="camera" // With this property, users on most mobiles can only take photo but no options to pick up a photo from gallery
                   className="image-upload visually-hidden"
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
