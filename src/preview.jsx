@@ -365,6 +365,10 @@ export default class Preview extends React.Component {
       top: this.state.editFormPosition.y,
       zIndex: 9999,
       cursor: this.state.dragging ? 'grabbing' : 'move',
+      height: 'auto',           // allow height to fit content
+      maxHeight: '80vh',        // prevent overflow beyond viewport
+      overflow: 'auto',         // enable scrolling when content is taller than maxHeight
+      boxSizing: 'border-box',  // ensure padding doesn't grow box beyond maxHeight
     };
 
     return (
