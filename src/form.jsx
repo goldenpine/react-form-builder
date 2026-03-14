@@ -371,7 +371,7 @@ class ReactForm extends React.Component {
     const backName = name || 'Cancel';
     const { backButton = false } = this.props;
 
-    return backButton || <a href={this.props.back_action} className='btn btn-default btn-cancel btn-big'>{backName}</a>;
+    return backButton || <a href={this.props.back_action} className='btn btn-secondary btn-cancel btn-big'>{backName}</a>;
   }
 
   render() {

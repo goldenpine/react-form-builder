@@ -160,7 +160,7 @@ Then navigate to http://localhost:8080/ in your browser and you should be able t
     </button>
   }
   backButton={
-    <a href="/" className="btn btn-default btn-cancel btn-big">
+    <a href="/" className="btn btn-secondary btn-cancel btn-big">
       Back
     </a>
   }

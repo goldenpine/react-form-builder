@@ -147,7 +147,7 @@ class TextInput extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <input {...props} />
         </div>
@@ -184,7 +184,7 @@ class EmailInput extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <input {...props} />
         </div>
@@ -221,7 +221,7 @@ class PhoneNumber extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <input {...props} />
         </div>
@@ -259,7 +259,7 @@ class NumberInput extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <input {...props} />
         </div>
@@ -296,7 +296,7 @@ class TextArea extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <textarea {...props} />
         </div>
@@ -333,7 +333,7 @@ class Dropdown extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <select {...props}>
             {this.props.data.options.map((option) => {
@@ -402,7 +402,7 @@ class Signature extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           {this.props.read_only === true || !!sourceDataURL ? (
             <img src={sourceDataURL} />
@@ -476,7 +476,7 @@ class Tags extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <Select {...props} />
         </div>
@@ -493,9 +493,9 @@ class Checkboxes extends React.Component {
 
   render() {
     const self = this;
-    let classNames = 'custom-control custom-checkbox';
+    let classNames = 'form-check';
     if (this.props.data.inline) {
-      classNames += ' option-inline';
+      classNames += ' form-check-inline';
     }
 
     let baseClasses = 'SortableItem rfb-item';
@@ -506,7 +506,7 @@ class Checkboxes extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
@@ -528,7 +528,7 @@ class Checkboxes extends React.Component {
               <div className={classNames} key={this_key}>
                 <input
                   id={`fid_${this_key}`}
-                  className="custom-control-input"
+                  className="form-check-input"
                   ref={(c) => {
                     if (c && self.props.mutable) {
                       self.options[`child_ref_${option.key}`] = c;
@@ -538,7 +538,7 @@ class Checkboxes extends React.Component {
                   {...props}
                 />
                 <label
-                  className="custom-control-label"
+                  className="form-check-label"
                   htmlFor={`fid_${this_key}`}
                 >
                   {option.text}
@@ -560,9 +560,9 @@ class RadioButtons extends React.Component {
 
   render() {
     const self = this;
-    let classNames = 'custom-control custom-radio';
+    let classNames = 'form-check';
     if (this.props.data.inline) {
-      classNames += ' option-inline';
+      classNames += ' form-check-inline';
     }
 
     let baseClasses = 'SortableItem rfb-item';
@@ -573,7 +573,7 @@ class RadioButtons extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
@@ -596,7 +596,7 @@ class RadioButtons extends React.Component {
               <div className={classNames} key={this_key}>
                 <input
                   id={`fid_${this_key}`}
-                  className="custom-control-input"
+                  className="form-check-input"
                   ref={(c) => {
                     if (c && self.props.mutable) {
                       self.options[`child_ref_${option.key}`] = c;
@@ -605,7 +605,7 @@ class RadioButtons extends React.Component {
                   {...props}
                 />
                 <label
-                  className="custom-control-label"
+                  className="form-check-label"
                   htmlFor={`fid_${this_key}`}
                 >
                   {option.text}
@@ -672,7 +672,7 @@ class Rating extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <StarRating {...props} />
         </div>
@@ -691,7 +691,7 @@ class HyperLink extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <label className={'form-label'}>
             <a
               target="_blank"
@@ -717,7 +717,7 @@ class Download extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <a
             href={`${this.props.download_path}?id=${this.props.data.file_path}`}
           >
@@ -781,6 +781,9 @@ class Camera extends React.Component {
       // "contain" is supposed to "Preserves the aspect ratio, and fits the image inside the container, without cutting"
       objectFit: 'contain', 
       objectPosition: this.props.data.center ? 'center' : 'left',
+      // Move width and height from element style to inline style of image, to make it work the same way as 'Image' element.
+      width: this.props.data.width,
+      height: this.props.data.height,
     };
     let baseClasses = 'SortableItem rfb-item';
     const name = this.props.data.field_name;
@@ -804,7 +807,7 @@ class Camera extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           {this.props.read_only === true &&
           this.props.defaultValue &&
@@ -813,7 +816,7 @@ class Camera extends React.Component {
               <img
                 style={imageStyle}
                 src={sourceDataURL}
-                {...this.getImageSizeProps(this.props.data)}
+                // {...this.getImageSizeProps(this.props.data)} // move width and height from element style to inline style of image, to make it work the same way as 'Image' element.
               />
             </div>
           ) : (
@@ -823,7 +826,7 @@ class Camera extends React.Component {
                   name={name}
                   type="file"
                   accept="image/*"
-                  capture="camera"
+                  //capture="camera" // With this property, users on most mobiles can only take photo but no options to pick up a photo from gallery
                   className="image-upload visually-hidden"
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
@@ -831,7 +834,7 @@ class Camera extends React.Component {
                   id={name}
                 />
                 <div className="image-upload-control" style={{ position: 'relative' }}>
-                  <label className="btn btn-default" htmlFor={name}>
+                  <label className="btn btn-outline-secondary" htmlFor={name}>
                     <i className="fas fa-camera"></i> {this.props.data.label_after_camera_icon}
                   </label>
                   <div>{this.props.data.message_under_camera_icon}</div>
@@ -925,13 +928,13 @@ class FileUpload extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
             <div>
-              <button className="btn btn-default" onClick={this.saveFile}>
+              <button className="btn btn-outline-secondary" onClick={this.saveFile}>
                 <i className="fas fa-download"></i> Download File
               </button>
             </div>
@@ -949,7 +952,7 @@ class FileUpload extends React.Component {
                   id={name}
                 />
                 <div className="image-upload-control" style={{ position: 'relative' }}>
-                  <label className="btn btn-default" htmlFor={name}>
+                  <label className="btn btn-outline-secondary" htmlFor={name}>
                     <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
                   </label>
                   <div>{this.props.data.message_under_file_icon}</div>
@@ -1067,7 +1070,7 @@ class Range extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <div className="range">
             <div className="clearfix">
@@ -1077,7 +1080,10 @@ class Range extends React.Component {
             <ReactBootstrapSlider {...props} />
           </div>
           <div className="visible_marks">{visible_marks}</div>
-          <input name={name} value={this.state.value} type="hidden" />
+          <input name={name} value={this.state.value} type="hidden" 
+                data-min-value={props.min}
+                data-max-value={props.max}
+                data-step={props.step} />
           <datalist id={props.list}>{_datalist}</datalist>
         </div>
       </div>

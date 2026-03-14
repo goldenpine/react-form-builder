@@ -71,23 +71,23 @@ export default class Demobar extends React.Component {
 
     return (
       <div className="clearfix" style={{ margin: '10px', width: '70%' }}>
-        <h4 className="float-left">Preview</h4>
+        <h4 className="float-start">Preview</h4>
         <button
-          className="btn btn-primary float-right"
+          className="btn btn-primary float-end"
           style={{ marginRight: '10px' }}
           onClick={this.showPreview.bind(this)}
         >
           Preview Form
         </button>
         <button
-          className="btn btn-default float-right"
+          className="btn btn-secondary float-end"
           style={{ marginRight: '10px' }}
           onClick={this.showShortPreview.bind(this)}
         >
           Alternate/Short Form C
         </button>
         <button
-          className="btn btn-default float-right"
+          className="btn btn-secondary float-end"
           style={{ marginRight: '10px' }}
           onClick={this.showRoPreview.bind(this)}
         >
@@ -113,7 +113,7 @@ export default class Demobar extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-secondary"
                     data-dismiss="modal"
                     onClick={this.closePreview.bind(this)}
                   >
@@ -146,7 +146,7 @@ export default class Demobar extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-secondary"
                     data-dismiss="modal"
                     onClick={this.closePreview.bind(this)}
                   >
@@ -177,7 +177,7 @@ export default class Demobar extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-secondary"
                     data-dismiss="modal"
                     onClick={this.closePreview.bind(this)}
                   >

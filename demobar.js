@@ -103,21 +103,21 @@ export default class Demobar extends React.Component {
           Preview Form
         </button>
         <button
-          className="btn btn-default float-end"
+          className="btn btn-secondary float-end"
           style={{ marginRight: '10px' }}
           onClick={() => this.showShortPreview()}
         >
           Alternate/Short Form
         </button>
         <button
-          className="btn btn-default float-end"
+          className="btn btn-secondary float-end"
           style={{ marginRight: '10px' }}
           onClick={() => this.showRoPreview()}
         >
           Read Only Form
         </button>
         <button
-          className="btn btn-default float-end"
+          className="btn btn-secondary float-end"
           style={{ marginRight: '10px' }}
           onClick={() => this.saveFormData()}
         >
@@ -146,7 +146,7 @@ export default class Demobar extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-secondary"
                     data-dismiss="modal"
                     onClick={this.closePreview.bind(this)}
                   >
@@ -180,7 +180,7 @@ export default class Demobar extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-secondary"
                     data-dismiss="modal"
                     onClick={this.closePreview.bind(this)}
                   >
@@ -212,7 +212,7 @@ export default class Demobar extends React.Component {
                 <div className="modal-footer">
                   <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-secondary"
                     data-dismiss="modal"
                     onClick={this.closePreview.bind(this)}
                   >

@@ -1,18 +1,23 @@
 .react-form-builder-form {
 
   .rfb-item {
-    label {
+  /*label {
       span {
         background: white;
         font-weight: bold;
         padding: 0 10px;
       }
-    }
+    } 
     .row {
       padding: 0 25px;
       border: 1px solid #6da6e3;
       border-radius: 10px;
       margin-top: -18px;
+    }*/
+
+    // The default Bootstrap 5 checkbox and radio styles have a light gray border that can be hard to see on some backgrounds. This custom style overrides the default border color to make it more visible.
+    .form-check-input {
+      --bs-border-color: hsl(60, 0%, 40%);
     }
   }
 }
@@ -65,8 +70,13 @@
       text-align: center;
       padding-top: 35px;
     }
+  
+    // The default Bootstrap 5 checkbox and radio styles have a light gray border that can be hard to see on some backgrounds. This custom style overrides the default border color to make it more visible.
+    .form-check-input {
+      --bs-border-color: hsl(60, 0%, 40%);
+    }
 
-    .option-inline {
+    .form-check-inline {
       display: inline-block !important;
       margin-right: 10px !important;
     }
@@ -99,7 +109,7 @@
       textarea {
         width: 100%;
       }
-      .form-group {
+      .mb-3 {
         .form-group-range {
           label {
             display: block;
@@ -165,7 +175,7 @@
         padding: 10px 20px;
         &.SortableItem {
           position: relative;
-          .form-group {
+          .mb-3 {
             pointer-events: none;
             label, select, input, a {
               cursor: move;
@@ -251,7 +261,7 @@
       margin-top: 0;
       text-align: center;
     }
-    .form-group {
+    .mb-3 {
       padding: 10px;
       border: 1px dashed #ddd;
     }

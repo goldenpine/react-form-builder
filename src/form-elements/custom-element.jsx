@@ -41,7 +41,7 @@ class CustomElement extends Component {
             {...props}
           />
         ) : (
-          <div className="form-group">
+          <div className="mb-3">
             <ComponentLabel className="form-label" {...this.props} />
             <Element
               data={this.props.data}

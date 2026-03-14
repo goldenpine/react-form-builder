@@ -125,7 +125,7 @@ class DatePicker extends React.Component {
     return (
       <div className={baseClasses} style={{ ...this.props.style }}>
         <ComponentHeader {...this.props} />
-        <div className="form-group">
+        <div className="mb-3">
           <ComponentLabel {...this.props} />
           <div>
             {readOnly && (
