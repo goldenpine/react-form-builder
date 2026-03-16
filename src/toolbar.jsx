@@ -329,6 +329,7 @@ class Toolbar extends React.Component {
         icon: 'fas fa-camera',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'camera_',
+        upload_layout: 'standard',
         label_after_camera_icon: intl.formatMessage({ id: 'place-holder-display-label-after-camera-icon' }),
         message_under_camera_icon: intl.formatMessage({ id: 'place-holder-display-message-under-camera-icon' }),
         label_after_photo_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-photo-clear-icon' }),
@@ -432,6 +433,7 @@ class Toolbar extends React.Component {
     }
 
     if (elementKey === 'Camera') {
+      elementOptions.upload_layout = item.upload_layout;
       elementOptions.label_after_camera_icon = item.label_after_camera_icon;
       elementOptions.message_under_camera_icon = item.message_under_camera_icon;
       elementOptions.label_after_photo_clear_icon = item.label_after_photo_clear_icon;

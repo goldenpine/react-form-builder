@@ -37,9 +37,13 @@
   "word" : "Word",
   "excel" : "Excel",
   "ppt" : "PPT",
-  "display-label-after-camera-icon" : "Display label after camera icon",
+  "upload-layout" : "Upload Area Layout",
+  "upload-layout-standard" : "Standard",
+  "upload-layout-dropzone" : "Dropzone",
+  "image-layout" : "Image Layout",
+  "display-label-after-camera-icon" : "Display label on button",
   "place-holder-display-label-after-camera-icon" : "Upload Photo",
-  "display-message-under-camera-icon" : "Display message under camera icon",
+  "display-message-under-camera-icon" : "Display message under icon",
   "place-holder-display-message-under-camera-icon" : "Select an image from your computer or device.",
   "display-label-after-photo-clear-icon" : "Display label after photo clear icon",
   "place-holder-display-label-after-photo-clear-icon" : "Clear Photo",
@@ -107,12 +111,4 @@
   "message.was-not-registered": "was not registered",
   "message.invalid-email": "field requires valid email address",
   "message.invalid-phone-number": "field requires a valid phone number"
-
-
-
-
-
-
-
-
 }

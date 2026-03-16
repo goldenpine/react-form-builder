@@ -804,6 +804,7 @@ class Camera extends React.Component {
       }
     }
 
+  if(this.props.data.upload_layout === "standard") {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
@@ -863,6 +864,64 @@ class Camera extends React.Component {
         </div>
       </div>
     );
+  }else {
+       return (
+      <div style={{ ...this.props.style }} className={baseClasses}>
+        <ComponentHeader {...this.props} />
+        <div className="mb-3">
+          <ComponentLabel {...this.props} />
+          {this.props.read_only === true &&
+          this.props.defaultValue &&
+          this.props.defaultValue.length > 0 ? (
+            <div>
+              <img
+                style={imageStyle}
+                src={sourceDataURL}
+              />
+            </div>
+          ) : (          
+            <div className="image-upload-container">
+              {/* The modern "Card" style upload area */}
+              <div style={fileInputStyle} className="upload-card">
+                <input
+                  name={name}
+                  type="file"
+                  accept="image/*"
+                  capture="camera"
+                  className="visually-hidden"
+                  onChange={this.displayImage}
+                  id={name}
+                  disabled={this.props.read_only}
+                />
+                
+                <label htmlFor={name} className="upload-card-content">
+                  <i className="fas fa-cloud-upload-alt upload-icon"></i>
+                  <span className="upload-text">{this.props.data.message_under_camera_icon}</span>
+                  <div className="btn-browse">{this.props.data.label_after_camera_icon}</div>
+                </label>
+              </div>
+
+              {/* Preview Section */}
+              {this.state.img && (
+                <div className="preview-container">
+                  <img
+                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
+                    src={this.state.previewImg}
+                    className="image-upload-preview"
+                    alt="Preview"
+                    height="100"
+                  />
+                  <button className="btn btn-image-clear" onClick={this.clearImage}>
+                    <i className="fas fa-times"></i> Remove Photo
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
   }
 }
 
