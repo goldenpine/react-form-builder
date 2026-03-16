@@ -887,7 +887,6 @@ class Camera extends React.Component {
                   name={name}
                   type="file"
                   accept="image/*"
-                  capture="camera"
                   className="visually-hidden"
                   onChange={this.displayImage}
                   id={name}
