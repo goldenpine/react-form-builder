@@ -889,8 +889,9 @@ class Camera extends React.Component {
                   accept="image/*"
                   className="visually-hidden"
                   onChange={this.displayImage}
-                  id={name}
+                  data-clearlabel={this.props.data.label_after_photo_clear_icon}
                   disabled={this.props.read_only}
+                  id={name}
                 />
                 
                 <label htmlFor={name} className="upload-card-content">
