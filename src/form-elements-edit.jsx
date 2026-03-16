@@ -113,6 +113,17 @@ export default class FormElementsEdit extends React.Component {
     }
   }
 
+  validateImageSize(e) {
+    const regex = /^$|^\d+(px|%)$/;
+    if (regex.test(e.target.value)) {
+      e.target.classList.remove("is-invalid");
+      e.target.classList.add("is-valid");
+    } else {
+      e.target.classList.remove("is-valid");
+      e.target.classList.add("is-invalid");
+    }
+  }
+    
   render() {
     if (this.state.dirty) {
       this.props.element.dirty = true;
@@ -352,11 +363,21 @@ export default class FormElementsEdit extends React.Component {
             <div className="row mb-3">
               <div className="col-sm-3">
                 <label className="control-label" htmlFor="elementWidth"><IntlMessages id="width" />:</label>
-                <input id="elementWidth" type="text" className="form-control" defaultValue={this.props.element.width} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'width', 'value')} />
+                <input id="elementWidth" type="text" className="form-control" 
+                       pattern="^$|^\d+(px|%)$"
+                       onInput={this.validateImageSize}
+                       defaultValue={this.props.element.width} 
+                       onBlur={this.updateElement.bind(this)} 
+                       onChange={this.editElementProp.bind(this, 'width', 'value')} />
               </div>
               <div className="col-sm-3">
                 <label className="control-label" htmlFor="elementHeight"><IntlMessages id="height" />:</label>
-                <input id="elementHeight" type="text" className="form-control" defaultValue={this.props.element.height} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'height', 'value')} />
+                <input id="elementHeight" type="text" className="form-control" 
+                       pattern="^$|^\d+(px|%)$"
+                       onInput={this.validateImageSize}
+                       defaultValue={this.props.element.height} 
+                       onBlur={this.updateElement.bind(this)} 
+                       onChange={this.editElementProp.bind(this, 'height', 'value')} />
               </div>
               <small className="form-text text-muted">
                   Use <code>px</code> or <code>%</code> (e.g. 200px, 100%).
