@@ -850,13 +850,9 @@ class Camera extends React.Component {
                     height="100"
                     className="image-upload-preview"
                   />
-                  <br />
-                  <div
-                    className="btn btn-image-clear"
-                    onClick={this.clearImage}
-                  >
+                  <button className="btn btn-image-clear" onClick={this.clearImage}>
                     <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
-                  </div>
+                  </button>
                 </div>
               )}
             </div>
@@ -903,7 +899,7 @@ class Camera extends React.Component {
 
               {/* Preview Section */}
               {this.state.img && (
-                <div className="preview-container">
+                <div>
                   <img
                     onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
                     src={this.state.previewImg}
@@ -912,7 +908,7 @@ class Camera extends React.Component {
                     height="100"
                   />
                   <button className="btn btn-image-clear" onClick={this.clearImage}>
-                    <i className="fas fa-times"></i> Remove Photo
+                    <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
                   </button>
                 </div>
               )}
