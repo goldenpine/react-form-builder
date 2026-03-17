@@ -340,6 +340,7 @@ class Toolbar extends React.Component {
         icon: 'fas fa-file',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'file_upload_',
+        upload_layout: 'standard',
         label_after_file_icon: intl.formatMessage({ id: 'place-holder-display-label-after-file-icon' }),
         message_under_file_icon: intl.formatMessage({ id: 'place-holder-display-message-under-file-icon' }),
         label_after_file_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-file-clear-icon' }),
@@ -440,6 +441,7 @@ class Toolbar extends React.Component {
     }
 
     if (elementKey === 'FileUpload') {
+      elementOptions.upload_layout = item.upload_layout;
       elementOptions.label_after_file_icon = item.label_after_file_icon;
       elementOptions.message_under_file_icon = item.message_under_file_icon;
       elementOptions.label_after_file_clear_icon = item.label_after_file_clear_icon;

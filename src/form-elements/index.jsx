@@ -980,6 +980,76 @@ class FileUpload extends React.Component {
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
     }
+    if (this.props.data.upload_layout === 'standard') {
+      return (
+        <div style={{ ...this.props.style }} className={baseClasses}>
+          <ComponentHeader {...this.props} />
+          <div className="mb-3">
+            <ComponentLabel {...this.props} />
+            {this.props.read_only === true &&
+            this.props.defaultValue &&
+            this.props.defaultValue.length > 0 ? (
+              <div>
+                <button className="btn btn-outline-secondary" onClick={this.saveFile}>
+                  <i className="fas fa-download"></i> Download File
+                </button>
+              </div>
+            ) : (
+              <div className="image-upload-container">
+                <div style={fileInputStyle}>
+                  <input
+                    name={name}
+                    type="file"
+                    accept={this.props.data.fileType || '*'}
+                    className="image-upload visually-hidden"
+                    onChange={this.displayFileUpload}
+                    data-clearlabel={this.props.data.label_after_file_clear_icon}
+                    disabled={this.props.read_only}
+                    id={name}
+                  />
+                  <div className="image-upload-control" style={{ position: 'relative' }}>
+                    <label className="btn btn-outline-secondary" htmlFor={name}>
+                      <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
+                    </label>
+                    <div>{this.props.data.message_under_file_icon}</div>
+                  </div>
+                </div>
+
+                {this.state.fileUpload && (
+                  <div>
+                    <div className="file-upload-preview">
+                      <div
+                        style={{ display: 'inline-block', marginRight: '5px' }}
+                      >
+                        {this.state.fileUpload.name}
+                      </div>
+                      <div style={{ display: 'inline-block', marginLeft: '5px' }}>
+                        {this.state.fileUpload.size.length > 6
+                          ? `  ${Math.ceil(
+                              this.state.fileUpload.size / (1024 * 1024)
+                            )} mb`
+                          : `  ${Math.ceil(
+                              this.state.fileUpload.size / 1024
+                            )} kb`}
+                      </div>
+                    </div>
+                    <br />
+                    <div
+                      className="btn btn-file-upload-clear"
+                      onClick={this.clearFileUpload}
+                    >
+                      <i className="fas fa-times"></i> {this.props.data.label_after_file_clear_icon}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // non-standard layout: use "upload-card" style like Camera
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
@@ -995,31 +1065,29 @@ class FileUpload extends React.Component {
             </div>
           ) : (
             <div className="image-upload-container">
-              <div style={fileInputStyle}>
+              <div style={fileInputStyle} className="upload-card">
                 <input
                   name={name}
                   type="file"
                   accept={this.props.data.fileType || '*'}
-                  className="image-upload visually-hidden"
+                  className="visually-hidden"
                   onChange={this.displayFileUpload}
                   data-clearlabel={this.props.data.label_after_file_clear_icon}
                   disabled={this.props.read_only}
                   id={name}
                 />
-                <div className="image-upload-control" style={{ position: 'relative' }}>
-                  <label className="btn btn-outline-secondary" htmlFor={name}>
-                    <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
-                  </label>
-                  <div>{this.props.data.message_under_file_icon}</div>
-                </div>
+
+                <label htmlFor={name} className="upload-card-content">
+                  <i className="fas fa-cloud-upload-alt upload-icon"></i>
+                  <span className="upload-text">{this.props.data.message_under_file_icon}</span>
+                  <div className="btn-browse">{this.props.data.label_after_file_icon}</div>
+                </label>
               </div>
 
               {this.state.fileUpload && (
                 <div>
                   <div className="file-upload-preview">
-                    <div
-                      style={{ display: 'inline-block', marginRight: '5px' }}
-                    >
+                    <div style={{ display: 'inline-block', marginRight: '5px' }}>
                       {this.state.fileUpload.name}
                     </div>
                     <div style={{ display: 'inline-block', marginLeft: '5px' }}>
@@ -1033,10 +1101,7 @@ class FileUpload extends React.Component {
                     </div>
                   </div>
                   <br />
-                  <div
-                    className="btn btn-file-upload-clear"
-                    onClick={this.clearFileUpload}
-                  >
+                  <div className="btn btn-file-upload-clear" onClick={this.clearFileUpload}>
                     <i className="fas fa-times"></i> {this.props.data.label_after_file_clear_icon}
                   </div>
                 </div>

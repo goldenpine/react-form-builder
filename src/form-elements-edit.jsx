@@ -146,6 +146,7 @@ export default class FormElementsEdit extends React.Component {
       canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue,
     } = this.props.element;
     const canHaveImageSize = (this.state.element.element === 'Image' || this.state.element.element === 'Camera');
+    const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {
@@ -292,47 +293,52 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
-        {this.state.element.element === 'Camera' && (
-          <div>
-            {/* Camera Layout Selection */}
-            <div className="mb-3">
-              <label className="control-label bold">
-                <IntlMessages id="upload-layout" />:
-              </label>
+        { canHaveUploadLayout && (
+            <div>
+              {/* Upload Layout Selection */}
+              <div className="mb-3">
+                <label className="control-label bold">
+                  <IntlMessages id="upload-layout" />:
+                </label>
 
-              <div className="d-flex align-items-center gap-3">
-                <div className="form-check d-flex align-items-center">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="uploadLayout"
-                    id="uploadLayoutStandard"
-                    value="standard"
-                    checked={this.props.element.upload_layout === "standard"}
-                    onChange={this.handleUploadLayoutChange}
-                  />
-                  <label className="form-check-label ms-2" htmlFor="uploadLayoutStandard">
-                    <IntlMessages id="upload-layout-standard" />
-                  </label>
-                </div>
+                <div className="d-flex align-items-center gap-3">
+                  <div className="form-check d-flex align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="uploadLayout"
+                      id="uploadLayoutStandard"
+                      value="standard"
+                      checked={this.props.element.upload_layout === "standard"}
+                      onChange={this.handleUploadLayoutChange}
+                    />
+                    <label className="form-check-label ms-2" htmlFor="uploadLayoutStandard">
+                      <IntlMessages id="upload-layout-standard" />
+                    </label>
+                  </div>
 
-                <div className="form-check d-flex align-items-center">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="uploadLayout"
-                    id="uploadLayoutDropZone"
-                    value="dropzone"
-                    checked={this.props.element.upload_layout === "dropzone"}
-                    onChange={this.handleUploadLayoutChange}
-                  />
-                  <label className="form-check-label ms-2" htmlFor="uploadLayoutDropZone">
-                    <IntlMessages id="upload-layout-dropzone" />
-                  </label>
+                  <div className="form-check d-flex align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="uploadLayout"
+                      id="uploadLayoutDropZone"
+                      value="dropzone"
+                      checked={this.props.element.upload_layout === "dropzone"}
+                      onChange={this.handleUploadLayoutChange}
+                    />
+                    <label className="form-check-label ms-2" htmlFor="uploadLayoutDropZone">
+                      <IntlMessages id="upload-layout-dropzone" />
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
+          )
 
+        }
+        {this.state.element.element === 'Camera' && (
+          <div>
             <div className="mb-3">
               <label className="control-label" htmlFor="LabelAfterCameraIcon"><IntlMessages id="display-label-after-camera-icon" />:</label>
               <input id="LabelAfterCameraIcon" type="text" className="form-control" defaultValue={this.props.element.label_after_camera_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'label_after_camera_icon', 'value')} />
