@@ -337,7 +337,7 @@ class Toolbar extends React.Component {
       {
         key: 'FileUpload',
         name: intl.formatMessage({ id: 'file-upload' }),
-        icon: 'fas fa-file',
+        icon: 'fas fa-file-upload',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'file_upload_',
         upload_layout: 'standard',

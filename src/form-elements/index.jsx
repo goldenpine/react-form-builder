@@ -1009,7 +1009,7 @@ class FileUpload extends React.Component {
                   />
                   <div className="image-upload-control" style={{ position: 'relative' }}>
                     <label className="btn btn-outline-secondary" htmlFor={name}>
-                      <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
+                      <i className="fas fa-file-upload"></i> {this.props.data.label_after_file_icon}
                     </label>
                     <div>{this.props.data.message_under_file_icon}</div>
                   </div>

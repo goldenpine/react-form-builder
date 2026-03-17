@@ -335,7 +335,6 @@ export default class FormElementsEdit extends React.Component {
               </div>
             </div>
           )
-
         }
         {this.state.element.element === 'Camera' && (
           <div>
