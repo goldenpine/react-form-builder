@@ -804,7 +804,7 @@ class Camera extends React.Component {
       }
     }
 
-  if(this.props.data.upload_layout === "standard") {
+  if(this.props.data.upload_layout !== "dropzone") {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
@@ -980,7 +980,7 @@ class FileUpload extends React.Component {
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
     }
-    if (this.props.data.upload_layout === 'standard') {
+    if (this.props.data.upload_layout !== 'dropzone') {
       return (
         <div style={{ ...this.props.style }} className={baseClasses}>
           <ComponentHeader {...this.props} />
