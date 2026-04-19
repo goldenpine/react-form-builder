@@ -107,6 +107,8 @@ class DatePicker extends React.Component {
     props.type = 'date';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     const readOnly = this.props.data.readOnly || this.props.read_only;
     const iOS =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -126,7 +128,7 @@ class DatePicker extends React.Component {
       <div className={baseClasses} style={{ ...this.props.style }}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <div>
             {readOnly && (
               <input

@@ -130,6 +130,8 @@ class TextInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder || '';
+    const labelHidden = this.props.data.labelHidden || false;
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -148,7 +150,7 @@ class TextInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <input {...props} />
         </div>
       </div>
@@ -167,6 +169,9 @@ class EmailInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder || '';
+    const labelHidden = this.props.data.labelHidden || false;
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -185,7 +190,7 @@ class EmailInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <input {...props} />
         </div>
       </div>
@@ -204,6 +209,13 @@ class PhoneNumber extends React.Component {
     props.type = 'tel';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    if (this.props.data.placeholder !== undefined && this.props.data.placeholder !== null) {
+      props.placeholder = this.props.data.placeholder;
+    } else {
+      props.placeholder = '+12345678900';
+    }
+    const labelHidden = this.props.data.labelHidden || false;
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -222,7 +234,7 @@ class PhoneNumber extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <input {...props} />
         </div>
       </div>
@@ -241,6 +253,8 @@ class NumberInput extends React.Component {
     props.type = 'number';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder || '';
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
@@ -260,7 +274,7 @@ class NumberInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <input {...props} />
         </div>
       </div>
@@ -278,6 +292,8 @@ class TextArea extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder || '';
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.read_only) {
       props.disabled = 'disabled';
@@ -297,7 +313,7 @@ class TextArea extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <textarea {...props} />
         </div>
       </div>
@@ -315,6 +331,7 @@ class Dropdown extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
@@ -334,7 +351,7 @@ class Dropdown extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <select {...props}>
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
@@ -375,6 +392,7 @@ class Signature extends React.Component {
     const props = {};
     props.type = 'hidden';
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = defaultValue;
@@ -403,7 +421,7 @@ class Signature extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           {this.props.read_only === true || !!sourceDataURL ? (
             <img src={sourceDataURL} />
           ) : (
@@ -457,6 +475,7 @@ class Tags extends React.Component {
     props.isMulti = true;
     props.name = this.props.data.field_name;
     props.onChange = this.handleChange;
+    const labelHidden = this.props.data.labelHidden || false;
 
     props.options = options;
     if (!this.props.mutable) {
@@ -477,7 +496,7 @@ class Tags extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <Select {...props} />
         </div>
       </div>
@@ -493,6 +512,8 @@ class Checkboxes extends React.Component {
 
   render() {
     const self = this;
+    const labelHidden = this.props.data.labelHidden || false;
+
     let classNames = 'form-check';
     if (this.props.data.inline) {
       classNames += ' form-check-inline';
@@ -507,7 +528,7 @@ class Checkboxes extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -560,6 +581,8 @@ class RadioButtons extends React.Component {
 
   render() {
     const self = this;
+    const labelHidden = this.props.data.labelHidden || false;
+
     let classNames = 'form-check';
     if (this.props.data.inline) {
       classNames += ' form-check-inline';
@@ -574,7 +597,7 @@ class RadioButtons extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -652,6 +675,8 @@ class Rating extends React.Component {
   render() {
     const props = {};
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     props.ratingAmount = 5;
 
     if (this.props.mutable) {
@@ -673,7 +698,7 @@ class Rating extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <StarRating {...props} />
         </div>
       </div>
@@ -787,6 +812,8 @@ class Camera extends React.Component {
     };
     let baseClasses = 'SortableItem rfb-item';
     const name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     const fileInputStyle = this.state.img ? { display: 'none' } : null;
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
@@ -809,7 +836,7 @@ class Camera extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -865,7 +892,7 @@ class Camera extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -976,6 +1003,8 @@ class FileUpload extends React.Component {
   render() {
     let baseClasses = 'SortableItem rfb-item';
     const name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     const fileInputStyle = this.state.fileUpload ? { display: 'none' } : null;
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
@@ -985,7 +1014,7 @@ class FileUpload extends React.Component {
         <div style={{ ...this.props.style }} className={baseClasses}>
           <ComponentHeader {...this.props} />
           <div className="mb-3">
-            <ComponentLabel {...this.props} />
+            {!labelHidden && <ComponentLabel {...this.props} />}
             {this.props.read_only === true &&
             this.props.defaultValue &&
             this.props.defaultValue.length > 0 ? (
@@ -1054,7 +1083,7 @@ class FileUpload extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -1136,6 +1165,7 @@ class Range extends React.Component {
   render() {
     const props = {};
     const name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;    
 
     props.type = 'range';
     props.list = `tickmarks_${name}`;
@@ -1191,7 +1221,7 @@ class Range extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          {!labelHidden && <ComponentLabel {...this.props} />}
           <div className="range">
             <div className="clearfix">
               <span className="float-start">{this.props.data.min_label}</span>

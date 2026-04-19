@@ -53,6 +53,8 @@
   "place-holder-display-message-under-file-icon" : "یک فایل را از رایانه یا دستگاه خود انتخاب کنید.",
   "display-label-after-file-clear-icon" : "نمایش برچسب پس از آیکون حذف فایل",
   "place-holder-display-label-after-file-clear-icon" : "حذف فایل",
+  "placeholder": "متن راهنما (در داخل فیلد ورودی نمایش داده می‌شود)",
+  "label-hidden": "پنهان کردن برچسب",
 
   "options": "گزینه‌ها",
   "value": "مقدار",

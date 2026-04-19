@@ -147,6 +147,9 @@ export default class FormElementsEdit extends React.Component {
     } = this.props.element;
     const canHaveImageSize = (this.state.element.element === 'Image' || this.state.element.element === 'Camera');
     const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
+    const canHavePlaceholder = this.props.element.element === 'TextInput' || this.props.element.element === 'TextArea'
+                              || this.props.element.element === 'EmailInput' || this.props.element.element === 'NumberInput'
+                              || this.props.element.element === 'PhoneNumber';
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {
@@ -197,7 +200,24 @@ export default class FormElementsEdit extends React.Component {
         }
         { this.props.element.hasOwnProperty('label') &&
           <div className="mb-3">
-            <label><IntlMessages id="display-label" /></label>
+            <div className="d-flex justify-content-between align-items-center">
+              <label className="mb-0">
+                <IntlMessages id="display-label" />
+              </label>
+
+              <div className="form-check m-0">
+                <input
+                  id="label-hidden"
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={this.props.element.labelHidden || false}
+                  onChange={this.editElementProp.bind(this, 'labelHidden', 'checked')}
+                />
+                <label className="form-check-label" htmlFor="label-hidden">
+                  <IntlMessages id="label-hidden" />
+                </label>
+              </div>
+            </div>
             <Editor
               toolbar={toolbar}
               defaultEditorState={editorState}
@@ -283,6 +303,12 @@ export default class FormElementsEdit extends React.Component {
                 </label>
               </div>
             }
+          </div>
+        }
+        { canHavePlaceholder &&
+          <div className="mb-3">
+            <label className="control-label" htmlFor="placeholderInput"><IntlMessages id="placeholder" /></label>
+            <input id="placeholderInput" type="text" className="form-control" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
           </div>
         }
         { this.props.element.hasOwnProperty('src') &&

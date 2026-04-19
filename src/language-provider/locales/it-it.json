@@ -53,7 +53,9 @@
   "place-holder-display-message-under-file-icon" : "Seleziona un file dal tuo computer o dispositivo.",
   "display-label-after-file-clear-icon" : "Mostra etichetta dopo l'icona di cancellazione del file",
   "place-holder-display-label-after-file-clear-icon" : "Cancella file",
-  
+  "placeholder": "Testo di suggerimento (mostrato all'interno del campo di input)",
+  "label-hidden": "Nascondi etichetta",
+
   "options" : "Opzioni",
   "value" : "Valore",
   "correct" : "Corretto",

@@ -53,6 +53,8 @@
   "place-holder-display-message-under-file-icon" : "Select a file from your computer or device.",
   "display-label-after-file-clear-icon" : "Display label after file clear icon",
   "place-holder-display-label-after-file-clear-icon" : "Clear File",
+  "placeholder" : "Hint text (shown inside the input field)",
+  "label-hidden" : "Hide label",
   
   "options" : "Options",
   "value" : "Value",
