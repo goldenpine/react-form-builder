@@ -150,7 +150,14 @@ class TextInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", // In app, it's leveraged to identify element labels. Additionally removed !important of its specificity in scss to make it work with labelHidden.
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <input {...props} />
         </div>
       </div>
@@ -190,7 +197,14 @@ class EmailInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <input {...props} />
         </div>
       </div>
@@ -234,7 +248,14 @@ class PhoneNumber extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <input {...props} />
         </div>
       </div>
@@ -274,7 +295,14 @@ class NumberInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <input {...props} />
         </div>
       </div>
@@ -313,7 +341,14 @@ class TextArea extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <textarea {...props} />
         </div>
       </div>
@@ -351,7 +386,14 @@ class Dropdown extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <select {...props}>
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
@@ -421,7 +463,14 @@ class Signature extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true || !!sourceDataURL ? (
             <img src={sourceDataURL} />
           ) : (
@@ -496,7 +545,14 @@ class Tags extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <Select {...props} />
         </div>
       </div>
@@ -528,7 +584,14 @@ class Checkboxes extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -597,7 +660,14 @@ class RadioButtons extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -698,7 +768,14 @@ class Rating extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <StarRating {...props} />
         </div>
       </div>
@@ -836,7 +913,14 @@ class Camera extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -892,7 +976,14 @@ class Camera extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -1014,7 +1105,14 @@ class FileUpload extends React.Component {
         <div style={{ ...this.props.style }} className={baseClasses}>
           <ComponentHeader {...this.props} />
           <div className="mb-3">
-            {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
             {this.props.read_only === true &&
             this.props.defaultValue &&
             this.props.defaultValue.length > 0 ? (
@@ -1083,7 +1181,14 @@ class FileUpload extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -1221,7 +1326,14 @@ class Range extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          {!labelHidden && <ComponentLabel {...this.props} />}
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <div className="range">
             <div className="clearfix">
               <span className="float-start">{this.props.data.min_label}</span>
