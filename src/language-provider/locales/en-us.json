@@ -1,5 +1,5 @@
 {
-  "display-label": "Display Label",
+  "display-label": "Display Label (cannot be empty, must be unique even if hidden)",
   "choose-file": "Choose file",
   "choose-file-type": "Choose file type",
   "select-file-type": "Select file type",

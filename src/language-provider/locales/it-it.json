@@ -1,5 +1,5 @@
 {
-  "display-label": "Visualizza etichetta",
+  "display-label": "Visualizza etichetta (non può essere vuota, deve essere univoca anche se nascosta)",
   "choose-file": "Scegli file",
   "choose-file-type": "Scegli tipo di file",
   "select-file-type": "Scegli tipo di file",
