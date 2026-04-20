@@ -15,6 +15,24 @@ import myxss from './myxss';
 
 const FormElements = {};
 
+// Helper function to format placeholder with asterisk if the field is required and label is hidden. 
+// The function checks if the field has a required label, if the label is hidden, and if the placeholder is not empty. 
+// If all conditions are met, it appends an asterisk to the placeholder.
+function formatPlaceholder(placeholder, hasRequiredLabel, labelHidden) {
+  let result = placeholder || '';
+
+  if (
+    hasRequiredLabel &&
+    labelHidden &&
+    result.trim() !== '' &&
+    !result.endsWith('*')
+  ) {
+    result += ' *';
+  }
+
+  return result;
+}
+
 class Header extends React.Component {
   render() {
     // const headerClasses = `dynamic-input ${this.props.data.element}-input`;
@@ -130,8 +148,18 @@ class TextInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-    props.placeholder = this.props.data.placeholder || '';
+    
     const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -176,8 +204,17 @@ class EmailInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-    props.placeholder = this.props.data.placeholder || '';
+
     const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
@@ -223,12 +260,23 @@ class PhoneNumber extends React.Component {
     props.type = 'tel';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-    if (this.props.data.placeholder !== undefined && this.props.data.placeholder !== null) {
-      props.placeholder = this.props.data.placeholder;
-    } else {
-      props.placeholder = '+12345678900';
-    }
+
     const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    let placeholder; // For phone number input, if placeholder is not set, we will set a default placeholder with an asterisk if it's required, to give users a hint about the expected format and the requirement. The default placeholder is "+12345678900" which is in E.164 format without spaces or dashes, as it's the most widely accepted format for international phone numbers and works well with the pattern validation we have in place. Merchants can customize this placeholder or even disable it by leaving it blank in the form builder.
+    if (this.props.data.placeholder !== undefined && this.props.data.placeholder !== null) {
+      placeholder = this.props.data.placeholder;
+    } else {
+      placeholder = '+12345678900';
+    }
+    props.placeholder = formatPlaceholder(
+      placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
@@ -274,8 +322,17 @@ class NumberInput extends React.Component {
     props.type = 'number';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-    props.placeholder = this.props.data.placeholder || '';
+
     const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
@@ -320,8 +377,17 @@ class TextArea extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-    props.placeholder = this.props.data.placeholder || '';
+
     const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
 
     if (this.props.read_only) {
       props.disabled = 'disabled';

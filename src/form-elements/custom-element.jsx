@@ -13,6 +13,7 @@ class CustomElement extends Component {
     const props = {};
     props.name = this.props.data.field_name;
     props.defaultValue = this.props.defaultValue;
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable && this.props.data.forwardRef) {
       props.ref = this.inputField;
@@ -42,7 +43,14 @@ class CustomElement extends Component {
           />
         ) : (
           <div className="mb-3">
-            <ComponentLabel className="form-label" {...this.props} />
+            <ComponentLabel
+              {...this.props}
+              className={[
+                "form-label", 
+                this.props.className,
+                labelHidden ? "d-none" : ""
+              ].filter(Boolean).join(" ")}
+            />            
             <Element
               data={this.props.data}
               {...this.props.data.props}
