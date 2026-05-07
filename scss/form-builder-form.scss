@@ -21,6 +21,34 @@ input[type="date"] {
     margin-top: 10px;
   }
 }
+
+  /* Floating placeholder styles for inputs */
+  .floating-input-wrapper{
+    position:relative;
+  }
+  .floating-input-wrapper .fb-placeholder{
+    position:absolute;
+    left:.75rem;
+    top:50%;
+    transform:translateY(-50%);
+    transition:all .15s ease;
+    color: #6c757d;
+    pointer-events:none;
+    font-size:1rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .floating-input-wrapper .fb-placeholder.shrunken{
+    top:.25rem;
+    transform:none;
+    font-size:.75rem;
+    color:#495057;
+  }
+  .floating-input-wrapper.has-placeholder input.form-control,
+  .floating-input-wrapper.has-placeholder textarea.form-control{
+    padding-top:1.5rem;
+  }
 .react-form-builder-form {
   position: relative;
 

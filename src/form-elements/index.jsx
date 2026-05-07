@@ -2,7 +2,7 @@
 // eslint-disable-next-line max-classes-per-file
 import fetch from 'isomorphic-fetch';
 import { saveAs } from 'file-saver';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import SignaturePad from 'react-signature-canvas';
 import ReactBootstrapSlider from '@goldenpine/react-bootstrap-slider';
@@ -12,6 +12,68 @@ import DatePicker from './date-picker';
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 import myxss from './myxss';
+
+// This component is used for text inputs (text, email, tel, number) and textarea 
+// to provide a floating placeholder that moves above the input 
+// when the user focuses on the input or when there is a value in the input. 
+// It accepts the following props:
+// - Tag: the HTML tag to use for the input (default is 'input', can be 'textarea' for multiline input)
+const FloatingPlaceholderInput = ({ Tag = 'input', inputProps = {}, placeholder = '', defaultValue = '', mutable = false }) => {
+  const [hasValue, setHasValue] = useState(!!(defaultValue && String(defaultValue).length > 0));
+  const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    setHasValue(!!(defaultValue && String(defaultValue).length > 0));
+  }, [defaultValue]);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setHasValue(val !== '' && val !== undefined && val !== null);
+    if (typeof inputProps.onChange === 'function') {
+      inputProps.onChange(e);
+    }
+  };
+
+  const handleFocus = (e) => {
+    setFocused(true);
+    if (typeof inputProps.onFocus === 'function') {
+      inputProps.onFocus(e);
+    }
+  };
+
+  const handleBlur = (e) => {
+    setFocused(false);
+    // If no value, ensure placeholder returns to original position
+    if (!ref.current || !ref.current.value) {
+      setHasValue(false);
+    }
+    if (typeof inputProps.onBlur === 'function') {
+      inputProps.onBlur(e);
+    }
+  };
+
+  // remove placeholder attribute from actual input to avoid duplicate text
+  const { placeholder: _ph, ...restProps } = inputProps;
+
+  const shrunken = hasValue || focused;
+
+  return (
+    <div className={`floating-input-wrapper${placeholder ? ' has-placeholder' : ''}`} onClick={() => { if (ref.current) ref.current.focus(); }}>
+      <Tag
+        {...restProps}
+        ref={ref}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        defaultValue={mutable ? defaultValue : undefined}
+      />
+      {placeholder && (
+        <span className={`fb-placeholder ${shrunken ? 'shrunken' : ''}`}>{placeholder}</span>
+      )}
+    </div>
+  );
+};
 
 const FormElements = {};
 
@@ -186,7 +248,7 @@ class TextInput extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <input {...props} />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -242,7 +304,7 @@ class EmailInput extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <input {...props} />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -304,7 +366,7 @@ class PhoneNumber extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <input {...props} />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -360,7 +422,7 @@ class NumberInput extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <input {...props} />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -415,7 +477,7 @@ class TextArea extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <textarea {...props} />
+          <FloatingPlaceholderInput Tag="textarea" inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
