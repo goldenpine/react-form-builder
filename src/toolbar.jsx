@@ -190,6 +190,14 @@ class Toolbar extends React.Component {
         field_name: 'phone_input_',
       },
       {
+        key: 'SensitiveInput',
+        canHaveAnswer: true,
+        name: intl.formatMessage({ id: 'sensitive-input' }),
+        label: intl.formatMessage({ id: 'place-holder-label' }),
+        icon: 'fas fa-lock',
+        field_name: 'sensitive_input_',
+      },
+      {
         key: 'TextArea',
         canHaveAnswer: true,
         name: intl.formatMessage({ id: 'multi-line-input' }),

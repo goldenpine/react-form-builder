@@ -79,6 +79,7 @@
   "checkboxes" : "Checkboxes",
   "multiple-choice":"Scelta multipla",
   "text-input":"Input testo",
+  "sensitive-input":"Input sensibile",
   "email-input":"Email",
   "phone-input":"Numero di telefono",
   "number-input":"Input numerico",

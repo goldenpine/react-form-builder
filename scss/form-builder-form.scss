@@ -49,6 +49,21 @@ input[type="date"] {
   .floating-input-wrapper.has-placeholder textarea.form-control{
     padding-top:1.5rem;
   }
+
+  /* Sensitive input (eye icon) styling */
+  .sensitive-wrapper { position: relative; }
+  .sensitive-wrapper .toggle-password{
+    position: absolute;
+    right: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+  }
+  .sensitive-wrapper input.form-control{
+    padding-right: 2.5rem;
+  }
+  
 .react-form-builder-form {
   position: relative;
 

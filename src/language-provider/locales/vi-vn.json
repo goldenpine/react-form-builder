@@ -79,6 +79,7 @@
   "checkboxes" : "Hộp chọn",
   "multiple-choice":"Nhiều lựa chọn",
   "text-input":"Nhập chữ",
+  "sensitive-input":"Nhập dữ liệu nhạy cảm",
   "email-input": "Email",
   "phone-input": "Số điện thoại",
   "number-input":"Nhập số",

@@ -79,6 +79,7 @@
   "checkboxes": "چک‌ باکس‌ها",
   "multiple-choice": "چند گزینه‌ای",
   "text-input": "ورودی متن",
+  "sensitive-input": "ورودی حساس",
   "email-input": "ایمیل",
   "phone-input": "شماره تلفن",
   "number-input": "ورودی عدد",

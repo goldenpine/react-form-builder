@@ -149,7 +149,7 @@ export default class FormElementsEdit extends React.Component {
     const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
     const canHavePlaceholder = this.props.element.element === 'TextInput' || this.props.element.element === 'TextArea'
                               || this.props.element.element === 'EmailInput' || this.props.element.element === 'NumberInput'
-                              || this.props.element.element === 'PhoneNumber';
+                              || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'SensitiveInput';
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {

@@ -255,6 +255,113 @@ class TextInput extends React.Component {
   }
 }
 
+class SensitiveInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.inputField = React.createRef();
+    this.state = {
+      value: props.defaultValue !== undefined ? props.defaultValue : '',
+      focused: false,
+      show: false,
+    };
+  }
+
+  handleChange = (e) => {
+    const val = e.target.value;
+    this.setState({ value: val });
+  };
+
+  handleFocus = () => {
+    this.setState({ focused: true });
+  };
+
+  handleBlur = () => {
+    this.setState({ focused: false });
+  };
+
+  toggleShow = (e) => {
+    if (e) e.stopPropagation();
+    const next = !this.state.show;
+    this.setState({ show: next }, () => {
+      if (this.inputField && this.inputField.current) {
+        try {
+          this.inputField.current.type = next ? 'text' : 'password';
+        } catch (err) {
+          // ignore if cannot change type
+        }
+      }
+    });
+  };
+
+  render() {
+    const props = {};
+    props.type = 'password';
+    props.className = 'form-control';
+    props.name = this.props.data.field_name;
+
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+      this.props.data.hasOwnProperty('required') &&
+      this.props.data.required === true &&
+      !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
+    if (this.props.mutable) {
+      props.defaultValue = this.props.defaultValue;
+    }
+
+    let baseClasses = 'SortableItem rfb-item';
+    if (this.props.data.pageBreakBefore) {
+      baseClasses += ' alwaysbreak';
+    }
+
+    if (this.props.read_only) {
+      props.disabled = 'disabled';
+    }
+
+     // remove placeholder attribute from actual input to avoid duplicate text
+    const { placeholder: _ph, ...restProps } = props;
+    const shrunken = (this.state.value && String(this.state.value).length > 0) || this.state.focused;
+
+    return (
+      <div style={{ ...this.props.style }} className={baseClasses}>
+        <ComponentHeader {...this.props} />
+        <div className="mb-3">
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label",
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <div className={`floating-input-wrapper${props.placeholder ? ' has-placeholder' : ''} sensitive-wrapper`} onClick={() => { if (this.inputField.current) this.inputField.current.focus(); }}>
+            <input
+              {...restProps}
+              ref={this.inputField}
+              onChange={this.handleChange}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}
+            />
+            {props.placeholder && (
+              <span className={`fb-placeholder ${shrunken ? 'shrunken' : ''}`}>{props.placeholder}</span>
+            )}
+            <i
+              className={`fas ${this.state.show ? 'fa-eye-slash' : 'fa-eye'} toggle-password`}
+              onClick={this.toggleShow}
+              // title={this.state.show ? 'Hide' : 'Show'}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
 class EmailInput extends React.Component {
   constructor(props) {
     super(props);
@@ -1486,6 +1593,7 @@ FormElements.Paragraph = Paragraph;
 FormElements.Label = Label;
 FormElements.LineBreak = LineBreak;
 FormElements.TextInput = TextInput;
+FormElements.SensitiveInput = SensitiveInput;
 FormElements.EmailInput = EmailInput;
 FormElements.PhoneNumber = PhoneNumber;
 FormElements.NumberInput = NumberInput;
