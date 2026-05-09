@@ -49,6 +49,15 @@ input[type="date"] {
   .floating-input-wrapper.has-placeholder textarea.form-control{
     padding-top:1.5rem;
   }
+  /* It will trigger sf-autofill even when the input is autofilled, so we can add '.drunken' class using js */
+  @keyframes sf-autofill {
+    from {}
+    to {}
+  }
+  .floating-input-wrapper input:-webkit-autofill {
+    animation-name: sf-autofill;
+    animation-duration: 0s;
+ }  
 
   /* Sensitive input (eye icon) styling */
   .sensitive-wrapper { position: relative; }

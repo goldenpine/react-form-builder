@@ -79,6 +79,14 @@
       wrapper.classList.remove('focused');
       update();
     });
+    // Listen for animationstart to detect autofill
+    input.addEventListener('animationstart', (e) => {
+      if (e.animationName === 'sf-autofill') {
+            if (placeholderSpan) {
+              placeholderSpan.classList.add('shrunken');
+            }
+      }
+    });
 
     // clicking the wrapper focuses inner input
     wrapper.addEventListener('click', (e) => {

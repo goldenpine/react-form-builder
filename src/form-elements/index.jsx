@@ -53,6 +53,8 @@ const FloatingPlaceholderInput = ({ Tag = 'input', inputProps = {}, placeholder 
     }
   };
 
+  // In the correspoding plain js file, the brwoser's autofill is detected by listening to 'animationstart' event with a specific animation name.
+
   // remove placeholder attribute from actual input to avoid duplicate text
   const { placeholder: _ph, ...restProps } = inputProps;
 
