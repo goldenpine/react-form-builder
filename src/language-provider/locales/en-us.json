@@ -1,5 +1,5 @@
 {
-  "display-label": "Display Label",
+  "display-label": "Display Label (cannot be empty, must be unique even if hidden)",
   "choose-file": "Choose file",
   "choose-file-type": "Choose file type",
   "select-file-type": "Select file type",
@@ -37,9 +37,13 @@
   "word" : "Word",
   "excel" : "Excel",
   "ppt" : "PPT",
-  "display-label-after-camera-icon" : "Display label after camera icon",
+  "upload-layout" : "Upload Area Layout",
+  "upload-layout-standard" : "Standard",
+  "upload-layout-dropzone" : "Large upload area",
+  "image-layout" : "Image Layout",
+  "display-label-after-camera-icon" : "Display label on button",
   "place-holder-display-label-after-camera-icon" : "Upload Photo",
-  "display-message-under-camera-icon" : "Display message under camera icon",
+  "display-message-under-camera-icon" : "Display message under icon",
   "place-holder-display-message-under-camera-icon" : "Select an image from your computer or device.",
   "display-label-after-photo-clear-icon" : "Display label after photo clear icon",
   "place-holder-display-label-after-photo-clear-icon" : "Clear Photo",
@@ -49,6 +53,8 @@
   "place-holder-display-message-under-file-icon" : "Select a file from your computer or device.",
   "display-label-after-file-clear-icon" : "Display label after file clear icon",
   "place-holder-display-label-after-file-clear-icon" : "Clear File",
+  "placeholder" : "Hint text (shown inside the input field)",
+  "label-hidden" : "Hide label",
   
   "options" : "Options",
   "value" : "Value",
@@ -73,6 +79,7 @@
   "checkboxes" : "Checkboxes",
   "multiple-choice":"Multiple Choice",
   "text-input":"Text Input",
+  "sensitive-input":"Sensitive Input",
   "email-input":"Email",
   "phone-input":"Phone Number",
   "number-input":"Number Input",
@@ -107,12 +114,4 @@
   "message.was-not-registered": "was not registered",
   "message.invalid-email": "field requires valid email address",
   "message.invalid-phone-number": "field requires a valid phone number"
-
-
-
-
-
-
-
-
 }

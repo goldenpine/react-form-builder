@@ -2,7 +2,7 @@
 // eslint-disable-next-line max-classes-per-file
 import fetch from 'isomorphic-fetch';
 import { saveAs } from 'file-saver';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import SignaturePad from 'react-signature-canvas';
 import ReactBootstrapSlider from '@goldenpine/react-bootstrap-slider';
@@ -13,7 +13,89 @@ import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 import myxss from './myxss';
 
+// This component is used for text inputs (text, email, tel, number) and textarea 
+// to provide a floating placeholder that moves above the input 
+// when the user focuses on the input or when there is a value in the input. 
+// It accepts the following props:
+// - Tag: the HTML tag to use for the input (default is 'input', can be 'textarea' for multiline input)
+const FloatingPlaceholderInput = ({ Tag = 'input', inputProps = {}, placeholder = '', defaultValue = '', mutable = false }) => {
+  const [hasValue, setHasValue] = useState(!!(defaultValue && String(defaultValue).length > 0));
+  const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    setHasValue(!!(defaultValue && String(defaultValue).length > 0));
+  }, [defaultValue]);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setHasValue(val !== '' && val !== undefined && val !== null);
+    if (typeof inputProps.onChange === 'function') {
+      inputProps.onChange(e);
+    }
+  };
+
+  const handleFocus = (e) => {
+    setFocused(true);
+    if (typeof inputProps.onFocus === 'function') {
+      inputProps.onFocus(e);
+    }
+  };
+
+  const handleBlur = (e) => {
+    setFocused(false);
+    // If no value, ensure placeholder returns to original position
+    if (!ref.current || !ref.current.value) {
+      setHasValue(false);
+    }
+    if (typeof inputProps.onBlur === 'function') {
+      inputProps.onBlur(e);
+    }
+  };
+
+  // In the correspoding plain js file, the brwoser's autofill is detected by listening to 'animationstart' event with a specific animation name.
+
+  // remove placeholder attribute from actual input to avoid duplicate text
+  const { placeholder: _ph, ...restProps } = inputProps;
+
+  const shrunken = hasValue || focused;
+
+  return (
+    <div className={`floating-input-wrapper${placeholder ? ' has-placeholder' : ''}`} onClick={() => { if (ref.current) ref.current.focus(); }}>
+      <Tag
+        {...restProps}
+        ref={ref}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        defaultValue={mutable ? defaultValue : undefined}
+      />
+      {placeholder && (
+        <span className={`fb-placeholder ${shrunken ? 'shrunken' : ''}`}>{placeholder}</span>
+      )}
+    </div>
+  );
+};
+
 const FormElements = {};
+
+// Helper function to format placeholder with asterisk if the field is required and label is hidden. 
+// The function checks if the field has a required label, if the label is hidden, and if the placeholder is not empty. 
+// If all conditions are met, it appends an asterisk to the placeholder.
+function formatPlaceholder(placeholder, hasRequiredLabel, labelHidden) {
+  let result = placeholder || '';
+
+  if (
+    hasRequiredLabel &&
+    labelHidden &&
+    result.trim() !== '' &&
+    !result.endsWith('*')
+  ) {
+    result += ' *';
+  }
+
+  return result;
+}
 
 class Header extends React.Component {
   render() {
@@ -130,6 +212,18 @@ class TextInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -148,8 +242,122 @@ class TextInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", // In app, it's leveraged to identify element labels. Additionally removed !important of its specificity in scss to make it work with labelHidden.
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
+        </div>
+      </div>
+    );
+  }
+}
+
+class SensitiveInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.inputField = React.createRef();
+    this.state = {
+      value: props.defaultValue !== undefined ? props.defaultValue : '',
+      focused: false,
+      show: false,
+    };
+  }
+
+  handleChange = (e) => {
+    const val = e.target.value;
+    this.setState({ value: val });
+  };
+
+  handleFocus = () => {
+    this.setState({ focused: true });
+  };
+
+  handleBlur = () => {
+    this.setState({ focused: false });
+  };
+
+  toggleShow = (e) => {
+    if (e) e.stopPropagation();
+    const next = !this.state.show;
+    this.setState({ show: next }, () => {
+      if (this.inputField && this.inputField.current) {
+        try {
+          this.inputField.current.type = next ? 'text' : 'password';
+        } catch (err) {
+          // ignore if cannot change type
+        }
+      }
+    });
+  };
+
+  render() {
+    const props = {};
+    props.type = 'password';
+    props.className = 'form-control';
+    props.name = this.props.data.field_name;
+
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+      this.props.data.hasOwnProperty('required') &&
+      this.props.data.required === true &&
+      !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
+    if (this.props.mutable) {
+      props.defaultValue = this.props.defaultValue;
+    }
+
+    let baseClasses = 'SortableItem rfb-item';
+    if (this.props.data.pageBreakBefore) {
+      baseClasses += ' alwaysbreak';
+    }
+
+    if (this.props.read_only) {
+      props.disabled = 'disabled';
+    }
+
+     // remove placeholder attribute from actual input to avoid duplicate text
+    const { placeholder: _ph, ...restProps } = props;
+    const shrunken = (this.state.value && String(this.state.value).length > 0) || this.state.focused;
+
+    return (
+      <div style={{ ...this.props.style }} className={baseClasses}>
+        <ComponentHeader {...this.props} />
+        <div className="mb-3">
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label",
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <div className={`floating-input-wrapper${props.placeholder ? ' has-placeholder' : ''} sensitive-wrapper`} onClick={() => { if (this.inputField.current) this.inputField.current.focus(); }}>
+            <input
+              {...restProps}
+              ref={this.inputField}
+              onChange={this.handleChange}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}
+            />
+            {props.placeholder && (
+              <span className={`fb-placeholder ${shrunken ? 'shrunken' : ''}`}>{props.placeholder}</span>
+            )}
+            <i
+              className={`fas ${this.state.show ? 'fa-eye-slash' : 'fa-eye'} toggle-password`}
+              onClick={this.toggleShow}
+              // title={this.state.show ? 'Hide' : 'Show'}
+            />
+          </div>
         </div>
       </div>
     );
@@ -167,6 +375,18 @@ class EmailInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -185,8 +405,15 @@ class EmailInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -204,6 +431,24 @@ class PhoneNumber extends React.Component {
     props.type = 'tel';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    let placeholder; // For phone number input, if placeholder is not set, we will set a default placeholder with an asterisk if it's required, to give users a hint about the expected format and the requirement. The default placeholder is "+12345678900" which is in E.164 format without spaces or dashes, as it's the most widely accepted format for international phone numbers and works well with the pattern validation we have in place. Merchants can customize this placeholder or even disable it by leaving it blank in the form builder.
+    if (this.props.data.placeholder !== undefined && this.props.data.placeholder !== null) {
+      placeholder = this.props.data.placeholder;
+    } else {
+      placeholder = '+12345678900';
+    }
+    props.placeholder = formatPlaceholder(
+      placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -222,8 +467,15 @@ class PhoneNumber extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -242,6 +494,17 @@ class NumberInput extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
 
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -260,8 +523,15 @@ class NumberInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -279,6 +549,17 @@ class TextArea extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
 
+    const labelHidden = this.props.data.labelHidden || false;
+    const hasRequiredLabel =
+              this.props.data.hasOwnProperty('required') &&
+              this.props.data.required === true &&
+              !this.props.read_only;
+    props.placeholder = formatPlaceholder(
+      this.props.data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
     if (this.props.read_only) {
       props.disabled = 'disabled';
     }
@@ -297,8 +578,15 @@ class TextArea extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
-          <textarea {...props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          <FloatingPlaceholderInput Tag="textarea" inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
         </div>
       </div>
     );
@@ -315,6 +603,7 @@ class Dropdown extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
@@ -334,7 +623,14 @@ class Dropdown extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <select {...props}>
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
@@ -375,6 +671,7 @@ class Signature extends React.Component {
     const props = {};
     props.type = 'hidden';
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = defaultValue;
@@ -403,7 +700,14 @@ class Signature extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true || !!sourceDataURL ? (
             <img src={sourceDataURL} />
           ) : (
@@ -457,6 +761,7 @@ class Tags extends React.Component {
     props.isMulti = true;
     props.name = this.props.data.field_name;
     props.onChange = this.handleChange;
+    const labelHidden = this.props.data.labelHidden || false;
 
     props.options = options;
     if (!this.props.mutable) {
@@ -477,7 +782,14 @@ class Tags extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <Select {...props} />
         </div>
       </div>
@@ -493,6 +805,8 @@ class Checkboxes extends React.Component {
 
   render() {
     const self = this;
+    const labelHidden = this.props.data.labelHidden || false;
+
     let classNames = 'form-check';
     if (this.props.data.inline) {
       classNames += ' form-check-inline';
@@ -507,7 +821,14 @@ class Checkboxes extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -560,6 +881,8 @@ class RadioButtons extends React.Component {
 
   render() {
     const self = this;
+    const labelHidden = this.props.data.labelHidden || false;
+
     let classNames = 'form-check';
     if (this.props.data.inline) {
       classNames += ' form-check-inline';
@@ -574,7 +897,14 @@ class RadioButtons extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -652,6 +982,8 @@ class Rating extends React.Component {
   render() {
     const props = {};
     props.name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     props.ratingAmount = 5;
 
     if (this.props.mutable) {
@@ -673,7 +1005,14 @@ class Rating extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <StarRating {...props} />
         </div>
       </div>
@@ -787,6 +1126,8 @@ class Camera extends React.Component {
     };
     let baseClasses = 'SortableItem rfb-item';
     const name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     const fileInputStyle = this.state.img ? { display: 'none' } : null;
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
@@ -804,11 +1145,19 @@ class Camera extends React.Component {
       }
     }
 
+  if(this.props.data.upload_layout !== "dropzone") {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -849,13 +1198,9 @@ class Camera extends React.Component {
                     height="100"
                     className="image-upload-preview"
                   />
-                  <br />
-                  <div
-                    className="btn btn-image-clear"
-                    onClick={this.clearImage}
-                  >
+                  <button className="btn btn-image-clear" onClick={this.clearImage}>
                     <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
-                  </div>
+                  </button>
                 </div>
               )}
             </div>
@@ -863,6 +1208,71 @@ class Camera extends React.Component {
         </div>
       </div>
     );
+  }else {
+       return (
+      <div style={{ ...this.props.style }} className={baseClasses}>
+        <ComponentHeader {...this.props} />
+        <div className="mb-3">
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+          {this.props.read_only === true &&
+          this.props.defaultValue &&
+          this.props.defaultValue.length > 0 ? (
+            <div>
+              <img
+                style={imageStyle}
+                src={sourceDataURL}
+              />
+            </div>
+          ) : (          
+            <div className="image-upload-container">
+              {/* The modern "Card" style upload area */}
+              <div style={fileInputStyle} className="upload-card">
+                <input
+                  name={name}
+                  type="file"
+                  accept="image/*"
+                  className="visually-hidden"
+                  onChange={this.displayImage}
+                  data-clearlabel={this.props.data.label_after_photo_clear_icon}
+                  disabled={this.props.read_only}
+                  id={name}
+                />
+                
+                <label htmlFor={name} className="upload-card-content">
+                  <i className="fas fa-cloud-upload-alt upload-icon"></i>
+                  <span className="upload-text">{this.props.data.message_under_camera_icon}</span>
+                  <div className="btn-browse">{this.props.data.label_after_camera_icon}</div>
+                </label>
+              </div>
+
+              {/* Preview Section */}
+              {this.state.img && (
+                <div>
+                  <img
+                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
+                    src={this.state.previewImg}
+                    className="image-upload-preview"
+                    alt="Preview"
+                    height="100"
+                  />
+                  <button className="btn btn-image-clear" onClick={this.clearImage}>
+                    <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
   }
 }
 
@@ -921,15 +1331,101 @@ class FileUpload extends React.Component {
   render() {
     let baseClasses = 'SortableItem rfb-item';
     const name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;
+
     const fileInputStyle = this.state.fileUpload ? { display: 'none' } : null;
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
     }
+    if (this.props.data.upload_layout !== 'dropzone') {
+      return (
+        <div style={{ ...this.props.style }} className={baseClasses}>
+          <ComponentHeader {...this.props} />
+          <div className="mb-3">
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
+            {this.props.read_only === true &&
+            this.props.defaultValue &&
+            this.props.defaultValue.length > 0 ? (
+              <div>
+                <button className="btn btn-outline-secondary" onClick={this.saveFile}>
+                  <i className="fas fa-download"></i> Download File
+                </button>
+              </div>
+            ) : (
+              <div className="image-upload-container">
+                <div style={fileInputStyle}>
+                  <input
+                    name={name}
+                    type="file"
+                    accept={this.props.data.fileType || '*'}
+                    className="image-upload visually-hidden"
+                    onChange={this.displayFileUpload}
+                    data-clearlabel={this.props.data.label_after_file_clear_icon}
+                    disabled={this.props.read_only}
+                    id={name}
+                  />
+                  <div className="image-upload-control" style={{ position: 'relative' }}>
+                    <label className="btn btn-outline-secondary" htmlFor={name}>
+                      <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
+                    </label>
+                    <div>{this.props.data.message_under_file_icon}</div>
+                  </div>
+                </div>
+
+                {this.state.fileUpload && (
+                  <div>
+                    <div className="file-upload-preview">
+                      <div
+                        style={{ display: 'inline-block', marginRight: '5px' }}
+                      >
+                        {this.state.fileUpload.name}
+                      </div>
+                      <div style={{ display: 'inline-block', marginLeft: '5px' }}>
+                        {this.state.fileUpload.size.length > 6
+                          ? `  ${Math.ceil(
+                              this.state.fileUpload.size / (1024 * 1024)
+                            )} mb`
+                          : `  ${Math.ceil(
+                              this.state.fileUpload.size / 1024
+                            )} kb`}
+                      </div>
+                    </div>
+                    <br />
+                    <div
+                      className="btn btn-file-upload-clear"
+                      onClick={this.clearFileUpload}
+                    >
+                      <i className="fas fa-times"></i> {this.props.data.label_after_file_clear_icon}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // non-standard layout: use "upload-card" style like Camera
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           {this.props.read_only === true &&
           this.props.defaultValue &&
           this.props.defaultValue.length > 0 ? (
@@ -940,31 +1436,29 @@ class FileUpload extends React.Component {
             </div>
           ) : (
             <div className="image-upload-container">
-              <div style={fileInputStyle}>
+              <div style={fileInputStyle} className="upload-card">
                 <input
                   name={name}
                   type="file"
                   accept={this.props.data.fileType || '*'}
-                  className="image-upload visually-hidden"
+                  className="visually-hidden"
                   onChange={this.displayFileUpload}
                   data-clearlabel={this.props.data.label_after_file_clear_icon}
                   disabled={this.props.read_only}
                   id={name}
                 />
-                <div className="image-upload-control" style={{ position: 'relative' }}>
-                  <label className="btn btn-outline-secondary" htmlFor={name}>
-                    <i className="fas fa-file"></i> {this.props.data.label_after_file_icon}
-                  </label>
-                  <div>{this.props.data.message_under_file_icon}</div>
-                </div>
+
+                <label htmlFor={name} className="upload-card-content">
+                  <i className="fas fa-file-upload upload-icon"></i>
+                  <span className="upload-text">{this.props.data.message_under_file_icon}</span>
+                  <div className="btn-browse">{this.props.data.label_after_file_icon}</div>
+                </label>
               </div>
 
               {this.state.fileUpload && (
                 <div>
                   <div className="file-upload-preview">
-                    <div
-                      style={{ display: 'inline-block', marginRight: '5px' }}
-                    >
+                    <div style={{ display: 'inline-block', marginRight: '5px' }}>
                       {this.state.fileUpload.name}
                     </div>
                     <div style={{ display: 'inline-block', marginLeft: '5px' }}>
@@ -978,10 +1472,7 @@ class FileUpload extends React.Component {
                     </div>
                   </div>
                   <br />
-                  <div
-                    className="btn btn-file-upload-clear"
-                    onClick={this.clearFileUpload}
-                  >
+                  <div className="btn btn-file-upload-clear" onClick={this.clearFileUpload}>
                     <i className="fas fa-times"></i> {this.props.data.label_after_file_clear_icon}
                   </div>
                 </div>
@@ -1016,6 +1507,7 @@ class Range extends React.Component {
   render() {
     const props = {};
     const name = this.props.data.field_name;
+    const labelHidden = this.props.data.labelHidden || false;    
 
     props.type = 'range';
     props.list = `tickmarks_${name}`;
@@ -1071,7 +1563,14 @@ class Range extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel
+            {...this.props}
+            className={[
+              "form-label", 
+              this.props.className,
+              labelHidden ? "d-none" : ""
+            ].filter(Boolean).join(" ")}
+          />
           <div className="range">
             <div className="clearfix">
               <span className="float-start">{this.props.data.min_label}</span>
@@ -1096,6 +1595,7 @@ FormElements.Paragraph = Paragraph;
 FormElements.Label = Label;
 FormElements.LineBreak = LineBreak;
 FormElements.TextInput = TextInput;
+FormElements.SensitiveInput = SensitiveInput;
 FormElements.EmailInput = EmailInput;
 FormElements.PhoneNumber = PhoneNumber;
 FormElements.NumberInput = NumberInput;

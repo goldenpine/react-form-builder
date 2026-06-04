@@ -48,6 +48,19 @@ export default class FormElementsEdit extends React.Component {
     });
   }
 
+  // Instead of using editElementProp for the camera layout change, we have a separate handler to immediately update the element on change without waiting for blur, as it's a radio button and we want the change to be reflected immediately in the UI.
+  handleUploadLayoutChange = (e) => {
+    const this_element = this.state.element;
+    this_element["upload_layout"] = e.target["value"];
+
+    this.setState({
+      element: this_element,
+      dirty: true,
+    }, () => {
+       this.updateElement(); 
+    });
+  };
+
   onEditorStateChange(index, property, editorContent) {
      const html = draftToHtml(convertToRaw(editorContent.getCurrentContent())).replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>');
     //const html = draftToHtml(convertToRaw(editorContent.getCurrentContent())).replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/&nbsp;/g, ' ')
@@ -100,6 +113,17 @@ export default class FormElementsEdit extends React.Component {
     }
   }
 
+  validateImageSize(e) {
+    const regex = /^$|^\d+(px|%)$/;
+    if (regex.test(e.target.value)) {
+      e.target.classList.remove("is-invalid");
+      e.target.classList.add("is-valid");
+    } else {
+      e.target.classList.remove("is-valid");
+      e.target.classList.add("is-invalid");
+    }
+  }
+    
   render() {
     if (this.state.dirty) {
       this.props.element.dirty = true;
@@ -122,6 +146,10 @@ export default class FormElementsEdit extends React.Component {
       canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue,
     } = this.props.element;
     const canHaveImageSize = (this.state.element.element === 'Image' || this.state.element.element === 'Camera');
+    const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
+    const canHavePlaceholder = this.props.element.element === 'TextInput' || this.props.element.element === 'TextArea'
+                              || this.props.element.element === 'EmailInput' || this.props.element.element === 'NumberInput'
+                              || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'SensitiveInput';
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {
@@ -172,7 +200,24 @@ export default class FormElementsEdit extends React.Component {
         }
         { this.props.element.hasOwnProperty('label') &&
           <div className="mb-3">
-            <label><IntlMessages id="display-label" /></label>
+            <div className="d-flex justify-content-between align-items-center">
+              <label className="mb-0">
+                <IntlMessages id="display-label" />
+              </label>
+
+              <div className="form-check m-0">
+                <input
+                  id="label-hidden"
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={this.props.element.labelHidden || false}
+                  onChange={this.editElementProp.bind(this, 'labelHidden', 'checked')}
+                />
+                <label className="form-check-label" htmlFor="label-hidden">
+                  <IntlMessages id="label-hidden" />
+                </label>
+              </div>
+            </div>
             <Editor
               toolbar={toolbar}
               defaultEditorState={editorState}
@@ -260,6 +305,12 @@ export default class FormElementsEdit extends React.Component {
             }
           </div>
         }
+        { canHavePlaceholder &&
+          <div className="mb-3">
+            <label className="control-label" htmlFor="placeholderInput"><IntlMessages id="placeholder" /></label>
+            <input id="placeholderInput" type="text" className="form-control" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
+          </div>
+        }
         { this.props.element.hasOwnProperty('src') &&
           <div>
             <div className="mb-3">
@@ -268,27 +319,48 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
-        { canHaveImageSize &&
-          <div>
-            <div className="mb-3">
-              <div className="form-check">
-                <input id="do-center" className="form-check-input" type="checkbox" checked={this_checked_center} value={true} onChange={this.editElementProp.bind(this, 'center', 'checked')} />
-                <label className="form-check-label" htmlFor="do-center">
-                <IntlMessages id="center" />?
+        { canHaveUploadLayout && (
+            <div>
+              {/* Upload Layout Selection */}
+              <div className="mb-3">
+                <label className="control-label bold">
+                  <IntlMessages id="upload-layout" />:
                 </label>
+
+                <div className="d-flex align-items-center gap-3">
+                  <div className="form-check d-flex align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="uploadLayout"
+                      id="uploadLayoutStandard"
+                      value="standard"
+                      checked={this.props.element.upload_layout === "standard"}
+                      onChange={this.handleUploadLayoutChange}
+                    />
+                    <label className="form-check-label ms-2" htmlFor="uploadLayoutStandard">
+                      <IntlMessages id="upload-layout-standard" />
+                    </label>
+                  </div>
+
+                  <div className="form-check d-flex align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="uploadLayout"
+                      id="uploadLayoutDropZone"
+                      value="dropzone"
+                      checked={this.props.element.upload_layout === "dropzone"}
+                      onChange={this.handleUploadLayoutChange}
+                    />
+                    <label className="form-check-label ms-2" htmlFor="uploadLayoutDropZone">
+                      <IntlMessages id="upload-layout-dropzone" />
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-sm-3">
-                <label className="control-label" htmlFor="elementWidth"><IntlMessages id="width" />:</label>
-                <input id="elementWidth" type="text" className="form-control" defaultValue={this.props.element.width} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'width', 'value')} />
-              </div>
-              <div className="col-sm-3">
-                <label className="control-label" htmlFor="elementHeight"><IntlMessages id="height" />:</label>
-                <input id="elementHeight" type="text" className="form-control" defaultValue={this.props.element.height} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'height', 'value')} />
-              </div>
-            </div>
-          </div>
+          )
         }
         {this.state.element.element === 'Camera' && (
           <div>
@@ -306,6 +378,44 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         )}
+        { canHaveImageSize &&
+          <div>
+            <div className="mb-3">
+              <label className="control-label bold">
+                <IntlMessages id="image-layout" />:
+              </label>
+              <div className="form-check">
+                <input id="do-center" className="form-check-input" type="checkbox" checked={this_checked_center} value={true} onChange={this.editElementProp.bind(this, 'center', 'checked')} />
+                <label className="form-check-label" htmlFor="do-center">
+                <IntlMessages id="center" />?
+                </label>
+              </div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-sm-3">
+                <label className="control-label" htmlFor="elementWidth"><IntlMessages id="width" />:</label>
+                <input id="elementWidth" type="text" className="form-control" 
+                       pattern="^$|^\d+(px|%)$"
+                       onInput={this.validateImageSize}
+                       defaultValue={this.props.element.width} 
+                       onBlur={this.updateElement.bind(this)} 
+                       onChange={this.editElementProp.bind(this, 'width', 'value')} />
+              </div>
+              <div className="col-sm-3">
+                <label className="control-label" htmlFor="elementHeight"><IntlMessages id="height" />:</label>
+                <input id="elementHeight" type="text" className="form-control" 
+                       pattern="^$|^\d+(px|%)$"
+                       onInput={this.validateImageSize}
+                       defaultValue={this.props.element.height} 
+                       onBlur={this.updateElement.bind(this)} 
+                       onChange={this.editElementProp.bind(this, 'height', 'value')} />
+              </div>
+              <small className="form-text text-muted">
+                  Use <code>px</code> or <code>%</code> (e.g. 200px, 100%).
+              </small>
+            </div>
+          </div>
+        }
         {this.state.element.element === 'FileUpload' && (
           <div>
             <div className="mb-3">

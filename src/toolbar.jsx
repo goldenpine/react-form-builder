@@ -190,6 +190,14 @@ class Toolbar extends React.Component {
         field_name: 'phone_input_',
       },
       {
+        key: 'SensitiveInput',
+        canHaveAnswer: true,
+        name: intl.formatMessage({ id: 'sensitive-input' }),
+        label: intl.formatMessage({ id: 'place-holder-label' }),
+        icon: 'fas fa-lock',
+        field_name: 'sensitive_input_',
+      },
+      {
         key: 'TextArea',
         canHaveAnswer: true,
         name: intl.formatMessage({ id: 'multi-line-input' }),
@@ -329,6 +337,7 @@ class Toolbar extends React.Component {
         icon: 'fas fa-camera',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'camera_',
+        upload_layout: 'standard',
         label_after_camera_icon: intl.formatMessage({ id: 'place-holder-display-label-after-camera-icon' }),
         message_under_camera_icon: intl.formatMessage({ id: 'place-holder-display-message-under-camera-icon' }),
         label_after_photo_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-photo-clear-icon' }),
@@ -336,9 +345,10 @@ class Toolbar extends React.Component {
       {
         key: 'FileUpload',
         name: intl.formatMessage({ id: 'file-upload' }),
-        icon: 'fas fa-file',
+        icon: 'fas fa-file-upload',
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'file_upload_',
+        upload_layout: 'standard',
         label_after_file_icon: intl.formatMessage({ id: 'place-holder-display-label-after-file-icon' }),
         message_under_file_icon: intl.formatMessage({ id: 'place-holder-display-message-under-file-icon' }),
         label_after_file_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-file-clear-icon' }),
@@ -432,12 +442,14 @@ class Toolbar extends React.Component {
     }
 
     if (elementKey === 'Camera') {
+      elementOptions.upload_layout = item.upload_layout;
       elementOptions.label_after_camera_icon = item.label_after_camera_icon;
       elementOptions.message_under_camera_icon = item.message_under_camera_icon;
       elementOptions.label_after_photo_clear_icon = item.label_after_photo_clear_icon;
     }
 
     if (elementKey === 'FileUpload') {
+      elementOptions.upload_layout = item.upload_layout;
       elementOptions.label_after_file_icon = item.label_after_file_icon;
       elementOptions.message_under_file_icon = item.message_under_file_icon;
       elementOptions.label_after_file_clear_icon = item.label_after_file_clear_icon;
