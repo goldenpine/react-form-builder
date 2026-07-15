@@ -55,6 +55,13 @@
   "place-holder-display-label-after-file-clear-icon" : "Cancella file",
   "placeholder": "Testo di suggerimento (mostrato all'interno del campo di input)",
   "label-hidden": "Nascondi etichetta",
+  "conditional-logic": "Logica condizionale",
+  "operator-equal-to": "uguale a",
+  "operator-not-equal-to": "diverso da",
+  "operator-contains": "contiene",
+  "operator-not-contains": "non contiene",
+  "operator-starts-with": "inizia con",
+  "operator-ends-with": "termina con",
 
   "options" : "Opzioni",
   "value" : "Valore",

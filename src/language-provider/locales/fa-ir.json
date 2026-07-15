@@ -55,6 +55,13 @@
   "place-holder-display-label-after-file-clear-icon" : "حذف فایل",
   "placeholder": "متن راهنما (در داخل فیلد ورودی نمایش داده می‌شود)",
   "label-hidden": "پنهان کردن برچسب",
+  "conditional-logic": "منطق شرطی",
+  "operator-equal-to": "برابر است با",
+  "operator-not-equal-to": "برابر نیست با",
+  "operator-contains": "شامل",
+  "operator-not-contains": "شامل نیست",
+  "operator-starts-with": "شروع می‌شود با",
+  "operator-ends-with": "پایان می‌یابد با",
 
   "options": "گزینه‌ها",
   "value": "مقدار",

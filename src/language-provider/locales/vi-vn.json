@@ -55,6 +55,13 @@
   "place-holder-display-label-after-file-clear-icon" : "Xóa tập tin",
   "placeholder": "Gợi ý (hiển thị bên trong ô nhập)",
   "label-hidden": "Ẩn nhãn",
+  "conditional-logic": "Logic điều kiện",
+  "operator-equal-to": "bằng",
+  "operator-not-equal-to": "không bằng",
+  "operator-contains": "chứa",
+  "operator-not-contains": "không chứa",
+  "operator-starts-with": "bắt đầu bằng",
+  "operator-ends-with": "kết thúc bằng",
 
   "options" : "Tùy chọn",
   "value" : "Giá trị",

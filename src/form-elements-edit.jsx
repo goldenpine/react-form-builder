@@ -20,11 +20,25 @@ const toolbar = {
   },
 };
 
+export function stripHTMLTagsKeepFirstLine(input) {
+  const safeInput = typeof input === 'string' ? input : '';
+  const noTags = safeInput.replace(/<\/?[^>]+(>|$)/g, '');
+  const lines = noTags
+    .split(/\r?\n/)
+    .map(line => line.replace(/\*+$/, '').replace(/[.$]/g, '').trim())
+    .filter(line => line !== '');
+  return lines[0] ?? '';
+}
+
 export default class FormElementsEdit extends React.Component {
   constructor(props) {
     super(props);
+    const elementCopy = { ...this.props.element };
+    if (!elementCopy.conditional) {
+      elementCopy.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
+    }
     this.state = {
-      element: this.props.element,
+      element: elementCopy,
       data: this.props.data,
       dirty: false,
     };
@@ -72,6 +86,8 @@ export default class FormElementsEdit extends React.Component {
       element: this_element,
       dirty: true,
     });
+    // persist label/content immediately to avoid losing changes
+    try { this.updateElement(); } catch (e) { /* ignore */ }
   }
 
   updateElement() {
@@ -110,6 +126,32 @@ export default class FormElementsEdit extends React.Component {
           dirty: true,
         });
       });
+    }
+  }
+
+  _getOtherFields() {
+    const all = (this.props.preview && this.props.preview.state && this.props.preview.state.data) || this.props.data || [];
+    const currentId = this.props.element && this.props.element.id;
+    const supportedElements = new Set(['Dropdown', 'Checkboxes', 'Checkbox', 'RadioButtons', 'Range', 'Rating']);
+
+    return all.filter((x) => {
+      const elementType = x && (x.element || x.type || '');
+      return x && x.field_name && x.id !== currentId && supportedElements.has(elementType);
+    }).map(x => ({
+      id: x.id,
+      label: stripHTMLTagsKeepFirstLine(x.label || x.text || x.field_name) || x.field_name,
+      field_name: x.field_name,
+    }));
+  }
+
+  componentDidUpdate(prevProps) {
+    // if the element prop changed (different object or id), sync to state
+    if (prevProps.element !== this.props.element) {
+      const elementCopy = { ...this.props.element };
+      if (!elementCopy.conditional) {
+        elementCopy.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
+      }
+      this.setState({ element: elementCopy });
     }
   }
 
@@ -156,21 +198,22 @@ export default class FormElementsEdit extends React.Component {
       this_files.unshift({ id: '', file_name: '' });
     }
 
+    const elem = this.state.element || this.props.element || {};
     let editorState;
-    if (this.props.element.hasOwnProperty('content')) {
-      editorState = this.convertFromHTML(this.props.element.content);
+    if (elem.hasOwnProperty('content')) {
+      editorState = this.convertFromHTML(elem.content);
     }
-    if (this.props.element.hasOwnProperty('label')) {
-      editorState = this.convertFromHTML(this.props.element.label);
+    if (elem.hasOwnProperty('label')) {
+      editorState = this.convertFromHTML(elem.label);
     }
 
     return (
       <div>
         <div className="clearfix">
-          <h4 className="float-start">{this.props.element.text}</h4>
+          <h4 className="float-start">{elem.text}</h4>
           <i className="float-end fas fa-times dismiss-edit" onClick={this.props.manualEditModeOff}></i>
         </div>
-        { this.props.element.hasOwnProperty('content') &&
+        { elem.hasOwnProperty('content') &&
           <div className="mb-3">
             <label className="control-label"><IntlMessages id="text-to-display" />:</label>
 
@@ -182,10 +225,10 @@ export default class FormElementsEdit extends React.Component {
               stripPastedStyles={true} />
           </div>
         }
-        { this.props.element.hasOwnProperty('file_path') &&
+        { elem.hasOwnProperty('file_path') &&
           <div className="mb-3">
             <label className="control-label" htmlFor="fileSelect"><IntlMessages id="choose-file" />:</label>
-            <select id="fileSelect" className="form-control" defaultValue={this.props.element.file_path} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'file_path', 'value')}>
+            <select id="fileSelect" className="form-control" defaultValue={elem.file_path} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'file_path', 'value')}>
               {this_files.map((file) => {
                 const this_key = `file_${file.id}`;
                 return <option value={file.id} key={this_key}>{file.file_name}</option>;
@@ -193,12 +236,12 @@ export default class FormElementsEdit extends React.Component {
             </select>
           </div>
         }
-        { this.props.element.hasOwnProperty('href') &&
+        { elem.hasOwnProperty('href') &&
           <div className="mb-3">
-            <TextAreaAutosize type="text" className="form-control" defaultValue={this.props.element.href} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'href', 'value')} />
+            <TextAreaAutosize type="text" className="form-control" defaultValue={elem.href} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'href', 'value')} />
           </div>
         }
-        { this.props.element.hasOwnProperty('label') &&
+        { elem.hasOwnProperty('label') &&
           <div className="mb-3">
             <div className="d-flex justify-content-between align-items-center">
               <label className="mb-0">
@@ -210,7 +253,7 @@ export default class FormElementsEdit extends React.Component {
                   id="label-hidden"
                   className="form-check-input"
                   type="checkbox"
-                  checked={this.props.element.labelHidden || false}
+                  checked={(this.state.element && this.state.element.labelHidden) || false}
                   onChange={this.editElementProp.bind(this, 'labelHidden', 'checked')}
                 />
                 <label className="form-check-label" htmlFor="label-hidden">
@@ -563,6 +606,79 @@ export default class FormElementsEdit extends React.Component {
             <TextAreaAutosize type="text" className="form-control" id="questionDescription" defaultValue={this.props.element.description} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'description', 'value')} />
           </div>
         }
+        <div className="mb-3">
+          <label className="control-label"><IntlMessages id="conditional-logic" defaultMessage="Conditional Logic" /></label>
+          <div className="mb-2 d-flex gap-2">
+            <select className="form-control" style={{ width: '30%' }} value={this.state.element.conditional.action || 'SHOW'} onChange={(e) => {
+              const el = { ...this.state.element };
+              el.conditional = { ...el.conditional, action: e.target.value };
+              this.setState({ element: el, dirty: true }, () => this.updateElement());
+            }}>
+              <option value="SHOW">Show when true</option>
+              <option value="HIDE">Hide when true</option>
+            </select>
+            <select className="form-control" style={{ width: '20%' }} value={this.state.element.conditional.logic || 'AND'} onChange={(e) => {
+              const el = { ...this.state.element };
+              el.conditional = { ...el.conditional, logic: e.target.value };
+              this.setState({ element: el, dirty: true }, () => this.updateElement());
+            }}>
+              <option value="AND">All rules (AND)</option>
+              <option value="OR">Any rule (OR)</option>
+            </select>
+            <button className="btn btn-sm btn-outline-secondary" onClick={(e) => {
+              e.preventDefault();
+              const el = { ...this.state.element };
+              el.conditional = el.conditional || { action: 'SHOW', logic: 'AND', rules: [] };
+              el.conditional.rules = el.conditional.rules || [];
+              el.conditional.rules.push({ field: '', operator: '==', value: '' });
+              this.setState({ element: el, dirty: true }, () => this.updateElement());
+            }}>+ Add rule</button>
+          </div>
+          { (this.state.element.conditional && this.state.element.conditional.rules && this.state.element.conditional.rules.length > 0) && (
+            <div>
+              { this.state.element.conditional.rules.map((rule, idx) => (
+                <div key={idx} className="d-flex align-items-center mb-2" style={{ gap: '8px' }}>
+                  <select className="form-control" style={{ width: '35%' }} value={rule.field || ''} onChange={(e) => {
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, field: e.target.value } : r);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }}>
+                    <option value="">Select field...</option>
+                    { this._getOtherFields().map(f => <option key={f.id} value={f.field_name}>{`${f.label} (${f.field_name})`}</option>) }
+                  </select>
+                  <select className="form-control" style={{ width: '20%' }} value={rule.operator || '=='} onChange={(e) => {
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, operator: e.target.value } : r);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }}>
+                    <option value="=="><IntlMessages id="operator-equal-to" defaultMessage="equal to" /></option>
+                    <option value="!="><IntlMessages id="operator-not-equal-to" defaultMessage="not equal to" /></option>
+                    <option value="contains"><IntlMessages id="operator-contains" defaultMessage="contains" /></option>
+                    <option value="not_contains"><IntlMessages id="operator-not-contains" defaultMessage="not contains" /></option>
+                    <option value="starts_with"><IntlMessages id="operator-starts-with" defaultMessage="starts with" /></option>
+                    <option value="ends_with"><IntlMessages id="operator-ends-with" defaultMessage="ends with" /></option>
+                    <option value=">">&gt;</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                  </select>
+                  <input className="form-control" style={{ width: '30%' }} type="text" value={rule.value || ''} onChange={(e) => {
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, value: e.target.value } : r);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }} />
+                  <button className="btn btn-sm btn-danger" onClick={(e) => {
+                    e.preventDefault();
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.filter((_, i) => i !== idx);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }}>Remove</button>
+                </div>
+              )) }
+            </div>
+          ) }
+          <p className="form-text text-muted">Choose a field, operator and value for each rule. Rules combine using the selected logic.</p>
+        </div>
         { this.props.showCorrectColumn && this.props.element.canHaveAnswer && !this.props.element.hasOwnProperty('options') &&
           <div className="mb-3">
             <label className="control-label" htmlFor="correctAnswer"><IntlMessages id="correct-answer" /></label>

@@ -55,6 +55,13 @@
   "place-holder-display-label-after-file-clear-icon" : "Clear File",
   "placeholder" : "Hint text (shown inside the input field)",
   "label-hidden" : "Hide label",
+  "conditional-logic": "Conditional Logic",
+  "operator-equal-to": "equal to",
+  "operator-not-equal-to": "not equal to",
+  "operator-contains": "contains",
+  "operator-not-contains": "not contains",
+  "operator-starts-with": "starts with",
+  "operator-ends-with": "ends with",
   
   "options" : "Options",
   "value" : "Value",

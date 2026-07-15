@@ -977,7 +977,25 @@ class Rating extends React.Component {
   constructor(props) {
     super(props);
     this.inputField = React.createRef();
+    this.state = {
+      value:
+        props.defaultValue !== undefined
+          ? parseFloat(props.defaultValue, 10)
+          : 0,
+    };
   }
+
+  changeValue = (e, ratingCache) => {
+    const nextValue = ratingCache && ratingCache.rating !== undefined
+      ? ratingCache.rating
+      : this.state.value;
+
+    this.setState({ value: nextValue }, () => {
+      if (typeof this.props.handleChange === 'function') {
+        this.props.handleChange(e);
+      }
+    });
+  };
 
   render() {
     const props = {};
@@ -987,13 +1005,11 @@ class Rating extends React.Component {
     props.ratingAmount = 5;
 
     if (this.props.mutable) {
-      props.rating =
-        this.props.defaultValue !== undefined
-          ? parseFloat(this.props.defaultValue, 10)
-          : 0;
+      props.rating = this.state.value;
       props.editing = true;
       props.disabled = this.props.read_only;
       props.ref = this.inputField;
+      props.onRatingClick = this.changeValue;
     }
 
     let baseClasses = 'SortableItem rfb-item';
@@ -1499,8 +1515,10 @@ class Range extends React.Component {
 
   changeValue = (e) => {
     const { target } = e;
-    this.setState({
-      value: target.value,
+    this.setState({ value: target.value }, () => {
+      if (typeof this.props.handleChange === 'function') {
+        this.props.handleChange(e);
+      }
     });
   };
 

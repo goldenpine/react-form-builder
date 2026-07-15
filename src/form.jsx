@@ -37,6 +37,14 @@ class ReactForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidMount() {
+    try {
+      this.forceUpdate();
+    } catch (e) {
+      // ignore
+    }
+  }
+
   _convert(answers) {
     if (Array.isArray(answers)) {
       const result = {};
@@ -53,6 +61,11 @@ class ReactForm extends React.Component {
   }
 
   _getDefaultValue(item) {
+    if (!item) return undefined;
+    const explicitDefault = item.defaultValue ?? item.default_value ?? item.value;
+    if (explicitDefault !== undefined && explicitDefault !== null && explicitDefault !== '') {
+      return explicitDefault;
+    }
     return this.answerData[item.field_name];
   }
 
@@ -86,6 +99,19 @@ class ReactForm extends React.Component {
       $item.value = ref.state.img;
     } else if (item.element === 'FileUpload') {
       $item.value = ref.state.fileUpload;
+    } else if (item.element === 'Range') {
+      $item.value = ref && ref.state ? ref.state.value : undefined;
+    } else if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
+      const checked = [];
+      if (ref && ref.options) {
+        item.options.forEach(option => {
+          const $option = ref.options[`child_ref_${option.key}`];
+          if ($option && $option.checked) {
+            checked.push(option.value);
+          }
+        });
+      }
+      $item.value = checked;
     } else if (ref && ref.inputField && ref.inputField.current) {
       $item = ref.inputField.current;
       if (trimValue && $item && typeof $item.value === 'string') {
@@ -181,7 +207,8 @@ class ReactForm extends React.Component {
 
   _collectFormData(data, trimValue) {
     const formData = [];
-    data.forEach(item => {
+    // only collect visible items (respect conditional logic)
+    (data || []).filter(i => this._evaluateCondition(i)).forEach(item => {
       const item_data = this._collect(item, trimValue);
       if (item_data) {
         formData.push(item_data);
@@ -244,6 +271,8 @@ class ReactForm extends React.Component {
       const data = this._collectFormData(this.props.data, false);
       onChange(data);
     }
+    // re-render to apply conditional logic visibility
+    try { this.forceUpdate(); } catch (e) { /* ignore */ }
   }
 
   validateForm() {
@@ -254,6 +283,9 @@ class ReactForm extends React.Component {
     if (this.props.display_short) {
       data_items = this.props.data.filter((i) => i.alternateForm === true);
     }
+
+    // apply conditional visibility filtering
+    data_items = data_items.filter(i => this._evaluateCondition(i));
 
     data_items.forEach(item => {
       if (item.element === 'Signature') {
@@ -307,6 +339,80 @@ class ReactForm extends React.Component {
     return data.find(x => x.id === id);
   }
 
+  _getFieldValueByName(fieldName) {
+    if (!fieldName) return undefined;
+    const item = (this.props.data || []).find(x => x.field_name === fieldName);
+    const ref = this.inputs[fieldName];
+    if (item && ref) {
+      const refValue = this._getItemValue(item, ref).value;
+      if (refValue !== undefined && refValue !== null && refValue !== '') {
+        return refValue;
+      }
+    }
+    const defaultValue = this._getDefaultValue(item);
+    if (defaultValue !== undefined && defaultValue !== null && defaultValue !== '') {
+      return defaultValue;
+    }
+    if (this.answerData && Object.prototype.hasOwnProperty.call(this.answerData, fieldName)) {
+      return this.answerData[fieldName];
+    }
+    return undefined;
+  }
+
+  _evaluateRule(rule) {
+    const left = this._getFieldValueByName(rule.field);
+    const right = rule.value;
+    const op = (rule.operator || '==').toString();
+    if (left === undefined || left === null) return false;
+    if (Array.isArray(left)) {
+      const normalizedLeft = left.map(value => value.toString().toLowerCase());
+      const normalizedRight = right.toString().toLowerCase();
+      if (op === 'contains') return normalizedLeft.some(value => value.includes(normalizedRight));
+      if (op === 'not_contains') return !normalizedLeft.some(value => value.includes(normalizedRight));
+      if (op === 'starts_with') return normalizedLeft.some(value => value.startsWith(normalizedRight));
+      if (op === 'ends_with') return normalizedLeft.some(value => value.endsWith(normalizedRight));
+    }
+    const leftNum = parseFloat(left);
+    const rightNum = parseFloat(right);
+    if (!Number.isNaN(leftNum) && !Number.isNaN(rightNum)) {
+      if (op === '>' ) return leftNum > rightNum;
+      if (op === '>=' ) return leftNum >= rightNum;
+      if (op === '<' ) return leftNum < rightNum;
+      if (op === '<=' ) return leftNum <= rightNum;
+    }
+    const leftString = left.toString().toLowerCase();
+    const rightString = right.toString().toLowerCase();
+    switch (op) {
+      case '!=':
+      case '<>':
+        return leftString !== rightString;
+      case 'contains':
+        return leftString.indexOf(rightString) > -1;
+      case 'not_contains':
+        return leftString.indexOf(rightString) === -1;
+      case 'starts_with':
+        return leftString.startsWith(rightString);
+      case 'ends_with':
+        return leftString.endsWith(rightString);
+      case '==' :
+      default:
+        return leftString === rightString;
+    }
+  }
+
+  _evaluateCondition(item) {
+    if (!item || !item.conditional) return true;
+    const cond = item.conditional;
+    const rules = cond.rules || [];
+    if (!rules.length) return true;
+    const logic = (cond.logic || 'AND').toUpperCase();
+    const results = rules.map(r => this._evaluateRule(r));
+    let ok = logic === 'AND' ? results.every(x => x) : results.some(x => x);
+    const action = (cond.action || 'SHOW').toUpperCase();
+    if (action === 'HIDE') ok = !ok;
+    return ok;
+  }
+
   getInputElement(item) {
     if (item.custom) {
       return this.getCustomElement(item);
@@ -323,7 +429,12 @@ class ReactForm extends React.Component {
   }
 
   getContainerElement(item, Element) {
-    const controls = item.childItems.map(x => (x ? this.getInputElement(this.getDataById(x)) : <div>&nbsp;</div>));
+     const controls = item.childItems.map(x => {
+      if (!x) return <div>&nbsp;</div>;
+      const child = this.getDataById(x);
+      if (!child) return <div>&nbsp;</div>;
+      return this._evaluateCondition(child) ? this.getInputElement(child) : <div key={`empty_${x}`}>&nbsp;</div>;
+    });
     return (<Element mutable={true} key={`form_${item.id}`} data={item} controls={controls} />);
   }
 
@@ -387,7 +498,7 @@ class ReactForm extends React.Component {
       }
     });
 
-    const items = data_items.filter(x => !x.parentId).map(item => {
+    const items = data_items.filter(x => !x.parentId && this._evaluateCondition(x)).map(item => {
       if (!item) return null;
       switch (item.element) {
         case 'TextInput':
