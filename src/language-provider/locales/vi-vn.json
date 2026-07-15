@@ -84,7 +84,7 @@
   "dropdown" : "Danh sách chọn",
   "tags": "Thẻ",
   "checkboxes" : "Hộp chọn",
-  "multiple-choice":"Nhiều lựa chọn",
+  "multiple-choice":"Nút chọn",
   "text-input":"Nhập chữ",
   "sensitive-input":"Nhập dữ liệu nhạy cảm",
   "email-input": "Email",

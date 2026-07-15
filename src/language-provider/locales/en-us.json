@@ -84,7 +84,7 @@
   "dropdown" : "Dropdown",
   "tags": "Tags",
   "checkboxes" : "Checkboxes",
-  "multiple-choice":"Multiple Choice",
+  "multiple-choice":"Radio Buttons",
   "text-input":"Text Input",
   "sensitive-input":"Sensitive Input",
   "email-input":"Email",
