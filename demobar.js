@@ -137,6 +137,7 @@ export default class Demobar extends React.Component {
                   form_action="/api/form"
                   form_method="POST"
                   // skip_validations={true}
+                  // skip_conditional_logic={true}
                   // onSubmit={this._onSubmit}
                   variables={this.props.variables}
                   data={this.state.data}

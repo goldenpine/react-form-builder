@@ -161,6 +161,7 @@ export interface FormGeneratorProps {
   authenticity_token?: string;
   hide_actions?: boolean;
   skip_validations?: boolean;
+  skip_conditional_logic?: boolean;
   option_key_value?: 'key' | 'value';
   download_path?: string;
   display_short?: boolean;

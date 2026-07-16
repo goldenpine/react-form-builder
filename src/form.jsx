@@ -401,6 +401,9 @@ class ReactForm extends React.Component {
   }
 
   _evaluateCondition(item) {
+    // Conditional logic can be explicitly disabled
+    if (this.props.skip_conditional_logic === true) return true;
+
     if (!item || !item.conditional) return true;
     const cond = item.conditional;
     const rules = cond.rules || [];
