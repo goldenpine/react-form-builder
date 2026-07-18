@@ -856,6 +856,7 @@ class Checkboxes extends React.Component {
                     }
                   }}
                   data-required-checks={this.props.data.checkbox_required_checks ? this.props.data.checkbox_required_checks : '1'}
+                  data-field-name={this.props.data.field_name}
                   {...props}
                 />
                 <label
