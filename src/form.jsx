@@ -432,7 +432,9 @@ class ReactForm extends React.Component {
   }
 
   getContainerElement(item, Element) {
-     const controls = item.childItems.map(x => {
+    // When react-form-builder is used in a React app, adding a Fieldset to the canvas will cause the form to crash
+    // because its childItems is undefined. So the below code is adjusted to prevent the crash by using an empty array when it's undefined.
+    const controls = (item.childItems || []).map(x => {
       if (!x) return <div>&nbsp;</div>;
       const child = this.getDataById(x);
       if (!child) return <div>&nbsp;</div>;
