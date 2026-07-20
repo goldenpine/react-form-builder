@@ -118,6 +118,7 @@ class Header extends React.Component {
         <ComponentHeader {...this.props} />
         <h3
           className={classNames}
+          data-field-name={this.props.data.field_name}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
           }}
@@ -147,6 +148,7 @@ class Paragraph extends React.Component {
         <ComponentHeader {...this.props} />
         <div
           className={classNames}
+          data-field-name={this.props.data.field_name}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
           }}
@@ -176,6 +178,7 @@ class Label extends React.Component {
         <ComponentHeader {...this.props} />
         <label
           className={`${classNames} form-label`}
+          data-field-name={this.props.data.field_name}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
           }}
@@ -195,7 +198,7 @@ class LineBreak extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <hr />
+        <hr/>
       </div>
     );
   }
@@ -966,9 +969,10 @@ class Image extends React.Component {
           <img
             src={this.props.data.src}            
             style={{ height: this.props.data.height, width: this.props.data.width, display: 'inline' }}
+            data-field-name={this.props.data.field_name}
           />
         )}
-        {!this.props.data.src && <div className="no-image">No Image</div>}
+        {!this.props.data.src && <div className="no-image" data-field-name={this.props.data.field_name}>No Image</div>}
       </div>
     );
   }
@@ -1048,7 +1052,7 @@ class HyperLink extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <label className={'form-label'}>
+          <label className={'form-label'} data-field-name={this.props.data.field_name}>
             <a
               target="_blank"
               href={this.props.data.href}
