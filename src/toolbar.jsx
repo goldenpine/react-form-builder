@@ -100,6 +100,7 @@ class Toolbar extends React.Component {
         icon: 'fas fa-heading',
         static: true,
         content: intl.formatMessage({ id: 'place-holder-text' }),
+        field_name: 'header_',
       },
       {
         key: 'Label',
@@ -107,6 +108,7 @@ class Toolbar extends React.Component {
         static: true,
         icon: 'fas fa-font',
         content: intl.formatMessage({ id: 'place-holder-text' }),
+        field_name: 'label_',
       },
       {
         key: 'Paragraph',
@@ -114,6 +116,7 @@ class Toolbar extends React.Component {
         static: true,
         icon: 'fas fa-paragraph',
         content: intl.formatMessage({ id: 'place-holder-text' }),
+        field_name: 'paragraph_',
       },
       {
         key: 'LineBreak',
@@ -307,6 +310,7 @@ class Toolbar extends React.Component {
         static: true,
         content: intl.formatMessage({ id: 'place-holder-website-link' }),
         href: 'http://www.example.com',
+        field_name: 'hyperlink_',
       },
       {
         key: 'Download',
