@@ -33,12 +33,11 @@ export function stripHTMLTagsKeepFirstLine(input) {
 export default class FormElementsEdit extends React.Component {
   constructor(props) {
     super(props);
-    const elementCopy = { ...this.props.element };
-    if (!elementCopy.conditional) {
-      elementCopy.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
+    if (!this.props.element.conditional) {
+      this.props.element.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
     }
     this.state = {
-      element: elementCopy,
+      element: this.props.element,
       data: this.props.data,
       dirty: false,
     };
@@ -147,11 +146,10 @@ export default class FormElementsEdit extends React.Component {
   componentDidUpdate(prevProps) {
     // if the element prop changed (different object or id), sync to state
     if (prevProps.element !== this.props.element) {
-      const elementCopy = { ...this.props.element };
-      if (!elementCopy.conditional) {
-        elementCopy.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
+      if (!this.props.element.conditional) {
+        this.props.element.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
       }
-      this.setState({ element: elementCopy });
+      this.setState({ element: this.props.element });
     }
   }
 
@@ -198,22 +196,21 @@ export default class FormElementsEdit extends React.Component {
       this_files.unshift({ id: '', file_name: '' });
     }
 
-    const elem = this.state.element || this.props.element || {};
     let editorState;
-    if (elem.hasOwnProperty('content')) {
-      editorState = this.convertFromHTML(elem.content);
+    if (this.props.element.hasOwnProperty('content')) {
+      editorState = this.convertFromHTML(this.props.element.content);
     }
-    if (elem.hasOwnProperty('label')) {
-      editorState = this.convertFromHTML(elem.label);
+    if (this.props.element.hasOwnProperty('label')) {
+      editorState = this.convertFromHTML(this.props.element.label);
     }
 
     return (
       <div>
         <div className="clearfix">
-          <h4 className="float-start">{elem.text}</h4>
+          <h4 className="float-start">{this.props.element.text}</h4>
           <i className="float-end fas fa-times dismiss-edit" onClick={this.props.manualEditModeOff}></i>
         </div>
-        { elem.hasOwnProperty('content') &&
+        { this.props.element.hasOwnProperty('content') &&
           <div className="mb-3">
             <label className="control-label"><IntlMessages id="text-to-display" />:</label>
 
@@ -225,10 +222,10 @@ export default class FormElementsEdit extends React.Component {
               stripPastedStyles={true} />
           </div>
         }
-        { elem.hasOwnProperty('file_path') &&
+        { this.props.element.hasOwnProperty('file_path') &&
           <div className="mb-3">
             <label className="control-label" htmlFor="fileSelect"><IntlMessages id="choose-file" />:</label>
-            <select id="fileSelect" className="form-control" defaultValue={elem.file_path} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'file_path', 'value')}>
+            <select id="fileSelect" className="form-control" defaultValue={this.props.element.file_path} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'file_path', 'value')}>
               {this_files.map((file) => {
                 const this_key = `file_${file.id}`;
                 return <option value={file.id} key={this_key}>{file.file_name}</option>;
@@ -236,12 +233,12 @@ export default class FormElementsEdit extends React.Component {
             </select>
           </div>
         }
-        { elem.hasOwnProperty('href') &&
+        { this.props.element.hasOwnProperty('href') &&
           <div className="mb-3">
-            <TextAreaAutosize type="text" className="form-control" defaultValue={elem.href} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'href', 'value')} />
+            <TextAreaAutosize type="text" className="form-control" defaultValue={this.props.element.href} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'href', 'value')} />
           </div>
         }
-        { elem.hasOwnProperty('label') &&
+        { this.props.element.hasOwnProperty('label') &&
           <div className="mb-3">
             <div className="d-flex justify-content-between align-items-center">
               <label className="mb-0">
@@ -253,7 +250,7 @@ export default class FormElementsEdit extends React.Component {
                   id="label-hidden"
                   className="form-check-input"
                   type="checkbox"
-                  checked={(this.state.element && this.state.element.labelHidden) || false}
+                  checked={this.props.element.labelHidden || false}
                   onChange={this.editElementProp.bind(this, 'labelHidden', 'checked')}
                 />
                 <label className="form-check-label" htmlFor="label-hidden">
