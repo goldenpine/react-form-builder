@@ -622,16 +622,23 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
-        { this.props.element.hasOwnProperty('options') &&
-          <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}
-            canHaveOptionCorrect={canHaveOptionCorrect}
-            canHaveOptionValue={canHaveOptionValue}
-            data={this.props.preview.state.data}
-            updateElement={this.props.updateElement}
-            preview={this.props.preview}
-            element={this.props.element}
-            key={this.props.element.options.length} />
-        }
+        { this.props.element.hasOwnProperty('options') && (
+          <>
+            {canHaveOptionValue && (
+              <p className="form-text text-muted">
+                Leave the <strong>Value</strong> blank to automatically generate it from the name (spaces are replaced with "_").
+              </p>
+            )}
+            <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}
+              canHaveOptionCorrect={canHaveOptionCorrect}
+              canHaveOptionValue={canHaveOptionValue}
+              data={this.props.preview.state.data}
+              updateElement={this.props.updateElement}
+              preview={this.props.preview}
+              element={this.props.element}
+              key={this.props.element.options.length} />
+          </>
+        )}
         <div className="mb-3">
           <label className="control-label"><IntlMessages id="conditional-logic" defaultMessage="Conditional Logic" /></label>
           <div className="mb-2 d-flex gap-2">
