@@ -641,7 +641,7 @@ export default class FormElementsEdit extends React.Component {
                     this.setState({ element: el, dirty: true }, () => this.updateElement());
                   }}>
                     <option value="">Select field...</option>
-                    { this._getOtherFields().map(f => <option key={f.id} value={f.field_name}>{`${f.label} (${f.field_name})`}</option>) }
+                    { this._getOtherFields().map(f => <option key={f.id} value={f.field_name}>{`${f.label} (${f.field_name.split('_')[0]})`}</option>) }
                   </select>
                   <select className="form-control" style={{ width: '20%' }} value={rule.operator || '=='} onChange={(e) => {
                     const el = { ...this.state.element };
