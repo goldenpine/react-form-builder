@@ -684,12 +684,12 @@ export default class FormElementsEdit extends React.Component {
                     el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, operator: e.target.value } : r);
                     this.setState({ element: el, dirty: true }, () => this.updateElement());
                   }}>
-                    <option value="=="><IntlMessages id="operator-equal-to" defaultMessage="equal to" /></option>
-                    <option value="!="><IntlMessages id="operator-not-equal-to" defaultMessage="not equal to" /></option>
                     <option value="contains"><IntlMessages id="operator-contains" defaultMessage="contains" /></option>
                     <option value="not_contains"><IntlMessages id="operator-not-contains" defaultMessage="not contains" /></option>
                     <option value="starts_with"><IntlMessages id="operator-starts-with" defaultMessage="starts with" /></option>
                     <option value="ends_with"><IntlMessages id="operator-ends-with" defaultMessage="ends with" /></option>
+                    <option value="=="><IntlMessages id="operator-equal-to" defaultMessage="equal to" /></option>
+                    <option value="!="><IntlMessages id="operator-not-equal-to" defaultMessage="not equal to" /></option>
                     <option value=">">&gt;</option>
                     <option value=">=">&gt;=</option>
                     <option value="<">&lt;</option>

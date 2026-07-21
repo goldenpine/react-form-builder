@@ -372,6 +372,12 @@ class ReactForm extends React.Component {
       if (op === 'starts_with') return normalizedLeft.some(value => value.startsWith(normalizedRight));
       if (op === 'ends_with') return normalizedLeft.some(value => value.endsWith(normalizedRight));
     }
+    // The value of a checkbox or radio button is an array, the former may be an array of multiple values, the latter is an array of a single value. 
+    // parseFloat() will call toString() on the array, which will convert it to a comma-separated string. 
+    // And then parseFloat() will parse the string until it encounters a non-numeric character, which will be the comma, and return the number before the comma.
+    // So for the single element array, parseFloat() will return the number, 
+    // but for the multiple element array, parseFloat() will return the number before the first comma, which will make the following comparision confusing.
+    // Currently we leave it as is, but we may need to consider how to handle the case where the left value is an array of multiple values in the future.
     const leftNum = parseFloat(left);
     const rightNum = parseFloat(right);
     if (!Number.isNaN(leftNum) && !Number.isNaN(rightNum)) {
@@ -379,24 +385,26 @@ class ReactForm extends React.Component {
       if (op === '>=' ) return leftNum >= rightNum;
       if (op === '<' ) return leftNum < rightNum;
       if (op === '<=' ) return leftNum <= rightNum;
+      if (op === '==') return leftNum === rightNum;
+      if (op === '!=') return leftNum !== rightNum;
     }
     const leftString = left.toString().toLowerCase();
     const rightString = right.toString().toLowerCase();
     switch (op) {
-      case '!=':
-      case '<>':
-        return leftString !== rightString;
       case 'contains':
-        return leftString.indexOf(rightString) > -1;
+        return leftString.includes(rightString);
       case 'not_contains':
-        return leftString.indexOf(rightString) === -1;
+        return !leftString.includes(rightString);
       case 'starts_with':
         return leftString.startsWith(rightString);
       case 'ends_with':
         return leftString.endsWith(rightString);
       case '==' :
-      default:
         return leftString === rightString;
+      case '!=':
+        return leftString !== rightString;
+      default:
+        return false;
     }
   }
 

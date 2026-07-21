@@ -107,6 +107,8 @@
       if (op === 'not_contains') return !normalizedLeft.some(value => value.includes(normalizedRight));
       if (op === 'starts_with') return normalizedLeft.some(value => value.startsWith(normalizedRight));
       if (op === 'ends_with') return normalizedLeft.some(value => value.endsWith(normalizedRight));
+      if (op === '==') return normalizedLeft.some(value => value === normalizedRight);
+      if (op === '!=') return !normalizedLeft.some(value => value === normalizedRight);
     }
 
     const leftNum = parseFloat(left);
@@ -116,15 +118,15 @@
       if (op === '>=') return leftNum >= rightNum;
       if (op === '<') return leftNum < rightNum;
       if (op === '<=') return leftNum <= rightNum;
+      if (op === '==') return leftNum === rightNum;
+      if (op === '!=') return leftNum !== rightNum;      
     }
 
     const leftString = normalizePrimitive(left).toLowerCase();
     const rightString = normalizePrimitive(right).toLowerCase();
 
     switch (op) {
-      case '!=':
-      case '<>':
-        return leftString !== rightString;
+
       case 'contains':
         return leftString.indexOf(rightString) > -1;
       case 'not_contains':
@@ -134,8 +136,11 @@
       case 'ends_with':
         return leftString.endsWith(rightString);
       case '==':
-      default:
         return leftString === rightString;
+      case '!=':
+        return leftString !== rightString;        
+      default:
+        return false;
     }
   }
 
