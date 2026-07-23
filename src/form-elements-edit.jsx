@@ -710,7 +710,7 @@ export default class FormElementsEdit extends React.Component {
               )) }
             </div>
           ) }
-          <p className="form-text text-muted">Choose a field, operator and value for each rule. Rules combine using the selected logic.</p>
+          <p className="form-text text-muted">Choose a field, operator, and value for each rule. Text matching is case-insensitive.</p>
         </div>        
       </div>
     );

@@ -371,6 +371,8 @@ class ReactForm extends React.Component {
       if (op === 'not_contains') return !normalizedLeft.some(value => value.includes(normalizedRight));
       if (op === 'starts_with') return normalizedLeft.some(value => value.startsWith(normalizedRight));
       if (op === 'ends_with') return normalizedLeft.some(value => value.endsWith(normalizedRight));
+      if (op === '==') return normalizedLeft.some(value => value === normalizedRight);
+      if (op === '!=') return !normalizedLeft.some(value => value === normalizedRight);
     }
     // The value of a checkbox or radio button is an array, the former may be an array of multiple values, the latter is an array of a single value. 
     // parseFloat() will call toString() on the array, which will convert it to a comma-separated string. 
