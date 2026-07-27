@@ -185,6 +185,18 @@ class Toolbar extends React.Component {
         field_name: 'number_input_',
       },
       {
+        key: 'InternationalPhoneNumber',
+        canHaveAnswer: true,
+        name: 'International Phone Number',
+        label: 'Phone Number',
+        icon: 'fas fa-phone-alt',
+        field_name: 'international_phone_number_',
+
+        allow_countries: [],
+        default_country: 'us',
+        phone_locale: '',
+      },
+      {
         key: 'PhoneNumber',
         canHaveAnswer: true,
         name: intl.formatMessage({ id: 'phone-input' }),
@@ -417,6 +429,12 @@ class Toolbar extends React.Component {
 
     if (item.class_name) {
       elementOptions.class_name = item.class_name;
+    }
+
+    if (elementKey === 'InternationalPhoneNumber') {
+      elementOptions.allow_countries = item.allow_countries;
+      elementOptions.default_country = item.default_country;
+      elementOptions.phone_locale = item.phone_locale;
     }
 
     if (elementKey === 'Image') {

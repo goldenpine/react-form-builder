@@ -62,6 +62,9 @@
   "operator-not-contains": "not contains",
   "operator-starts-with": "starts with",
   "operator-ends-with": "ends with",
+  "allow-countries" : "Allowed Countries",
+  "allow-countries-desc" : "Hold Ctrl (Windows) or Command (Mac) to select multiple countries. Leave all options unselected to allow all countries. Country names will be automatically localized on the storefront.",
+  "default-country" : "Default Country",
   
   "options" : "Options",
   "value" : "Value",

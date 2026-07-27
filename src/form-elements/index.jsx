@@ -13,6 +13,127 @@ import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 import myxss from './myxss';
 
+import {
+  PhoneInput,
+  defaultCountries,
+  parseCountry,
+  buildCountryData,
+} from 'react-international-phone';
+
+const localizedPhoneCountriesCache = {};
+
+function getPhoneLocale(locale) {
+  return String(locale || 'en')
+    .replace('_', '-')
+    .toLowerCase();
+}
+
+function getLocalizedPhoneCountries(locale) {
+  const normalizedLocale = getPhoneLocale(locale);
+
+  if (localizedPhoneCountriesCache[normalizedLocale]) {
+    return localizedPhoneCountriesCache[normalizedLocale];
+  }
+
+  let displayNames;
+
+  try {
+    displayNames = new Intl.DisplayNames(
+      [normalizedLocale],
+      { type: 'region' }
+    );
+  } catch (error) {
+    displayNames = null;
+  }
+  
+  // localizing country names using Intl.DisplayNames API, if available. If not, fallback to default country names.
+  const countries = defaultCountries.map((countryData) => {
+    const country = parseCountry(countryData);
+
+    let localizedName = country.name;
+
+    if (displayNames) {
+      try {
+        localizedName =
+          displayNames.of(country.iso2.toUpperCase()) ||
+          country.name;
+      } catch (error) {
+        localizedName = country.name;
+      }
+    }
+
+    return buildCountryData({
+      ...country,
+      name: localizedName,
+    });
+  });
+
+  localizedPhoneCountriesCache[normalizedLocale] = countries;
+
+  return countries;
+}
+
+function getAllowedPhoneCountries(
+  localizedCountries,
+  allowCountries
+) {
+  if (
+    !Array.isArray(allowCountries) ||
+    allowCountries.length === 0
+  ) {
+    return localizedCountries;
+  }
+
+  const allowedIsoCodes = new Set(
+    allowCountries
+      .filter(Boolean)
+      .map(code => String(code).toLowerCase())
+  );
+
+  return localizedCountries.filter((countryData) => {
+    const country = parseCountry(countryData);
+
+    return allowedIsoCodes.has(
+      country.iso2.toLowerCase()
+    );
+  });
+}
+
+// If the selected default country is not in the allowed countries list, 
+// we will use the first country in the list as the default. 
+// If the allowed countries list is empty, we will use 'us' as the default.
+function getValidDefaultCountry(
+  countries,
+  configuredDefaultCountry
+) {
+  const normalizedDefault = String(
+    configuredDefaultCountry || ''
+  ).toLowerCase();
+
+  const defaultCountryExists = countries.some(
+    countryData => {
+      const country = parseCountry(countryData);
+
+      return (
+        country.iso2.toLowerCase() ===
+        normalizedDefault
+      );
+    }
+  );
+
+  if (defaultCountryExists) {
+    return normalizedDefault;
+  }
+
+  if (countries.length > 0) {
+    return parseCountry(countries[0])
+      .iso2
+      .toLowerCase();
+  }
+
+  return 'us';
+}
+
 // This component is used for text inputs (text, email, tel, number) and textarea 
 // to provide a floating placeholder that moves above the input 
 // when the user focuses on the input or when there is a value in the input. 
@@ -479,6 +600,200 @@ class PhoneNumber extends React.Component {
             ].filter(Boolean).join(" ")}
           />
           <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
+        </div>
+      </div>
+    );
+  }
+}
+
+class InternationalPhoneNumber extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value:
+        props.defaultValue !== undefined &&
+        props.defaultValue !== null
+          ? String(props.defaultValue)
+          : '',
+    };
+
+    this.phoneWrapper = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.defaultValue !== this.props.defaultValue &&
+      this.props.defaultValue !== this.state.value
+    ) {
+      this.setState({
+        value:
+          this.props.defaultValue !== undefined &&
+          this.props.defaultValue !== null
+            ? String(this.props.defaultValue)
+            : '',
+      });
+    }
+  }
+
+    getDefaultCountry() {
+    return String(
+      this.props.data.default_country || 'us'
+    ).toLowerCase();
+  }
+
+ /*  dispatchNativeChangeEvents = () => {
+    if (!this.phoneWrapper.current) {
+      return;
+    }
+
+    const input =
+      this.phoneWrapper.current.querySelector(
+        'input[type="tel"]'
+      );
+
+    if (!input) {
+      return;
+    }
+
+    input.dispatchEvent(
+      new Event('input', {
+        bubbles: true,
+      })
+    );
+
+    input.dispatchEvent(
+      new Event('change', {
+        bubbles: true,
+      })
+    );
+  };
+ */
+  handleChange = (phone, metadata) => {
+    const value = phone || '';
+
+    this.setState(
+      {
+        value,
+      },
+      () => {
+        //this.dispatchNativeChangeEvents();
+
+        if (typeof this.props.handleChange === 'function') {
+          this.props.handleChange({
+            target: {
+              name: this.props.data.field_name,
+              value,
+            },
+            phoneMetadata: metadata,
+          });
+        }
+      }
+    );
+  };
+
+  render() {
+    const {
+      data,
+      mutable,
+      read_only: readOnly,
+    } = this.props;
+
+    const labelHidden = data.labelHidden || false;
+
+    const hasRequiredLabel =
+      data.hasOwnProperty('required') &&
+      data.required === true &&
+      !readOnly;
+
+    const placeholder = formatPlaceholder(
+      data.placeholder || 'Phone number',
+      hasRequiredLabel,
+      labelHidden
+    );
+
+    let baseClasses = 'SortableItem rfb-item';
+
+    if (data.pageBreakBefore) {
+      baseClasses += ' alwaysbreak';
+    }
+
+    const locale =
+      data.phone_locale ||
+      window.Shopify?.locale ||
+      document.documentElement.lang ||
+      navigator.language ||
+      'en';
+
+    const localizedCountries =
+      getLocalizedPhoneCountries(locale);
+
+    const countries =
+      getAllowedPhoneCountries(
+        localizedCountries,
+        data.allow_countries
+      );
+
+    const defaultCountry =
+      getValidDefaultCountry(
+        countries,
+        data.default_country
+      );
+
+    /*
+     * Keep the component controlled in the generated form.
+     * In builder preview mode, an empty value is sufficient
+     * to display the selector and input.
+     */
+    const value = mutable ? this.state.value : '';
+
+    // There is a reported library issue where switching between custom country lists 
+    // during the same component session can cause a fatal internal indexing error. 
+    // A documented workaround is to remount PhoneInput by changing its React key
+    const countriesKey = countries
+      .map(countryData => parseCountry(countryData).iso2)
+      .join('-');
+
+    console.log('State value:', this.state.value);
+    return (
+      <div
+        style={{ ...this.props.style }}
+        className={baseClasses}
+      >
+        <ComponentHeader {...this.props} />
+
+        <div className="mb-3">
+          <ComponentLabel
+            {...this.props}
+            className={[
+              'form-label',
+              this.props.className,
+              labelHidden ? 'd-none' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          />
+
+          <div
+            ref={this.phoneWrapper}
+            className="rfb-international-phone"
+          >
+            <PhoneInput
+              key={`${countriesKey}-${defaultCountry}`}
+              defaultCountry={this.getDefaultCountry()}
+              countries={countries}
+              value={value}
+              onChange={this.handleChange}
+              name={data.field_name}
+              required={data.required === true}
+              disabled={readOnly}
+              inputProps={{
+                'data-field-name': data.field_name,
+                autoComplete: 'tel',
+                placeholder: placeholder,
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -1621,6 +1936,7 @@ FormElements.TextInput = TextInput;
 FormElements.SensitiveInput = SensitiveInput;
 FormElements.EmailInput = EmailInput;
 FormElements.PhoneNumber = PhoneNumber;
+FormElements.InternationalPhoneNumber = InternationalPhoneNumber;
 FormElements.NumberInput = NumberInput;
 FormElements.TextArea = TextArea;
 FormElements.Dropdown = Dropdown;

@@ -62,6 +62,9 @@
   "operator-not-contains": "non contiene",
   "operator-starts-with": "inizia con",
   "operator-ends-with": "termina con",
+  "allow-countries" : "Paesi consentiti",
+  "allow-countries-desc" : "Tieni premuto Ctrl (Windows) o Command (Mac) per selezionare più paesi. Lasciare tutte le opzioni non selezionate per consentire tutti i paesi. I nomi dei paesi saranno automaticamente localizzati sul negozio.",
+  "default-country" : "Paese predefinito",
 
   "options" : "Opzioni",
   "value" : "Valore",

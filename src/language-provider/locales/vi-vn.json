@@ -62,6 +62,9 @@
   "operator-not-contains": "không chứa",
   "operator-starts-with": "bắt đầu bằng",
   "operator-ends-with": "kết thúc bằng",
+  "allow-countries" : "Các quốc gia được phép",
+  "allow-countries-desc" : "Giữ Ctrl (Windows) hoặc Command (Mac) để chọn nhiều quốc gia. Để cho phép tất cả các quốc gia, hãy để trống tất cả các tùy chọn. Tên quốc gia sẽ được tự động địa phương hóa trên cửa hàng.",
+  "default-country" : "Quốc gia mặc định",
 
   "options" : "Tùy chọn",
   "value" : "Giá trị",

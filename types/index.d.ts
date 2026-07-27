@@ -15,6 +15,7 @@ type BaseElement = {
     | "Text Input"
     | "Sensitive Input"
     | "Email Input"
+    | "International Phone Number"
     | "Phone Number"
     | "Number Input"
     | "Multi-line Input"

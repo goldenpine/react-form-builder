@@ -11,6 +11,23 @@ import { get } from './stores/requests';
 import ID from './UUID';
 import IntlMessages from './language-provider/IntlMessages';
 
+import {
+  defaultCountries,
+  parseCountry,
+} from 'react-international-phone';
+
+const phoneCountryOptions = defaultCountries
+  .map((countryData) => {
+    const country = parseCountry(countryData);
+
+    return {
+      iso2: country.iso2,
+      name: country.name,
+      dialCode: country.dialCode,
+    };
+  })
+  .sort((a, b) => a.name.localeCompare(b.name));
+
 const toolbar = {
   options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
   inline: {
@@ -189,7 +206,8 @@ export default class FormElementsEdit extends React.Component {
     const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
     const canHavePlaceholder = this.props.element.element === 'TextInput' || this.props.element.element === 'TextArea'
                               || this.props.element.element === 'EmailInput' || this.props.element.element === 'NumberInput'
-                              || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'SensitiveInput';
+                              || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'InternationalPhoneNumber'
+                              || this.props.element.element === 'SensitiveInput';
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {
@@ -351,6 +369,111 @@ export default class FormElementsEdit extends React.Component {
             <input id="placeholderInput" type="text" className="form-control" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
           </div>
         }
+        {this.props.element.hasOwnProperty('allow_countries') && (
+          <div className="mb-3">
+            <label
+              className="control-label"
+              htmlFor="allowCountriesInput"
+            >
+              <IntlMessages id="allow-countries" />:
+            </label>
+            <div className="form-text">
+              <IntlMessages id="allow-countries-desc" />
+            </div>
+            <select
+              id="allowCountriesInput"
+              className="form-control"
+              multiple
+              size="10"
+              defaultValue={this.props.element.allow_countries || []}
+              onChange={(e) => {
+                const allowCountries = Array.from(
+                  e.target.selectedOptions,
+                  option => option.value
+                );
+
+                const thisElement = this.state.element;
+                thisElement.allow_countries = allowCountries;
+
+                /*
+                * Make sure the default country remains valid.
+                */
+                if (
+                  allowCountries.length > 0 &&
+                  !allowCountries.includes(
+                    this.props.element.default_country
+                  )
+                ) {
+                  this.props.element.default_country =
+                    allowCountries[0];
+                }
+
+                this.setState(
+                  {
+                    element: thisElement,
+                    dirty: true,
+                  },
+                  () => {
+                    this.updateElement();
+                  }
+                );        
+              }}
+              onBlur={this.updateElement.bind(this)}
+            >
+              {phoneCountryOptions.map(country => (
+                <option
+                  key={country.iso2}
+                  value={country.iso2}
+                >
+                  {country.name} (+{country.dialCode})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {this.props.element.hasOwnProperty('default_country') && (
+          <div className="mb-3">
+            <label
+              className="control-label"
+              htmlFor="defaultCountryInput"
+            >
+              <IntlMessages id="default-country" />:
+            </label>
+
+            <select
+              id="defaultCountryInput"
+              className="form-control"
+              defaultValue={this.props.element.default_country || ''}
+              onChange={(e) => {
+                this.props.element.default_country =
+                  e.target.value;
+                this.updateElement();
+              }}
+            >
+              {phoneCountryOptions
+                .filter(country => {
+                  const allowCountries =
+                    this.props.element.allow_countries || [];
+
+                  /*
+                  * An empty array can mean all countries.
+                  */
+                  return (
+                    allowCountries.length === 0 ||
+                    allowCountries.includes(country.iso2)
+                  );
+                })
+                .map(country => (
+                  <option
+                    key={country.iso2}
+                    value={country.iso2}
+                  >
+                    {country.name} (+{country.dialCode})
+                  </option>
+                ))}
+            </select>
+          </div>
+        )}        
         { this.props.element.hasOwnProperty('src') &&
           <div>
             <div className="mb-3">
