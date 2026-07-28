@@ -754,7 +754,6 @@ class InternationalPhoneNumber extends React.Component {
       .map(countryData => parseCountry(countryData).iso2)
       .join('-');
 
-    console.log('State value:', this.state.value);
     return (
       <div
         style={{ ...this.props.style }}

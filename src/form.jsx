@@ -520,6 +520,7 @@ class ReactForm extends React.Component {
         case 'SensitiveInput':
         case 'EmailInput':
         case 'PhoneNumber':
+        case 'InternationalPhoneNumber':
         case 'NumberInput':
         case 'TextArea':
         case 'Dropdown':
