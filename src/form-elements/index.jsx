@@ -635,14 +635,14 @@ class InternationalPhoneNumber extends React.Component {
       });
     }
   }
-
-    getDefaultCountry() {
+/*
+  getDefaultCountry() {
     return String(
       this.props.data.default_country || 'us'
     ).toLowerCase();
   }
 
- /*  dispatchNativeChangeEvents = () => {
+  dispatchNativeChangeEvents = () => {
     if (!this.phoneWrapper.current) {
       return;
     }
@@ -779,7 +779,7 @@ class InternationalPhoneNumber extends React.Component {
           >
             <PhoneInput
               key={`${countriesKey}-${defaultCountry}`}
-              defaultCountry={this.getDefaultCountry()}
+              defaultCountry={defaultCountry}
               countries={countries}
               value={value}
               onChange={this.handleChange}
