@@ -1823,13 +1823,53 @@ class FileUpload extends React.Component {
 class Range extends React.Component {
   constructor(props) {
     super(props);
+
     this.inputField = React.createRef();
+
+    const configuredDefault = this.getConfiguredDefault(props);
+
+    // Once a user moves the silder, the state.value tracks the interactive value,
+    // so use instance variable to record the default selected value.
+    this.lastConfiguredDefault = configuredDefault;
+
     this.state = {
-      value:
-        props.defaultValue !== undefined
-          ? parseInt(props.defaultValue, 10)
-          : parseInt(props.data.default_value, 10),
+      value: configuredDefault,
     };
+  }
+
+  getConfiguredDefault = (props) => {
+    const rawValue =
+      props.defaultValue !== undefined
+        ? props.defaultValue
+        : props.data.default_value;
+
+    const value = Number(rawValue);
+
+    return Number.isFinite(value)
+      ? value
+      : Number(props.data.min_value) || 0;
+  };
+
+  // Majorly to trigger the re-render when the default selected value is changed.
+  componentDidUpdate() {
+    const configuredDefault =
+      this.getConfiguredDefault(this.props);
+    
+    // Only calling setState when the default selected is changed. Therefore, 
+    // moving the slider will no longer cause it to jump back to the configured default
+    if (
+      configuredDefault !== this.lastConfiguredDefault
+    ) {
+      this.lastConfiguredDefault = configuredDefault;
+
+      if (
+        configuredDefault !== Number(this.state.value)
+      ) {
+        this.setState({
+          value: configuredDefault,
+        });
+      }
+    }
   }
 
   changeValue = (e) => {
