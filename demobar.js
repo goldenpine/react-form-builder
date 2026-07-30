@@ -159,6 +159,48 @@ export default class Demobar extends React.Component {
           </div>
         )}
 
+        /** This is a hidden modal that is used to copy the HTML of the form to be used in other contexts.
+         * The html should be with all elements, and this is why skip_conditional_logic={true};
+         * Also the default country should be set according to what users set in Property Editor, 
+         * and this is why html_copy_mode={true} is set
+         */
+{/*         {true && (
+          <div id="hmtl-copy" className={shortModalClass} style={{ display: 'none' }}>
+            <div className="modal-dialog modal-lg">
+              <div className="modal-content border border-light p-3 mb-4">
+                <ReactFormGenerator
+                  download_path=""
+                  back_action="/"
+                  back_name="Back"
+                  answer_data={answers}
+                  action_name="Save"
+                  form_action="/api/form"
+                  form_method="POST"
+                  // skip_validations={true}
+                  skip_conditional_logic={true}
+                  html_copy_mode={true}
+                  // onSubmit={this._onSubmit}
+                  variables={this.props.variables}
+                  data={this.state.data}
+                  locale="en"
+                  interactive={false}
+                />
+
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                    onClick={this.closePreview.bind(this)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+ */}
         {this.state.roPreviewVisible && (
           <div className={roModalClass}>
             <div className="modal-dialog modal-lg">

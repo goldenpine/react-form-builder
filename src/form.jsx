@@ -426,6 +426,12 @@ class ReactForm extends React.Component {
     return ok;
   }
 
+  /* 
+   * Also note that skip_conditional_logic works without being forwarded 
+   * because it is consumed directly by ReactForm._evaluateCondition(). 
+   * html_copy_mode, by contrast, is consumed by the child InternationalPhoneNumber, 
+   * so it must be passed one level further down.
+  */
   getInputElement(item) {
     if (item.custom) {
       return this.getCustomElement(item);
@@ -438,7 +444,9 @@ class ReactForm extends React.Component {
       key={`form_${item.id}`}
       data={item}
       read_only={this.props.read_only}
-      defaultValue={this._getDefaultValue(item)} />);
+      defaultValue={this._getDefaultValue(item)}
+      html_copy_mode={this.props.html_copy_mode}
+      />);
   }
 
   getContainerElement(item, Element) {

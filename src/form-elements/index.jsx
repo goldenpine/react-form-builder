@@ -742,10 +742,19 @@ class InternationalPhoneNumber extends React.Component {
 
     /*
      * Keep the component controlled in the generated form.
-     * In builder preview mode, an empty value is sufficient
+     * In builder preview mode (Canvas??), an empty value is sufficient
      * to display the selector and input.
+     * html_copy_mode is used to disable the value in the InternationalPhoneNumber element,
+     * when a hidden form is used to copy the HTML of the form for use in other contexts. 
+     * So the default country can be updated properly when users select a different default 
+     * country on Property Edit panel.
      */
-    const value = mutable ? this.state.value : '';
+    const value =
+      this.props.html_copy_mode === true
+        ? ''
+        : mutable
+          ? this.state.value
+          : '';
 
     // There is a reported library issue where switching between custom country lists 
     // during the same component session can cause a fatal internal indexing error. 
