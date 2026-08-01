@@ -707,7 +707,7 @@ class InternationalPhoneNumber extends React.Component {
       !readOnly;
 
     const placeholder = formatPlaceholder(
-      data.placeholder || 'Phone number',
+      data.placeholder,
       hasRequiredLabel,
       labelHidden
     );
