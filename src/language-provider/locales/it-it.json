@@ -65,6 +65,8 @@
   "allow-countries" : "Paesi consentiti",
   "allow-countries-desc" : "Tieni premuto Ctrl (Windows) o Command (Mac) per selezionare più paesi. Lasciare tutte le opzioni non selezionate per consentire tutti i paesi. I nomi dei paesi saranno automaticamente localizzati sul negozio.",
   "default-country" : "Paese predefinito",
+  "invalid-phone-number-message" : "Messaggio numero di telefono non valido",
+  "place-holder-invalid-phone-number" : "Si prega di inserire un numero di telefono valido",
 
   "options" : "Opzioni",
   "value" : "Valore",

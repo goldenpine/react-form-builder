@@ -195,6 +195,7 @@ class Toolbar extends React.Component {
         allow_countries: [],
         default_country: 'us',
         phone_locale: '',
+        message_invalid_phone_number: intl.formatMessage({ id: 'place-holder-invalid-phone-number' }),
       },
       {
         key: 'PhoneNumber',
@@ -435,6 +436,7 @@ class Toolbar extends React.Component {
       elementOptions.allow_countries = item.allow_countries;
       elementOptions.default_country = item.default_country;
       elementOptions.phone_locale = item.phone_locale;
+      elementOptions.message_invalid_phone_number = item.message_invalid_phone_number;
     }
 
     if (elementKey === 'Image') {

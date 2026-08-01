@@ -473,7 +473,13 @@ export default class FormElementsEdit extends React.Component {
                 ))}
             </select>
           </div>
-        )}        
+        )}
+        { this.props.element.hasOwnProperty('message_invalid_phone_number') &&
+            <div className="mb-3">
+              <label className="control-label" htmlFor="MessageInvalidPhoneNumber"><IntlMessages id="invalid-phone-number-message" />:</label>
+              <input id="MessageInvalidPhoneNumber" type="text" className="form-control" defaultValue={this.props.element.message_invalid_phone_number} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'message_invalid_phone_number', 'value')} />
+            </div>
+        }
         { this.props.element.hasOwnProperty('src') &&
           <div>
             <div className="mb-3">

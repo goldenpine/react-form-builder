@@ -65,6 +65,8 @@
   "allow-countries" : "Allowed Countries",
   "allow-countries-desc" : "Hold Ctrl (Windows) or Command (Mac) to select multiple countries. Leave all options unselected to allow all countries. Country names will be automatically localized on the storefront.",
   "default-country" : "Default Country",
+  "invalid-phone-number-message" : "Invalid phone number message",
+  "place-holder-invalid-phone-number" : "Please enter a valid phone number",
   
   "options" : "Options",
   "value" : "Value",

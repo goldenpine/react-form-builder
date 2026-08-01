@@ -636,12 +636,6 @@ class InternationalPhoneNumber extends React.Component {
     }
   }
 /*
-  getDefaultCountry() {
-    return String(
-      this.props.data.default_country || 'us'
-    ).toLowerCase();
-  }
-
   dispatchNativeChangeEvents = () => {
     if (!this.phoneWrapper.current) {
       return;
@@ -797,6 +791,7 @@ class InternationalPhoneNumber extends React.Component {
               disabled={readOnly}
               inputProps={{
                 'data-field-name': data.field_name,
+                'data-message-invalid-phone-number': data.message_invalid_phone_number,
                 autoComplete: 'tel',
                 placeholder: placeholder,
               }}
