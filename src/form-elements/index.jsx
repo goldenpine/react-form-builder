@@ -1643,28 +1643,31 @@ class FileUpload extends React.Component {
 
   saveFile = async (e) => {
     e.preventDefault();
+
     const sourceUrl = this.props.defaultValue;
-    const response = await fetch(sourceUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      responseType: 'blob',
-    });
-    const dispositionHeader = response.headers.get('Content-Disposition');
-    const resBlob = await response.blob();
-    // eslint-disable-next-line no-undef
-    const blob = new Blob([resBlob], {
-      type: this.props.data.fileType || response.headers.get('Content-Type'),
-    });
-    if (dispositionHeader && dispositionHeader.indexOf(';filename=') > -1) {
-      const fileName = dispositionHeader.split(';filename=')[1];
-      saveAs(blob, fileName);
-    } else {
-      const fileName = sourceUrl.substring(sourceUrl.lastIndexOf('/') + 1);
-      saveAs(response.url, fileName);
+
+    const response = await fetch(sourceUrl);
+
+    if (!response.ok) {
+      throw new Error(`Download failed: ${response.status} ${response.statusText}`);
     }
+
+    const dispositionHeader = response.headers.get('Content-Disposition');
+    const blob = await response.blob();
+
+    let fileName = 'download';
+
+    if (dispositionHeader) {
+      const match = dispositionHeader.match(
+        /filename\s*=\s*"([^"]+)"|filename\s*=\s*([^;]+)/i
+      );
+
+      if (match) {
+        fileName = (match[1] || match[2]).trim();
+      }
+    }
+
+    saveAs(blob, fileName);
   };
 
   render() {
