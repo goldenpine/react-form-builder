@@ -60,13 +60,27 @@ class ReactForm extends React.Component {
     return answers || {};
   }
 
+  _getConfiguredDefault(item) {
+    return (
+      item.defaultValue ??
+      item.default_value ??
+      item.value
+    );
+  }
+
   _getDefaultValue(item) {
     if (!item) return undefined;
-    const explicitDefault = item.defaultValue ?? item.default_value ?? item.value;
-    if (explicitDefault !== undefined && explicitDefault !== null && explicitDefault !== '') {
-      return explicitDefault;
+
+    const answer = this.answerData[item.field_name];
+    if (
+      answer !== undefined &&
+      answer !== null &&
+      answer !== ''
+    ) {
+      return answer;
     }
-    return this.answerData[item.field_name];
+
+    return this._getConfiguredDefault(item);
   }
 
   _optionsDefaultValue(item) {
