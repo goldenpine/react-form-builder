@@ -134,6 +134,36 @@ function getValidDefaultCountry(
   return 'us';
 }
 
+function getFileNameFromDisposition(disposition) {
+  if (!disposition) {
+    return null;
+  }
+
+  // Prefer filename*=UTF-8''...
+  const utf8Match = disposition.match(
+    /filename\*\s*=\s*UTF-8''([^;]+)/i
+  );
+
+  if (utf8Match) {
+    try {
+      return decodeURIComponent(utf8Match[1].trim());
+    } catch (error) {
+      console.error('Unable to decode filename*:', error);
+    }
+  }
+
+  // Fall back to filename="..."
+  const filenameMatch = disposition.match(
+    /filename\s*=\s*"([^"]+)"|filename\s*=\s*([^;]+)/i
+  );
+
+  if (filenameMatch) {
+    return (filenameMatch[1] || filenameMatch[2]).trim();
+  }
+
+  return null;
+};
+
 // This component is used for text inputs (text, email, tel, number) and textarea 
 // to provide a floating placeholder that moves above the input 
 // when the user focuses on the input or when there is a value in the input. 
@@ -1646,28 +1676,25 @@ class FileUpload extends React.Component {
 
     const sourceUrl = this.props.defaultValue;
 
-    const response = await fetch(sourceUrl);
+    try {
+      const response = await fetch(sourceUrl);
 
-    if (!response.ok) {
-      throw new Error(`Download failed: ${response.status} ${response.statusText}`);
-    }
-
-    const dispositionHeader = response.headers.get('Content-Disposition');
-    const blob = await response.blob();
-
-    let fileName = 'download';
-
-    if (dispositionHeader) {
-      const match = dispositionHeader.match(
-        /filename\s*=\s*"([^"]+)"|filename\s*=\s*([^;]+)/i
-      );
-
-      if (match) {
-        fileName = (match[1] || match[2]).trim();
+      if (!response.ok) {
+        throw new Error(
+          `Download failed: ${response.status} ${response.statusText}`
+        );
       }
-    }
 
-    saveAs(blob, fileName);
+      const dispositionHeader = response.headers.get('Content-Disposition');
+      const blob = await response.blob();
+
+      const fileName =
+        getFileNameFromDisposition(dispositionHeader) || 'download';
+
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error('Unable to download file:', error);
+    }
   };
 
   render() {
