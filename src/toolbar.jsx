@@ -100,6 +100,7 @@ class Toolbar extends React.Component {
         icon: 'fas fa-heading',
         static: true,
         content: intl.formatMessage({ id: 'place-holder-text' }),
+        field_name: 'header_',
       },
       {
         key: 'Label',
@@ -107,6 +108,7 @@ class Toolbar extends React.Component {
         static: true,
         icon: 'fas fa-font',
         content: intl.formatMessage({ id: 'place-holder-text' }),
+        field_name: 'label_',
       },
       {
         key: 'Paragraph',
@@ -114,6 +116,7 @@ class Toolbar extends React.Component {
         static: true,
         icon: 'fas fa-paragraph',
         content: intl.formatMessage({ id: 'place-holder-text' }),
+        field_name: 'paragraph_',
       },
       {
         key: 'LineBreak',
@@ -180,6 +183,19 @@ class Toolbar extends React.Component {
         label: intl.formatMessage({ id: 'place-holder-label' }),
         icon: 'fas fa-plus',
         field_name: 'number_input_',
+      },
+      {
+        key: 'InternationalPhoneNumber',
+        canHaveAnswer: true,
+        name: 'International Phone Number',
+        label: 'Phone Number',
+        icon: 'fas fa-phone-alt',
+        field_name: 'international_phone_number_',
+
+        allow_countries: [],
+        default_country: 'us',
+        phone_locale: '',
+        message_invalid_phone_number: intl.formatMessage({ id: 'place-holder-invalid-phone-number' }),
       },
       {
         key: 'PhoneNumber',
@@ -307,6 +323,7 @@ class Toolbar extends React.Component {
         static: true,
         content: intl.formatMessage({ id: 'place-holder-website-link' }),
         href: 'http://www.example.com',
+        field_name: 'hyperlink_',
       },
       {
         key: 'Download',
@@ -413,6 +430,13 @@ class Toolbar extends React.Component {
 
     if (item.class_name) {
       elementOptions.class_name = item.class_name;
+    }
+
+    if (elementKey === 'InternationalPhoneNumber') {
+      elementOptions.allow_countries = item.allow_countries;
+      elementOptions.default_country = item.default_country;
+      elementOptions.phone_locale = item.phone_locale;
+      elementOptions.message_invalid_phone_number = item.message_invalid_phone_number;
     }
 
     if (elementKey === 'Image') {

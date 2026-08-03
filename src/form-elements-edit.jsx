@@ -11,6 +11,23 @@ import { get } from './stores/requests';
 import ID from './UUID';
 import IntlMessages from './language-provider/IntlMessages';
 
+import {
+  defaultCountries,
+  parseCountry,
+} from 'react-international-phone';
+
+const phoneCountryOptions = defaultCountries
+  .map((countryData) => {
+    const country = parseCountry(countryData);
+
+    return {
+      iso2: country.iso2,
+      name: country.name,
+      dialCode: country.dialCode,
+    };
+  })
+  .sort((a, b) => a.name.localeCompare(b.name));
+
 const toolbar = {
   options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
   inline: {
@@ -20,9 +37,22 @@ const toolbar = {
   },
 };
 
+export function stripHTMLTagsKeepFirstLine(input) {
+  const safeInput = typeof input === 'string' ? input : '';
+  const noTags = safeInput.replace(/<\/?[^>]+(>|$)/g, '');
+  const lines = noTags
+    .split(/\r?\n/)
+    .map(line => line.replace(/\*+$/, '').replace(/[.$]/g, '').trim())
+    .filter(line => line !== '');
+  return lines[0] ?? '';
+}
+
 export default class FormElementsEdit extends React.Component {
   constructor(props) {
     super(props);
+    if (!this.props.element.conditional) {
+      this.props.element.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
+    }
     this.state = {
       element: this.props.element,
       data: this.props.data,
@@ -72,6 +102,8 @@ export default class FormElementsEdit extends React.Component {
       element: this_element,
       dirty: true,
     });
+    // persist label/content immediately to avoid losing changes
+    try { this.updateElement(); } catch (e) { /* ignore */ }
   }
 
   updateElement() {
@@ -113,6 +145,31 @@ export default class FormElementsEdit extends React.Component {
     }
   }
 
+  _getOtherFields() {
+    const all = (this.props.preview && this.props.preview.state && this.props.preview.state.data) || this.props.data || [];
+    const currentId = this.props.element && this.props.element.id;
+    const supportedElements = new Set(['Dropdown', 'Checkboxes', 'Checkbox', 'RadioButtons', 'Range', 'Rating']);
+
+    return all.filter((x) => {
+      const elementType = x && (x.element || x.type || '');
+      return x && x.field_name && x.id !== currentId && supportedElements.has(elementType);
+    }).map(x => ({
+      id: x.id,
+      label: stripHTMLTagsKeepFirstLine(x.label || x.text || x.field_name) || x.field_name,
+      field_name: x.field_name,
+    }));
+  }
+
+  componentDidUpdate(prevProps) {
+    // if the element prop changed (different object or id), sync to state
+    if (prevProps.element !== this.props.element) {
+      if (!this.props.element.conditional) {
+        this.props.element.conditional = { action: 'SHOW', logic: 'AND', rules: [] };
+      }
+      this.setState({ element: this.props.element });
+    }
+  }
+
   validateImageSize(e) {
     const regex = /^$|^\d+(px|%)$/;
     if (regex.test(e.target.value)) {
@@ -149,7 +206,8 @@ export default class FormElementsEdit extends React.Component {
     const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
     const canHavePlaceholder = this.props.element.element === 'TextInput' || this.props.element.element === 'TextArea'
                               || this.props.element.element === 'EmailInput' || this.props.element.element === 'NumberInput'
-                              || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'SensitiveInput';
+                              || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'InternationalPhoneNumber'
+                              || this.props.element.element === 'SensitiveInput';
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {
@@ -310,6 +368,117 @@ export default class FormElementsEdit extends React.Component {
             <label className="control-label" htmlFor="placeholderInput"><IntlMessages id="placeholder" /></label>
             <input id="placeholderInput" type="text" className="form-control" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
           </div>
+        }
+        {this.props.element.hasOwnProperty('allow_countries') && (
+          <div className="mb-3">
+            <label
+              className="control-label"
+              htmlFor="allowCountriesInput"
+            >
+              <IntlMessages id="allow-countries" />:
+            </label>
+            <div className="form-text">
+              <IntlMessages id="allow-countries-desc" />
+            </div>
+            <select
+              id="allowCountriesInput"
+              className="form-control"
+              multiple
+              size="10"
+              defaultValue={this.props.element.allow_countries || []}
+              onChange={(e) => {
+                const allowCountries = Array.from(
+                  e.target.selectedOptions,
+                  option => option.value
+                );
+
+                const thisElement = this.state.element;
+                thisElement.allow_countries = allowCountries;
+
+                /*
+                * Make sure the default country remains valid.
+                */
+                if (
+                  allowCountries.length > 0 &&
+                  !allowCountries.includes(
+                    this.props.element.default_country
+                  )
+                ) {
+                  this.props.element.default_country =
+                    allowCountries[0];
+                }
+
+                this.setState(
+                  {
+                    element: thisElement,
+                    dirty: true,
+                  },
+                  () => {
+                    this.updateElement();
+                  }
+                );        
+              }}
+              onBlur={this.updateElement.bind(this)}
+            >
+              {phoneCountryOptions.map(country => (
+                <option
+                  key={country.iso2}
+                  value={country.iso2}
+                >
+                  {country.name} (+{country.dialCode})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {this.props.element.hasOwnProperty('default_country') && (
+          <div className="mb-3">
+            <label
+              className="control-label"
+              htmlFor="defaultCountryInput"
+            >
+              <IntlMessages id="default-country" />:
+            </label>
+
+            <select
+              id="defaultCountryInput"
+              className="form-control"
+              defaultValue={this.props.element.default_country || ''}
+              onChange={(e) => {
+                this.props.element.default_country =
+                  e.target.value;
+                this.updateElement();
+              }}
+            >
+              {phoneCountryOptions
+                .filter(country => {
+                  const allowCountries =
+                    this.props.element.allow_countries || [];
+
+                  /*
+                  * An empty array can mean all countries.
+                  */
+                  return (
+                    allowCountries.length === 0 ||
+                    allowCountries.includes(country.iso2)
+                  );
+                })
+                .map(country => (
+                  <option
+                    key={country.iso2}
+                    value={country.iso2}
+                  >
+                    {country.name} (+{country.dialCode})
+                  </option>
+                ))}
+            </select>
+          </div>
+        )}
+        { this.props.element.hasOwnProperty('message_invalid_phone_number') &&
+            <div className="mb-3">
+              <label className="control-label" htmlFor="MessageInvalidPhoneNumber"><IntlMessages id="invalid-phone-number-message" />:</label>
+              <input id="MessageInvalidPhoneNumber" type="text" className="form-control" defaultValue={this.props.element.message_invalid_phone_number} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'message_invalid_phone_number', 'value')} />
+            </div>
         }
         { this.props.element.hasOwnProperty('src') &&
           <div>
@@ -582,16 +751,96 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
-        { this.props.element.hasOwnProperty('options') &&
-          <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}
-            canHaveOptionCorrect={canHaveOptionCorrect}
-            canHaveOptionValue={canHaveOptionValue}
-            data={this.props.preview.state.data}
-            updateElement={this.props.updateElement}
-            preview={this.props.preview}
-            element={this.props.element}
-            key={this.props.element.options.length} />
-        }
+        { this.props.element.hasOwnProperty('options') && (
+          <>
+            {canHaveOptionValue && (
+              <p className="form-text text-muted">
+                Leave the <strong>Value</strong> blank to automatically generate it from the name (spaces are replaced with "_").
+              </p>
+            )}
+            <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}
+              canHaveOptionCorrect={canHaveOptionCorrect}
+              canHaveOptionValue={canHaveOptionValue}
+              data={this.props.preview.state.data}
+              updateElement={this.props.updateElement}
+              preview={this.props.preview}
+              element={this.props.element}
+              key={this.props.element.options.length} />
+          </>
+        )}
+        <div className="mb-3">
+          <label className="control-label"><IntlMessages id="conditional-logic" defaultMessage="Conditional Logic" /></label>
+          <div className="mb-2 d-flex gap-2">
+            <select className="form-control" style={{ width: '30%' }} value={this.state.element.conditional.action || 'SHOW'} onChange={(e) => {
+              const el = { ...this.state.element };
+              el.conditional = { ...el.conditional, action: e.target.value };
+              this.setState({ element: el, dirty: true }, () => this.updateElement());
+            }}>
+              <option value="SHOW">Show when true</option>
+              <option value="HIDE">Hide when true</option>
+            </select>
+            <select className="form-control" style={{ width: '20%' }} value={this.state.element.conditional.logic || 'AND'} onChange={(e) => {
+              const el = { ...this.state.element };
+              el.conditional = { ...el.conditional, logic: e.target.value };
+              this.setState({ element: el, dirty: true }, () => this.updateElement());
+            }}>
+              <option value="AND">All rules (AND)</option>
+              <option value="OR">Any rule (OR)</option>
+            </select>
+            <button className="btn btn-sm btn-outline-secondary" onClick={(e) => {
+              e.preventDefault();
+              const el = { ...this.state.element };
+              el.conditional = el.conditional || { action: 'SHOW', logic: 'AND', rules: [] };
+              el.conditional.rules = el.conditional.rules || [];
+              el.conditional.rules.push({ field: '', operator: '==', value: '' });
+              this.setState({ element: el, dirty: true }, () => this.updateElement());
+            }}>+ Add rule</button>
+          </div>
+          { (this.state.element.conditional && this.state.element.conditional.rules && this.state.element.conditional.rules.length > 0) && (
+            <div>
+              { this.state.element.conditional.rules.map((rule, idx) => (
+                <div key={idx} className="d-flex align-items-center mb-2" style={{ gap: '8px' }}>
+                  <select className="form-control" style={{ width: '35%' }} value={rule.field || ''} onChange={(e) => {
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, field: e.target.value } : r);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }}>
+                    <option value="">Select field...</option>
+                    { this._getOtherFields().map(f => <option key={f.id} value={f.field_name}>{`${f.label} (${f.field_name.split('_')[0]})`}</option>) }
+                  </select>
+                  <select className="form-control" style={{ width: '20%' }} value={rule.operator || '=='} onChange={(e) => {
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, operator: e.target.value } : r);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }}>
+                    <option value="contains"><IntlMessages id="operator-contains" defaultMessage="contains" /></option>
+                    <option value="not_contains"><IntlMessages id="operator-not-contains" defaultMessage="not contains" /></option>
+                    <option value="starts_with"><IntlMessages id="operator-starts-with" defaultMessage="starts with" /></option>
+                    <option value="ends_with"><IntlMessages id="operator-ends-with" defaultMessage="ends with" /></option>
+                    <option value="=="><IntlMessages id="operator-equal-to" defaultMessage="equal to" /></option>
+                    <option value="!="><IntlMessages id="operator-not-equal-to" defaultMessage="not equal to" /></option>
+                    <option value=">">&gt;</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                  </select>
+                  <input className="form-control" style={{ width: '30%' }} type="text" value={rule.value || ''} onChange={(e) => {
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.map((r, i) => i === idx ? { ...r, value: e.target.value } : r);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }} />
+                  <button className="btn btn-sm btn-danger" onClick={(e) => {
+                    e.preventDefault();
+                    const el = { ...this.state.element };
+                    el.conditional.rules = el.conditional.rules.filter((_, i) => i !== idx);
+                    this.setState({ element: el, dirty: true }, () => this.updateElement());
+                  }}>Remove</button>
+                </div>
+              )) }
+            </div>
+          ) }
+          <p className="form-text text-muted">Choose a field, operator, and value for each rule. Text matching is case-insensitive.</p>
+        </div>        
       </div>
     );
   }

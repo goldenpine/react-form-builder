@@ -13,6 +13,157 @@ import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 import myxss from './myxss';
 
+import {
+  PhoneInput,
+  defaultCountries,
+  parseCountry,
+  buildCountryData,
+} from 'react-international-phone';
+
+const localizedPhoneCountriesCache = {};
+
+function getPhoneLocale(locale) {
+  return String(locale || 'en')
+    .replace('_', '-')
+    .toLowerCase();
+}
+
+function getLocalizedPhoneCountries(locale) {
+  const normalizedLocale = getPhoneLocale(locale);
+
+  if (localizedPhoneCountriesCache[normalizedLocale]) {
+    return localizedPhoneCountriesCache[normalizedLocale];
+  }
+
+  let displayNames;
+
+  try {
+    displayNames = new Intl.DisplayNames(
+      [normalizedLocale],
+      { type: 'region' }
+    );
+  } catch (error) {
+    displayNames = null;
+  }
+  
+  // localizing country names using Intl.DisplayNames API, if available. If not, fallback to default country names.
+  const countries = defaultCountries.map((countryData) => {
+    const country = parseCountry(countryData);
+
+    let localizedName = country.name;
+
+    if (displayNames) {
+      try {
+        localizedName =
+          displayNames.of(country.iso2.toUpperCase()) ||
+          country.name;
+      } catch (error) {
+        localizedName = country.name;
+      }
+    }
+
+    return buildCountryData({
+      ...country,
+      name: localizedName,
+    });
+  });
+
+  localizedPhoneCountriesCache[normalizedLocale] = countries;
+
+  return countries;
+}
+
+function getAllowedPhoneCountries(
+  localizedCountries,
+  allowCountries
+) {
+  if (
+    !Array.isArray(allowCountries) ||
+    allowCountries.length === 0
+  ) {
+    return localizedCountries;
+  }
+
+  const allowedIsoCodes = new Set(
+    allowCountries
+      .filter(Boolean)
+      .map(code => String(code).toLowerCase())
+  );
+
+  return localizedCountries.filter((countryData) => {
+    const country = parseCountry(countryData);
+
+    return allowedIsoCodes.has(
+      country.iso2.toLowerCase()
+    );
+  });
+}
+
+// If the selected default country is not in the allowed countries list, 
+// we will use the first country in the list as the default. 
+// If the allowed countries list is empty, we will use 'us' as the default.
+function getValidDefaultCountry(
+  countries,
+  configuredDefaultCountry
+) {
+  const normalizedDefault = String(
+    configuredDefaultCountry || ''
+  ).toLowerCase();
+
+  const defaultCountryExists = countries.some(
+    countryData => {
+      const country = parseCountry(countryData);
+
+      return (
+        country.iso2.toLowerCase() ===
+        normalizedDefault
+      );
+    }
+  );
+
+  if (defaultCountryExists) {
+    return normalizedDefault;
+  }
+
+  if (countries.length > 0) {
+    return parseCountry(countries[0])
+      .iso2
+      .toLowerCase();
+  }
+
+  return 'us';
+}
+
+function getFileNameFromDisposition(disposition) {
+  if (!disposition) {
+    return null;
+  }
+
+  // Prefer filename*=UTF-8''...
+  const utf8Match = disposition.match(
+    /filename\*\s*=\s*UTF-8''([^;]+)/i
+  );
+
+  if (utf8Match) {
+    try {
+      return decodeURIComponent(utf8Match[1].trim());
+    } catch (error) {
+      console.error('Unable to decode filename*:', error);
+    }
+  }
+
+  // Fall back to filename="..."
+  const filenameMatch = disposition.match(
+    /filename\s*=\s*"([^"]+)"|filename\s*=\s*([^;]+)/i
+  );
+
+  if (filenameMatch) {
+    return (filenameMatch[1] || filenameMatch[2]).trim();
+  }
+
+  return null;
+};
+
 // This component is used for text inputs (text, email, tel, number) and textarea 
 // to provide a floating placeholder that moves above the input 
 // when the user focuses on the input or when there is a value in the input. 
@@ -118,6 +269,7 @@ class Header extends React.Component {
         <ComponentHeader {...this.props} />
         <h3
           className={classNames}
+          data-field-name={this.props.data.field_name}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
           }}
@@ -147,6 +299,7 @@ class Paragraph extends React.Component {
         <ComponentHeader {...this.props} />
         <div
           className={classNames}
+          data-field-name={this.props.data.field_name}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
           }}
@@ -176,6 +329,7 @@ class Label extends React.Component {
         <ComponentHeader {...this.props} />
         <label
           className={`${classNames} form-label`}
+          data-field-name={this.props.data.field_name}
           dangerouslySetInnerHTML={{
             __html: myxss.process(this.props.data.content),
           }}
@@ -195,7 +349,7 @@ class LineBreak extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <hr />
+        <hr/>
       </div>
     );
   }
@@ -476,6 +630,203 @@ class PhoneNumber extends React.Component {
             ].filter(Boolean).join(" ")}
           />
           <FloatingPlaceholderInput inputProps={props} placeholder={props.placeholder} defaultValue={props.defaultValue} mutable={this.props.mutable} />
+        </div>
+      </div>
+    );
+  }
+}
+
+class InternationalPhoneNumber extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value:
+        props.defaultValue !== undefined &&
+        props.defaultValue !== null
+          ? String(props.defaultValue)
+          : '',
+    };
+
+    this.phoneWrapper = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.defaultValue !== this.props.defaultValue &&
+      this.props.defaultValue !== this.state.value
+    ) {
+      this.setState({
+        value:
+          this.props.defaultValue !== undefined &&
+          this.props.defaultValue !== null
+            ? String(this.props.defaultValue)
+            : '',
+      });
+    }
+  }
+/*
+  dispatchNativeChangeEvents = () => {
+    if (!this.phoneWrapper.current) {
+      return;
+    }
+
+    const input =
+      this.phoneWrapper.current.querySelector(
+        'input[type="tel"]'
+      );
+
+    if (!input) {
+      return;
+    }
+
+    input.dispatchEvent(
+      new Event('input', {
+        bubbles: true,
+      })
+    );
+
+    input.dispatchEvent(
+      new Event('change', {
+        bubbles: true,
+      })
+    );
+  };
+ */
+  handleChange = (phone, metadata) => {
+    const value = phone || '';
+
+    this.setState(
+      {
+        value,
+      },
+      () => {
+        //this.dispatchNativeChangeEvents();
+
+        if (typeof this.props.handleChange === 'function') {
+          this.props.handleChange({
+            target: {
+              name: this.props.data.field_name,
+              value,
+            },
+            phoneMetadata: metadata,
+          });
+        }
+      }
+    );
+  };
+
+  render() {
+    const {
+      data,
+      mutable,
+      read_only: readOnly,
+    } = this.props;
+
+    const labelHidden = data.labelHidden || false;
+
+    const hasRequiredLabel =
+      data.hasOwnProperty('required') &&
+      data.required === true &&
+      !readOnly;
+
+    const placeholder = formatPlaceholder(
+      data.placeholder,
+      hasRequiredLabel,
+      labelHidden
+    );
+
+    let baseClasses = 'SortableItem rfb-item';
+
+    if (data.pageBreakBefore) {
+      baseClasses += ' alwaysbreak';
+    }
+
+    const locale =
+      data.phone_locale ||
+      window.Shopify?.locale ||
+      document.documentElement.lang ||
+      navigator.language ||
+      'en';
+
+    const localizedCountries =
+      getLocalizedPhoneCountries(locale);
+
+    const countries =
+      getAllowedPhoneCountries(
+        localizedCountries,
+        data.allow_countries
+      );
+
+    const defaultCountry =
+      getValidDefaultCountry(
+        countries,
+        data.default_country
+      );
+
+    /*
+     * Keep the component controlled in the generated form.
+     * In builder preview mode (Canvas??), an empty value is sufficient
+     * to display the selector and input.
+     * html_copy_mode is used to disable the value in the InternationalPhoneNumber element,
+     * when a hidden form is used to copy the HTML of the form for use in other contexts. 
+     * So the default country can be updated properly when users select a different default 
+     * country on Property Edit panel.
+     */
+    const value =
+      this.props.html_copy_mode === true
+        ? ''
+        : mutable
+          ? this.state.value
+          : '';
+
+    // There is a reported library issue where switching between custom country lists 
+    // during the same component session can cause a fatal internal indexing error. 
+    // A documented workaround is to remount PhoneInput by changing its React key
+    const countriesKey = countries
+      .map(countryData => parseCountry(countryData).iso2)
+      .join('-');
+
+    return (
+      <div
+        style={{ ...this.props.style }}
+        className={baseClasses}
+      >
+        <ComponentHeader {...this.props} />
+
+        <div className="mb-3">
+          <ComponentLabel
+            {...this.props}
+            className={[
+              'form-label',
+              this.props.className,
+              labelHidden ? 'd-none' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          />
+
+          <div
+            ref={this.phoneWrapper}
+            className="rfb-international-phone"
+          >
+            <PhoneInput
+              key={`${countriesKey}-${defaultCountry}`}
+              defaultCountry={defaultCountry}
+              countries={countries}
+              value={value}
+              onChange={this.handleChange}
+              name={data.field_name}
+              required={data.required === true}
+              disabled={readOnly}
+              inputProps={{
+                'data-field-name': data.field_name,
+                'data-message-invalid-phone-number': data.message_invalid_phone_number,
+                autoComplete: 'tel',
+                placeholder: placeholder,
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -856,6 +1207,7 @@ class Checkboxes extends React.Component {
                     }
                   }}
                   data-required-checks={this.props.data.checkbox_required_checks ? this.props.data.checkbox_required_checks : '1'}
+                  data-field-name={this.props.data.field_name}
                   {...props}
                 />
                 <label
@@ -965,9 +1317,10 @@ class Image extends React.Component {
           <img
             src={this.props.data.src}            
             style={{ height: this.props.data.height, width: this.props.data.width, display: 'inline' }}
+            data-field-name={this.props.data.field_name}
           />
         )}
-        {!this.props.data.src && <div className="no-image">No Image</div>}
+        {!this.props.data.src && <div className="no-image" data-field-name={this.props.data.field_name}>No Image</div>}
       </div>
     );
   }
@@ -977,7 +1330,25 @@ class Rating extends React.Component {
   constructor(props) {
     super(props);
     this.inputField = React.createRef();
+    this.state = {
+      value:
+        props.defaultValue !== undefined
+          ? parseFloat(props.defaultValue, 10)
+          : 0,
+    };
   }
+
+  changeValue = (e, ratingCache) => {
+    const nextValue = ratingCache && ratingCache.rating !== undefined
+      ? ratingCache.rating
+      : this.state.value;
+
+    this.setState({ value: nextValue }, () => {
+      if (typeof this.props.handleChange === 'function') {
+        this.props.handleChange(e);
+      }
+    });
+  };
 
   render() {
     const props = {};
@@ -987,13 +1358,11 @@ class Rating extends React.Component {
     props.ratingAmount = 5;
 
     if (this.props.mutable) {
-      props.rating =
-        this.props.defaultValue !== undefined
-          ? parseFloat(this.props.defaultValue, 10)
-          : 0;
+      props.rating = this.state.value;
       props.editing = true;
       props.disabled = this.props.read_only;
       props.ref = this.inputField;
+      props.onRatingClick = this.changeValue;
     }
 
     let baseClasses = 'SortableItem rfb-item';
@@ -1031,7 +1400,7 @@ class HyperLink extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="mb-3">
-          <label className={'form-label'}>
+          <label className={'form-label'} data-field-name={this.props.data.field_name}>
             <a
               target="_blank"
               href={this.props.data.href}
@@ -1304,27 +1673,27 @@ class FileUpload extends React.Component {
 
   saveFile = async (e) => {
     e.preventDefault();
+
     const sourceUrl = this.props.defaultValue;
-    const response = await fetch(sourceUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      responseType: 'blob',
-    });
-    const dispositionHeader = response.headers.get('Content-Disposition');
-    const resBlob = await response.blob();
-    // eslint-disable-next-line no-undef
-    const blob = new Blob([resBlob], {
-      type: this.props.data.fileType || response.headers.get('Content-Type'),
-    });
-    if (dispositionHeader && dispositionHeader.indexOf(';filename=') > -1) {
-      const fileName = dispositionHeader.split(';filename=')[1];
+
+    try {
+      const response = await fetch(sourceUrl);
+
+      if (!response.ok) {
+        throw new Error(
+          `Download failed: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const dispositionHeader = response.headers.get('Content-Disposition');
+      const blob = await response.blob();
+
+      const fileName =
+        getFileNameFromDisposition(dispositionHeader) || 'download';
+
       saveAs(blob, fileName);
-    } else {
-      const fileName = sourceUrl.substring(sourceUrl.lastIndexOf('/') + 1);
-      saveAs(response.url, fileName);
+    } catch (error) {
+      console.error('Unable to download file:', error);
     }
   };
 
@@ -1488,19 +1857,61 @@ class FileUpload extends React.Component {
 class Range extends React.Component {
   constructor(props) {
     super(props);
+
     this.inputField = React.createRef();
+
+    const configuredDefault = this.getConfiguredDefault(props);
+
+    // Once a user moves the silder, the state.value tracks the interactive value,
+    // so use instance variable to record the default selected value.
+    this.lastConfiguredDefault = configuredDefault;
+
     this.state = {
-      value:
-        props.defaultValue !== undefined
-          ? parseInt(props.defaultValue, 10)
-          : parseInt(props.data.default_value, 10),
+      value: configuredDefault,
     };
+  }
+
+  getConfiguredDefault = (props) => {
+    const rawValue =
+      props.defaultValue !== undefined
+        ? props.defaultValue
+        : props.data.default_value;
+
+    const value = Number(rawValue);
+
+    return Number.isFinite(value)
+      ? value
+      : Number(props.data.min_value) || 0;
+  };
+
+  // Majorly to trigger the re-render when the default selected value is changed.
+  componentDidUpdate() {
+    const configuredDefault =
+      this.getConfiguredDefault(this.props);
+    
+    // Only calling setState when the default selected is changed. Therefore, 
+    // moving the slider will no longer cause it to jump back to the configured default
+    if (
+      configuredDefault !== this.lastConfiguredDefault
+    ) {
+      this.lastConfiguredDefault = configuredDefault;
+
+      if (
+        configuredDefault !== Number(this.state.value)
+      ) {
+        this.setState({
+          value: configuredDefault,
+        });
+      }
+    }
   }
 
   changeValue = (e) => {
     const { target } = e;
-    this.setState({
-      value: target.value,
+    this.setState({ value: target.value }, () => {
+      if (typeof this.props.handleChange === 'function') {
+        this.props.handleChange(e);
+      }
     });
   };
 
@@ -1598,6 +2009,7 @@ FormElements.TextInput = TextInput;
 FormElements.SensitiveInput = SensitiveInput;
 FormElements.EmailInput = EmailInput;
 FormElements.PhoneNumber = PhoneNumber;
+FormElements.InternationalPhoneNumber = InternationalPhoneNumber;
 FormElements.NumberInput = NumberInput;
 FormElements.TextArea = TextArea;
 FormElements.Dropdown = Dropdown;

@@ -72,7 +72,7 @@ export default function FieldSetBase(props) {
       <ComponentHeader {...props} isFieldSet={true} />
       <div>
         <ComponentLabel {...props} />
-        <div className="row">        
+        <div className="row" data-field-name={props.data.field_name}>
           {
             childItems?.map((x, i) => (
               <div key={`${i}_${x || "_"}`} className={"col-md-12"}>

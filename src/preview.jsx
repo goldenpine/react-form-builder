@@ -101,8 +101,13 @@ export default class Preview extends React.Component {
 
   // start dragging the edit form (ignore clicks on inputs/buttons)
   onEditFormMouseDown = (e) => {
-    const tag = e.target && e.target.tagName && e.target.tagName.toLowerCase();
-    if (['input', 'textarea', 'select', 'button', 'a', 'label'].includes(tag)) {
+    const target = e.target;
+    if (
+      target instanceof Element &&
+      target.closest(
+        'input, textarea, select, option, button, a, label, [contenteditable="true"], .rdw-editor-wrapper'
+      )
+    ) {
       return;
     }
     if (!this.editForm.current) return;
@@ -140,8 +145,11 @@ export default class Preview extends React.Component {
   manualEditModeOff = () => {
     const { editElement } = this.props;
     if (editElement && editElement.dirty) {
-      editElement.dirty = false;
-      this.updateElement(editElement);
+      // prefer the latest element from this preview's state to avoid overwriting
+      // changes that were already applied via updateElement calls
+      const latest = this.getDataById(editElement.id) || editElement;
+      latest.dirty = false;
+      this.updateElement(latest);
     }
     this.props.manualEditModeOff();
   }

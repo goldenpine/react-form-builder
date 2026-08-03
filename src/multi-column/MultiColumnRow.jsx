@@ -22,7 +22,7 @@ class MultiColumnRowBase extends React.Component {
         <ComponentHeader {...this.props} />
         <div>
           <ComponentLabel {...this.props} />
-          <div className="row">
+          <div className="row" data-field-name={data.field_name}>
             {childItems.map((x, i) => (
               <div key={`${i}_${x || '_'}`} className={className}>{
                 controls ? controls[i] :

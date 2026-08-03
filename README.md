@@ -90,7 +90,9 @@ ReactDOM.render(
 | answer_data        | array    | Optional  | Answer data, only used if loading a pre-existing form with values.                                                                                                                          |
 | authenticity_token | string   | Optional  | If using Rails and need an auth token to submit form.                                                                                                                                       |
 | hide_actions       | boolean  | Optional  | If you would like to hide the submit / cancel buttons set to true.                                                                                                                          |
-| skip_validations   | boolean  | Optional  | Suppress form validations on submit, if set to true.                                                                                                                                        |
+| skip_validations   | boolean  | Optional  | Suppress form validations on submit, if set to true.|
+| skip_conditional_logic   | boolean  | Optional  | Suppress conditial logic, if set to true.|
+| html_copy_mode   | boolean  | Optional  | Set as true when a genereted form html can be used in other contexes. Currently it's a workaround to make the default country setting of InternationPHoneNumber work in the generated html.|
 | display_short      | boolean  | Optional  | Display an optional "shorter page/form" which is common for legal documents or situations where the user will just have to sign or fill out a shorter form with only the critical elements. |
 | read_only          | boolean  | Optional  | Shows a read only version which has fields disabled and removes "required" labels.                                                                                                          |
 | variables          | object   | Optional  | Key/value object that can be used for Signature variable replacement.                                                                                                                       |
