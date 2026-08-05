@@ -164,55 +164,114 @@ function getFileNameFromDisposition(disposition) {
   return null;
 };
 
+/* 
+ * A wrapper component that provides a floating placeholder for input fields.
+ * The placeholder will float above the input field when the field is focused or has a value.
+ */
+const FloatingPlaceholderWrapper = ({
+  placeholder = '',
+  hasValue = false,
+  focused = false,
+  className = '',
+  onClick,
+  children,
+}) => {
+  const shrunken = hasValue || focused;
+
+  return (
+    <div
+      className={[
+        'floating-input-wrapper',
+        placeholder ? 'has-placeholder' : '',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      onClick={onClick}
+    >
+      {children}
+
+      {placeholder && (
+        <span
+          className={`fb-placeholder ${
+            shrunken ? 'shrunken' : ''
+          }`}
+        >
+          {placeholder}
+        </span>
+      )}
+    </div>
+  );
+};
+
 // This component is used for text inputs (text, email, tel, number) and textarea 
 // to provide a floating placeholder that moves above the input 
 // when the user focuses on the input or when there is a value in the input. 
 // It accepts the following props:
 // - Tag: the HTML tag to use for the input (default is 'input', can be 'textarea' for multiline input)
-const FloatingPlaceholderInput = ({ Tag = 'input', inputProps = {}, placeholder = '', defaultValue = '', mutable = false }) => {
-  const [hasValue, setHasValue] = useState(!!(defaultValue && String(defaultValue).length > 0));
+const FloatingPlaceholderInput = ({
+  Tag = 'input',
+  inputProps = {},
+  placeholder = '',
+  defaultValue = '',
+  mutable = false,
+}) => {
+  const [hasValue, setHasValue] = useState(
+    defaultValue !== undefined &&
+    defaultValue !== null &&
+    String(defaultValue).length > 0
+  );
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
-    setHasValue(!!(defaultValue && String(defaultValue).length > 0));
+    setHasValue(
+      defaultValue !== undefined &&
+      defaultValue !== null &&
+      String(defaultValue).length > 0
+    );
   }, [defaultValue]);
 
   const handleChange = (e) => {
     const val = e.target.value;
-    setHasValue(val !== '' && val !== undefined && val !== null);
-    if (typeof inputProps.onChange === 'function') {
-      inputProps.onChange(e);
-    }
+
+    setHasValue(
+      val !== '' &&
+      val !== undefined &&
+      val !== null
+    );
+
+    inputProps.onChange?.(e);
   };
 
   const handleFocus = (e) => {
     setFocused(true);
-    if (typeof inputProps.onFocus === 'function') {
-      inputProps.onFocus(e);
-    }
+    inputProps.onFocus?.(e);
   };
 
   const handleBlur = (e) => {
     setFocused(false);
-    // If no value, ensure placeholder returns to original position
-    if (!ref.current || !ref.current.value) {
+
+    if (!ref.current?.value) {
       setHasValue(false);
     }
-    if (typeof inputProps.onBlur === 'function') {
-      inputProps.onBlur(e);
-    }
+
+    inputProps.onBlur?.(e);
   };
 
   // In the correspoding plain js file, the brwoser's autofill is detected by listening to 'animationstart' event with a specific animation name.
 
   // remove placeholder attribute from actual input to avoid duplicate text
-  const { placeholder: _ph, ...restProps } = inputProps;
-
-  const shrunken = hasValue || focused;
+  const { placeholder: ignoredPlaceholder, ...restProps } =
+    inputProps;
 
   return (
-    <div className={`floating-input-wrapper${placeholder ? ' has-placeholder' : ''}`} onClick={() => { if (ref.current) ref.current.focus(); }}>
+    <FloatingPlaceholderWrapper
+      placeholder={placeholder}
+      hasValue={hasValue}
+      focused={focused}
+      onClick={() => ref.current?.focus()}
+    >
       <Tag
         {...restProps}
         ref={ref}
@@ -221,10 +280,7 @@ const FloatingPlaceholderInput = ({ Tag = 'input', inputProps = {}, placeholder 
         onBlur={handleBlur}
         defaultValue={mutable ? defaultValue : undefined}
       />
-      {placeholder && (
-        <span className={`fb-placeholder ${shrunken ? 'shrunken' : ''}`}>{placeholder}</span>
-      )}
-    </div>
+    </FloatingPlaceholderWrapper>
   );
 };
 
