@@ -702,6 +702,7 @@ class InternationalPhoneNumber extends React.Component {
         props.defaultValue !== null
           ? String(props.defaultValue)
           : '',
+      focused: false,
     };
 
     this.phoneWrapper = React.createRef();
@@ -749,6 +750,18 @@ class InternationalPhoneNumber extends React.Component {
     );
   };
  */
+  handleFocus = () => {
+    this.setState({
+      focused: true,
+    });
+  };
+
+  handleBlur = () => {
+    this.setState({
+      focused: false,
+    });
+  };
+
   handleChange = (phone, metadata) => {
     const value = phone || '';
 
@@ -862,27 +875,44 @@ class InternationalPhoneNumber extends React.Component {
               .join(' ')}
           />
 
-          <div
-            ref={this.phoneWrapper}
-            className="rfb-international-phone"
+          <FloatingPlaceholderWrapper
+            placeholder={placeholder}
+            hasValue={this.state.value.length > 0}
+            focused={this.state.focused}
+            className="floating-international-phone"
+            onClick={() => {
+              const input =
+                this.phoneWrapper.current?.querySelector(
+                  'input[type="tel"]'
+                );
+
+              input?.focus();
+            }}
           >
-            <PhoneInput
-              key={`${countriesKey}-${defaultCountry}`}
-              defaultCountry={defaultCountry}
-              countries={countries}
-              value={value}
-              onChange={this.handleChange}
-              name={data.field_name}
-              required={data.required === true}
-              disabled={readOnly}
-              inputProps={{
-                'data-field-name': data.field_name,
-                'data-message-invalid-phone-number': data.message_invalid_phone_number,
-                autoComplete: 'tel',
-                placeholder: placeholder,
-              }}
-            />
-          </div>
+            <div
+              ref={this.phoneWrapper}
+              className="rfb-international-phone"
+            >
+              <PhoneInput
+                key={`${countriesKey}-${defaultCountry}`}
+                defaultCountry={defaultCountry}
+                countries={countries}
+                value={value}
+                onChange={this.handleChange}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                name={data.field_name}
+                required={data.required === true}
+                disabled={readOnly}
+                inputProps={{
+                  'data-field-name': data.field_name,
+                  'data-message-invalid-phone-number':
+                    data.message_invalid_phone_number,
+                  autoComplete: 'tel',
+                }}
+              />
+            </div>
+          </FloatingPlaceholderWrapper>
         </div>
       </div>
     );
