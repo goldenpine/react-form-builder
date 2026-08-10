@@ -1526,7 +1526,7 @@ class Download extends React.Component {
 class Camera extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { img: null, previewImg: null };
+    this.state = { img: null, previewImg: null, previewImgError: false };
   }
 
   displayImage = (e) => {
@@ -1536,14 +1536,26 @@ class Camera extends React.Component {
       self.setState({
         img: target.files[0],
         previewImg: URL.createObjectURL(target.files[0]),
+        previewImgError: false,
       });
     }
   };
+
+  handleImageError = () => {
+    if (this.state.previewImg) {
+      URL.revokeObjectURL(this.state.previewImg);
+    }
+
+    this.setState({
+      previewImgError: true,
+    });
+  };  
 
   clearImage = () => {
     this.setState({
       img: null,
       previewImg: null,
+      previewImgError: false,
     });
   };
 
@@ -1629,11 +1641,12 @@ class Camera extends React.Component {
                 <input
                   name={name}
                   type="file"
-                  accept="image/*"
-                  //capture="camera" // With this property, users on most mobiles can only take photo but no options to pick up a photo from gallery
+                  //accept="image/*" // With this property but without "capture", users on Samsung Galaxy can only pick up a photo from gallery but no options to take photo.
+                  //capture="camera" // With this property, users on Samsung Galaxy can only take photo but no options to pick up a photo from gallery
                   className="image-upload visually-hidden"
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
+                  data-unsupportedlabel={this.props.data.unsupported_image_message}
                   disabled={this.props.read_only}
                   id={name}
                 />
@@ -1647,12 +1660,20 @@ class Camera extends React.Component {
 
               {this.state.img && (
                 <div>
-                  <img
-                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
-                    src={this.state.previewImg}
-                    height="100"
-                    className="image-upload-preview"
-                  />
+                  {this.state.previewImgError ? (
+                    <div className="image-upload-error">
+                      {this.props.data.unsupported_image_message}
+                    </div>
+                  ) : (
+                    <img
+                      onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
+                      onError={this.handleImageError}
+                      src={this.state.previewImg}
+                      alt="Preview"
+                      height="100"
+                      className="image-upload-preview"
+                    />
+                  )}
                   <button className="btn btn-image-clear" onClick={this.clearImage}>
                     <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
                   </button>
@@ -1692,10 +1713,11 @@ class Camera extends React.Component {
                 <input
                   name={name}
                   type="file"
-                  accept="image/*"
+                  // accept="image/*"
                   className="visually-hidden"
                   onChange={this.displayImage}
                   data-clearlabel={this.props.data.label_after_photo_clear_icon}
+                  data-unsupportedlabel={this.props.data.unsupported_image_message}
                   disabled={this.props.read_only}
                   id={name}
                 />
@@ -1710,13 +1732,20 @@ class Camera extends React.Component {
               {/* Preview Section */}
               {this.state.img && (
                 <div>
-                  <img
-                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
-                    src={this.state.previewImg}
-                    className="image-upload-preview"
-                    alt="Preview"
-                    height="100"
-                  />
+                  {this.state.previewImgError ? (
+                    <div className="image-upload-error">
+                      {this.props.data.unsupported_image_message}
+                    </div>
+                  ) : (
+                    <img
+                      onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
+                      onError={this.handleImageError}
+                      src={this.state.previewImg}
+                      className="image-upload-preview"
+                      alt="Preview"
+                      height="100"
+                    />
+                  )}
                   <button className="btn btn-image-clear" onClick={this.clearImage}>
                     <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
                   </button>
@@ -1819,7 +1848,7 @@ class FileUpload extends React.Component {
                   <input
                     name={name}
                     type="file"
-                    accept={this.props.data.fileType || '*'}
+                    accept={this.props.data.fileType || undefined}
                     className="image-upload visually-hidden"
                     onChange={this.displayFileUpload}
                     data-clearlabel={this.props.data.label_after_file_clear_icon}

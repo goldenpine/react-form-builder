@@ -53,6 +53,8 @@
   "place-holder-display-message-under-file-icon" : "یک فایل را از رایانه یا دستگاه خود انتخاب کنید.",
   "display-label-after-file-clear-icon" : "نمایش برچسب پس از آیکون حذف فایل",
   "place-holder-display-label-after-file-clear-icon" : "حذف فایل",
+  "display-unsupported-image-message" : "نمایش پیام برای تصاویر پشتیبانی نشده",
+  "place-holder-unsupported-image-message" : "این قالب تصویر قابل پیش‌نمایش نیست. لطفاً تصویر دیگری انتخاب کنید.",
   "placeholder": "متن راهنما (در داخل فیلد ورودی نمایش داده می‌شود)",
   "label-hidden": "پنهان کردن برچسب",
   "conditional-logic": "منطق شرطی",

@@ -358,6 +358,7 @@ class Toolbar extends React.Component {
         label_after_camera_icon: intl.formatMessage({ id: 'place-holder-display-label-after-camera-icon' }),
         message_under_camera_icon: intl.formatMessage({ id: 'place-holder-display-message-under-camera-icon' }),
         label_after_photo_clear_icon: intl.formatMessage({ id: 'place-holder-display-label-after-photo-clear-icon' }),
+        unsupported_image_message: intl.formatMessage({ id: 'place-holder-unsupported-image-message' }),
       },
       {
         key: 'FileUpload',
@@ -470,6 +471,7 @@ class Toolbar extends React.Component {
       elementOptions.label_after_camera_icon = item.label_after_camera_icon;
       elementOptions.message_under_camera_icon = item.message_under_camera_icon;
       elementOptions.label_after_photo_clear_icon = item.label_after_photo_clear_icon;
+      elementOptions.unsupported_image_message = item.unsupported_image_message;
     }
 
     if (elementKey === 'FileUpload') {

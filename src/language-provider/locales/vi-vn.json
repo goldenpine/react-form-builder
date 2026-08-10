@@ -47,6 +47,8 @@
   "place-holder-display-message-under-camera-icon" : "Chọn một hình ảnh từ máy tính hoặc thiết bị của bạn.",
   "display-label-after-photo-clear-icon" : "Hiển thị nhãn sau biểu tượng xóa ảnh",
   "place-holder-display-label-after-photo-clear-icon" : "Xóa ảnh",
+  "display-unsupported-image-message" : "Hiển thị thông báo cho hình ảnh không được hỗ trợ",
+  "place-holder-unsupported-image-message" : "Định dạng hình ảnh này không thể xem trước. Vui lòng chọn một hình ảnh khác.",
   "display-label-after-file-icon" : "Hiển thị nhãn sau biểu tượng tập tin",
   "place-holder-display-label-after-file-icon" : "Tải tập tin lên",
   "display-message-under-file-icon" : "Hiển thị tin nhắn dưới biểu tượng tập tin",
