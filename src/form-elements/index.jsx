@@ -1533,6 +1533,9 @@ class Camera extends React.Component {
     const self = this;
     const target = e.target;
     if (target.files && target.files.length) {
+      // Keep a reference to the actual file input so an unsupported image
+      // can be removed from form submission while the error UI remains visible.
+      this.fileInput = target;      
       self.setState({
         img: target.files[0],
         previewImg: URL.createObjectURL(target.files[0]),
@@ -1545,13 +1548,22 @@ class Camera extends React.Component {
     if (this.state.previewImg) {
       URL.revokeObjectURL(this.state.previewImg);
     }
-
+    // Remove the unsupported file from the real input so it won't be submitted.
+    if (this.fileInput) {
+      this.fileInput.value = '';
+    }
+    
     this.setState({
       previewImgError: true,
     });
   };  
 
   clearImage = () => {
+
+    if (this.fileInput) {
+      this.fileInput.value = '';
+    }    
+
     this.setState({
       img: null,
       previewImg: null,
@@ -1595,7 +1607,8 @@ class Camera extends React.Component {
     const name = this.props.data.field_name;
     const labelHidden = this.props.data.labelHidden || false;
 
-    const fileInputStyle = this.state.img ? { display: 'none' } : null;
+    const fileInputStyle = this.state.img && !this.state.previewImgError
+                                   ? { display: 'none' } : null;
     if (this.props.data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
     }
@@ -1658,27 +1671,33 @@ class Camera extends React.Component {
                 </div>
               </div>
 
-              {this.state.img && (
+              {this.state.img && !this.state.previewImgError && (
                 <div>
-                  {this.state.previewImgError ? (
-                    <div className="image-upload-error">
-                      {this.props.data.unsupported_image_message}
-                    </div>
-                  ) : (
-                    <img
-                      onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
-                      onError={this.handleImageError}
-                      src={this.state.previewImg}
-                      alt="Preview"
-                      height="100"
-                      className="image-upload-preview"
-                    />
-                  )}
-                  <button className="btn btn-image-clear" onClick={this.clearImage}>
-                    <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
+                  <img
+                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
+                    onError={this.handleImageError}
+                    src={this.state.previewImg}
+                    alt="Preview"
+                    height="100"
+                    className="image-upload-preview"
+                  />
+
+                  <button
+                    className="btn btn-image-clear"
+                    onClick={this.clearImage}
+                  >
+                    <i className="fas fa-times"></i>{' '}
+                    {this.props.data.label_after_photo_clear_icon}
                   </button>
                 </div>
               )}
+
+              {this.state.previewImgError && (
+                <div className="image-upload-error text-danger small pt-2">
+                  {this.props.data.unsupported_image_message}
+                </div>
+              )}
+
             </div>
           )}
         </div>
@@ -1730,25 +1749,30 @@ class Camera extends React.Component {
               </div>
 
               {/* Preview Section */}
-              {this.state.img && (
+              {this.state.img && !this.state.previewImgError && (
                 <div>
-                  {this.state.previewImgError ? (
-                    <div className="image-upload-error">
-                      {this.props.data.unsupported_image_message}
-                    </div>
-                  ) : (
-                    <img
-                      onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
-                      onError={this.handleImageError}
-                      src={this.state.previewImg}
-                      className="image-upload-preview"
-                      alt="Preview"
-                      height="100"
-                    />
-                  )}
-                  <button className="btn btn-image-clear" onClick={this.clearImage}>
-                    <i className="fas fa-times"></i> {this.props.data.label_after_photo_clear_icon}
+                  <img
+                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
+                    onError={this.handleImageError}
+                    src={this.state.previewImg}
+                    className="image-upload-preview"
+                    alt="Preview"
+                    height="100"
+                  />
+
+                  <button
+                    className="btn btn-image-clear"
+                    onClick={this.clearImage}
+                  >
+                    <i className="fas fa-times"></i>{' '}
+                    {this.props.data.label_after_photo_clear_icon}
                   </button>
+                </div>
+              )}
+
+              {this.state.previewImgError && (
+                <div className="image-upload-error text-danger small pt-2">
+                  {this.props.data.unsupported_image_message}
                 </div>
               )}
             </div>
