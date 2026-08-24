@@ -32,6 +32,7 @@
   "description": "Description",
   "correct-answer" : "Correct Answer",
   "populate-options-from-api" : "Populate Options from API",
+  "options-tip": "Leave Value blank to auto-generate it from the name (spaces become '_'; emojis are supported).",
   "minimum-number-of-selections" : "The minimum number of options a customer must select",
   "populate" : "Populate",
   "pdf" : "PDF",

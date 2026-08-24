@@ -32,6 +32,7 @@
   "description": "Mô tả",
   "correct-answer": "Lựa chọn đúng",
   "populate-options-from-api": "Lấy dữ liệu từ API",
+  "options-tip": "Để trống Giá trị để tự động tạo từ tên (dấu cách được thay bằng '_'; hỗ trợ emoji).",
   "minimum-number-of-selections" : "Số lượng lựa chọn tối thiểu mà khách hàng phải chọn",
   "populate": "Thực hiện",
   "pdf" : "PDF",

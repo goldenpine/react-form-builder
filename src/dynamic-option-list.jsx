@@ -17,7 +17,7 @@
    }
 
    _setValue(text) {
-     return text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase();
+     return text.trim().replace(/\s+/g, '_').toLowerCase();;
    }
 
    editOption(option_index, e) {

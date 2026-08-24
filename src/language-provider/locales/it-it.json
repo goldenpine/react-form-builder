@@ -32,6 +32,7 @@
   "description": "Descrizione",
   "correct-answer" : "Risposta corretta",
   "populate-options-from-api" : "Popola opzione da API",
+  "options-tip" : "Lascia vuoto Valore per generarlo automaticamente dal nome (gli spazi diventano '_'; le emoji sono supportate).",
   "minimum-number-of-selections" : "Il numero minimo di opzioni che un cliente deve selezionare",
   "populate" : "Popola",
   "pdf" : "PDF",
