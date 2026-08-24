@@ -208,6 +208,8 @@ export default class FormElementsEdit extends React.Component {
                               || this.props.element.element === 'EmailInput' || this.props.element.element === 'NumberInput'
                               || this.props.element.element === 'PhoneNumber' || this.props.element.element === 'InternationalPhoneNumber'
                               || this.props.element.element === 'SensitiveInput';
+    const canUseEmojis = ! ( this.props.element.element === 'TwoColumnRow' || this.props.element.element === 'ThreeColumnRow' || this.props.element.element === 'MultiColumnRow'
+                          || this.props.element.element === 'Image' );
 
     const this_files = this.props.files.length ? this.props.files : [];
     if (this_files.length < 1 || (this_files.length > 0 && this_files[0].id !== '')) {
@@ -224,9 +226,13 @@ export default class FormElementsEdit extends React.Component {
 
     return (
       <div>
-        <div className="clearfix">
-          <h4 className="float-start">{this.props.element.text}</h4>
-          <i className="float-end fas fa-times dismiss-edit" onClick={this.props.manualEditModeOff}></i>
+        <div className="d-flex align-items-center">
+          <h4 className="mb-0">{this.props.element.text}</h4>
+          { canUseEmojis && 
+            <span className="text-muted medium ms-2">
+              <IntlMessages id="use-emojis" />
+            </span>   }       
+          <i className="fas fa-times dismiss-edit ms-auto" onClick={this.props.manualEditModeOff}></i>
         </div>
         { this.props.element.hasOwnProperty('content') &&
           <div className="mb-3">

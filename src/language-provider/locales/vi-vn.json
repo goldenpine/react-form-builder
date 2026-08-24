@@ -1,4 +1,5 @@
 {
+  "use-emojis": "Nhấn Win + . hoặc Ctrl + Cmd + Space để chọn emoji!",
   "display-label": "Nhãn hiển thị (không được để trống, phải là duy nhất ngay cả khi bị ẩn)",
   "choose-file": "Chọn tệp tin",
   "choose-file-type": "Chọn loại tệp",
