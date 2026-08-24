@@ -1,28 +1,34 @@
-input[type="date"]:before {
-  content: attr(placeholder);
-  color: #aaa;
-  margin-right: 0.5em;
-}
-
-input[type="date"] {
-  width: 200px;
-}
-.validation-error {
-  position: fixed;
-  width: 100%;
-  top: 0;
-  left: 0;
-  margin: 0;
-  z-index: 99999999;
-  ul {
-    width: auto;
+.rfb-item {
+  input[type="date"]:before {
+    content: attr(placeholder);
+    color: #aaa;
+    margin-right: 0.5em;
   }
-  .dismiss-modal-button {
-    margin-top: 10px;
+
+  input[type="date"] {
+    width: 200px;
   }
 }
 
-  /* Floating placeholder styles for inputs */
+.react-form-builder-form {
+  .validation-error {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    z-index: 99999999;
+    ul {
+      width: auto;
+    }
+    .dismiss-modal-button {
+      margin-top: 10px;
+    }
+  }
+}
+
+.rfb-item {
+/* Floating placeholder styles for inputs */
   .floating-input-wrapper{
     position:relative;
   }
@@ -72,7 +78,8 @@ input[type="date"] {
   .sensitive-wrapper input.form-control{
     padding-right: 2.5rem;
   }
-  
+}
+
 .react-form-builder-form {
   position: relative;
 
@@ -130,237 +137,239 @@ input[type="date"] {
   }
 }
 
-// Styles for 'Dropzone' layout of the image upload component
-.image-upload-container {
-  .upload-card {
-    background: #ffffff;
-    border: 1px solid #ccc;
-    padding: 20px 20px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
+.rfb-item {
+  // Styles for 'Dropzone' layout of the image upload component
+  .image-upload-container {
+    .upload-card {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 20px 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+
+    .upload-card-content {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      color: #666;
+      //margin-bottom: 5px;
+    }
+
+    .upload-text {
+      // Use the default font size and color.
+      // font-size: 16px;
+      // color: #333;
+      font-weight: 300; // Consistent with the one on 'Standard' layout. Lighter font weight for better aesthetics.
+      //margin-bottom: 15px;
+    }
+
+    .btn-browse {
+      background-color: #333;
+      color: white;
+      padding: 10px 25px;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      border: none;
+      // font-size: 14px;
+    }
+
+    .btn-browse:hover {
+      background-color: #908f8f;
+    }
   }
 
-  .upload-card-content {
-    cursor: pointer;
+  // International phone number styles
+  .rfb-international-phone {
+    //--react-international-phone-height: 38px;
+    // Using the same height as Bootstrap 5 uses instead of the original fixed value.
+    // Also covering the floading placeholder case by using the same padding values 
+    // as Bootstrap 5 uses for .form-control.
+    --react-international-phone-height: calc(1.5em + 0.75rem + 2px); 
+    --rfb-floating-padding-top: 1.5rem;
+    --rfb-input-padding-bottom: 0.375rem;
+    // Line height + floating top padding + bottom padding + borders
+    --rfb-floating-height:
+      calc(
+        1.5em +
+        var(--rfb-floating-padding-top) +
+        var(--rfb-input-padding-bottom) + 2px
+      );  
+    
+    // Using Bootstrap 5 variables for consistency with other elements
+    //--react-international-phone-border-radius: 0.375rem;
+    //--react-international-phone-border-color: #ced4da;
+    //--react-international-phone-background-color: #fff;
+    //--react-international-phone-text-color: #212529;
+    --react-international-phone-border-radius: var(--bs-border-radius);
+    --react-international-phone-border-color: var(--bs-border-color);
+    --react-international-phone-background-color: var(--bs-body-bg);
+    --react-international-phone-text-color: var(--bs-body-color);
+
+    --react-international-phone-country-selector-background-color: #fff;
+    --react-international-phone-country-selector-background-color-hover: #f8f9fa;
+  }
+
+  .rfb-international-phone .react-international-phone-input-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
     width: 100%;
   }
 
-  .upload-icon {
-    font-size: 40px;
-    color: #666;
-    //margin-bottom: 5px;
+  .rfb-international-phone .react-international-phone-country-selector {
+    position: relative;
   }
 
-  .upload-text {
-    // Use the default font size and color.
-    // font-size: 16px;
-    // color: #333;
-    font-weight: 300; // Consistent with the one on 'Standard' layout. Lighter font weight for better aesthetics.
-    //margin-bottom: 15px;
-  }
-
-  .btn-browse {
-    background-color: #333;
-    color: white;
-    padding: 10px 25px;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    border: none;
-    // font-size: 14px;
-  }
-
-  .btn-browse:hover {
-    background-color: #908f8f;
-  }
-}
-
-// International phone number styles
-.rfb-international-phone {
-  //--react-international-phone-height: 38px;
-  // Using the same height as Bootstrap 5 uses instead of the original fixed value.
-  // Also covering the floading placeholder case by using the same padding values 
-  // as Bootstrap 5 uses for .form-control.
-  --react-international-phone-height: calc(1.5em + 0.75rem + 1.6px); 
-  --rfb-floating-padding-top: 1.5rem;
-  --rfb-input-padding-bottom: 0.375rem;
-  // Line height + floating top padding + bottom padding + borders
-  --rfb-floating-height:
-    calc(
-      1.5em +
-      var(--rfb-floating-padding-top) +
-      var(--rfb-input-padding-bottom) + 1.6px
-    );  
-  
-  // Using Bootstrap 5 variables for consistency with other elements
-  //--react-international-phone-border-radius: 0.375rem;
-  //--react-international-phone-border-color: #ced4da;
-  //--react-international-phone-background-color: #fff;
-  //--react-international-phone-text-color: #212529;
-  --react-international-phone-border-radius: var(--bs-border-radius);
-  --react-international-phone-border-color: var(--bs-border-color);
-  --react-international-phone-background-color: var(--bs-body-bg);
-  --react-international-phone-text-color: var(--bs-body-color);
-
-  --react-international-phone-country-selector-background-color: #fff;
-  --react-international-phone-country-selector-background-color-hover: #f8f9fa;
-}
-
-.rfb-international-phone .react-international-phone-input-container {
-  display: flex;
-  width: 100%;
-}
-
-.rfb-international-phone .react-international-phone-country-selector {
-  position: relative;
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-button {
-  height: 100%;
-  padding: 0 0.75rem;
-  border: 1px solid
-    var(--react-international-phone-border-color);
-  // border-right: 0;
-  border-radius:
-    var(--react-international-phone-border-radius)
-    0
-    0
-    var(--react-international-phone-border-radius);
-  background-color:
-    var(--react-international-phone-country-selector-background-color);
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-button:hover {
-  background-color:
-    var(
-      --react-international-phone-country-selector-background-color-hover
-    );
-}
-
-.rfb-international-phone .react-international-phone-input {
-  display: block;
-  flex: 1 1 auto;
-  width: 1%;
-  min-width: 0;
-  height: var(--react-international-phone-height);
-  padding: 0.375rem 0.75rem;
-  border: 1px solid
-    var(--react-international-phone-border-color);
-  border-radius:
-    0
-    var(--react-international-phone-border-radius)
-    var(--react-international-phone-border-radius)
-    0;
-  background-color:
-    var(--react-international-phone-background-color);
-  color: var(--react-international-phone-text-color);
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.rfb-international-phone
-  .react-international-phone-input:focus {
-  z-index: 2;
-  border-color: #86b7fe;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem
-    rgba(13, 110, 253, 0.25);
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-dropdown {
-  position: absolute;
-  z-index: 1050;
-  max-height: 300px;
-  overflow-y: auto;
-  margin: 0;
-  padding: 0.25rem 0;
-  border: 1px solid #ced4da;
-  border-radius: 0.375rem;
-  background: #fff;
-  box-shadow: 0 0.5rem 1rem
-    rgba(0, 0, 0, 0.15);
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-dropdown__list-item {
-  display: flex;
-  align-items: center;
-  padding: 0.4rem 0.75rem;
-  cursor: pointer;
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-dropdown__list-item:hover,
-.rfb-international-phone
-  .react-international-phone-country-selector-dropdown__list-item--selected {
-  background-color: #f0f0f0;
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-dropdown__list-item-country-name {
-  margin-left: 0.5rem;
-}
-
-.rfb-international-phone
-  .react-international-phone-country-selector-dropdown__list-item-dial-code {
-  margin-left: auto;
-  padding-left: 1rem;
-  color: #6c757d;
-}
-
-/* 
- * International phone input styles for disabled state
- * 
- * make the disabled input and country selector button look like 
- * other elements, which input has class "form-control". 
- * --bs-secondary-bg is defined in bootstrap.css.
- */
-.rfb-international-phone .react-international-phone-input:disabled,
-.rfb-international-phone .react-international-phone-country-selector-button:disabled {
-  background-color: var(--bs-secondary-bg);
-}
-
-// International phone input styles for floating placeholder
-.floating-international-phone .fb-placeholder {
-  left: 98px;
-  z-index: 3;
-}
-
-.floating-international-phone
-  .fb-placeholder.shrunken {
-  left: 98px;
-}
- 
-.floating-input-wrapper.has-placeholder
-  .rfb-international-phone {
-  --react-international-phone-height: var(--rfb-floating-height);
-}
-/* Make the flag emoji bigger when the input has a placeholder since the input is taller */
-.floating-input-wrapper.has-placeholder
   .rfb-international-phone
-  .react-international-phone-flag-emoji {
-  width: 40px;
-  height: 40px;
-}
-.floating-input-wrapper.has-placeholder
+    .react-international-phone-country-selector-button {
+    height: 100%;
+    padding: 0 0.75rem;
+    border: 1px solid
+      var(--react-international-phone-border-color);
+    // border-right: 0;
+    border-radius:
+      var(--react-international-phone-border-radius)
+      0
+      0
+      var(--react-international-phone-border-radius);
+    background-color:
+      var(--react-international-phone-country-selector-background-color);
+  }
+
   .rfb-international-phone
-  .react-international-phone-input {
-  padding-top: var(--rfb-floating-padding-top);
-  padding-bottom: var(--rfb-input-padding-bottom);
-}
-.floating-input-wrapper.has-placeholder
+    .react-international-phone-country-selector-button:hover {
+    background-color:
+      var(
+        --react-international-phone-country-selector-background-color-hover
+      );
+  }
+
+  .rfb-international-phone .react-international-phone-input {
+    display: block;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    height: var(--react-international-phone-height);
+    padding: 0.375rem 0.75rem;
+    border: 1px solid
+      var(--react-international-phone-border-color);
+    border-radius:
+      0
+      var(--react-international-phone-border-radius)
+      var(--react-international-phone-border-radius)
+      0;
+    background-color:
+      var(--react-international-phone-background-color);
+    color: var(--react-international-phone-text-color);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .rfb-international-phone
+    .react-international-phone-input:focus {
+    z-index: 2;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem
+      rgba(13, 110, 253, 0.25);
+  }
+
+  .rfb-international-phone
+    .react-international-phone-country-selector-dropdown {
+    position: absolute;
+    z-index: 1050;
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0.25rem 0;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    background: #fff;
+    box-shadow: 0 0.5rem 1rem
+      rgba(0, 0, 0, 0.15);
+  }
+
   .rfb-international-phone
     .react-international-phone-country-selector-dropdown__list-item {
-  padding: 0.2rem 0.75rem;
+    display: flex;
+    align-items: center;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+  }
+
+  .rfb-international-phone
+    .react-international-phone-country-selector-dropdown__list-item:hover,
+  .rfb-international-phone
+    .react-international-phone-country-selector-dropdown__list-item--selected {
+    background-color: #f0f0f0;
+  }
+
+  .rfb-international-phone
+    .react-international-phone-country-selector-dropdown__list-item-country-name {
+    margin-left: 0.5rem;
+  }
+
+  .rfb-international-phone
+    .react-international-phone-country-selector-dropdown__list-item-dial-code {
+    margin-left: auto;
+    padding-left: 1rem;
+    color: #6c757d;
+  }
+
+  /* 
+  * International phone input styles for disabled state
+  * 
+  * make the disabled input and country selector button look like 
+  * other elements, which input has class "form-control". 
+  * --bs-secondary-bg is defined in bootstrap.css.
+  */
+  .rfb-international-phone .react-international-phone-input:disabled,
+  .rfb-international-phone .react-international-phone-country-selector-button:disabled {
+    background-color: var(--bs-secondary-bg);
+  }
+
+  // International phone input styles for floating placeholder
+  .floating-international-phone .fb-placeholder {
+    left: 98px;
+    z-index: 3;
+  }
+
+  .floating-international-phone
+    .fb-placeholder.shrunken {
+    left: 98px;
+  }
+  
+  .floating-input-wrapper.has-placeholder
+    .rfb-international-phone {
+    --react-international-phone-height: var(--rfb-floating-height);
+  }
+  /* Make the flag emoji bigger when the input has a placeholder since the input is taller */
+  .floating-input-wrapper.has-placeholder
+    .rfb-international-phone
+    .react-international-phone-flag-emoji {
+    width: 40px;
+    height: 40px;
+  }
+  .floating-input-wrapper.has-placeholder
+    .rfb-international-phone
+    .react-international-phone-input {
+    padding-top: var(--rfb-floating-padding-top);
+    padding-bottom: var(--rfb-input-padding-bottom);
+  }
+  .floating-input-wrapper.has-placeholder
+    .rfb-international-phone
+      .react-international-phone-country-selector-dropdown__list-item {
+    padding: 0.2rem 0.75rem;
+  }
 }

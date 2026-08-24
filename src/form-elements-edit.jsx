@@ -545,6 +545,10 @@ export default class FormElementsEdit extends React.Component {
               <label className="control-label" htmlFor="LabelAfterPhotoClearIcon"><IntlMessages id="display-label-after-photo-clear-icon" />:</label>
               <input id="LabelAfterPhotoClearIcon" type="text" className="form-control" defaultValue={this.props.element.label_after_photo_clear_icon} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'label_after_photo_clear_icon', 'value')} />
             </div>
+            <div className="mb-3">
+              <label className="control-label" htmlFor="UnsupportedImageMessage"><IntlMessages id="display-unsupported-image-message" />:</label>
+              <input id="UnsupportedImageMessage" type="text" className="form-control" defaultValue={this.props.element.unsupported_image_message} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'unsupported_image_message', 'value')} />
+            </div>
           </div>
         )}
         { canHaveImageSize &&
@@ -606,15 +610,16 @@ export default class FormElementsEdit extends React.Component {
               <select
                 id='fileType'
                 className="form-control"
+                defaultValue={this.props.element.fileType}
                 onBlur={this.updateElement.bind(this)}
                 onChange={this.editElementProp.bind(this, 'fileType', 'value')}
               >
                 {[
                   {
-                    type: 'image, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, video/mp4,video/x-m4v,video/*',
-                    typeName: 'All File Type',
+                    type: '',
+                    typeName: 'All File Types',
                   },
-                  { type: 'image', typeName: 'Image' },
+                  { type: 'image/*', typeName: 'Image' },
                   { type: 'application/pdf', typeName: 'PDF' },
                   {
                     type: 'application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document',

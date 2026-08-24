@@ -47,6 +47,8 @@
   "place-holder-display-message-under-camera-icon" : "Seleziona un'immagine dal tuo computer o dispositivo.",
   "display-label-after-photo-clear-icon" : "Mostra etichetta dopo l'icona di cancellazione della foto",
   "place-holder-display-label-after-photo-clear-icon" : "Cancella foto",
+  "display-unsupported-image-message" : "Mostra messaggio per immagini non supportate",
+  "place-holder-unsupported-image-message" : "Questo formato immagine non può essere visualizzato in anteprima. Seleziona un'immagine diversa.",
   "display-label-after-file-icon" : "Mostra etichetta dopo l'icona del file",
   "place-holder-display-label-after-file-icon" : "Carica file",
   "display-message-under-file-icon" : "Mostra messaggio sotto l'icona del file",

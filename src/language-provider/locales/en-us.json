@@ -47,6 +47,8 @@
   "place-holder-display-message-under-camera-icon" : "Select an image from your computer or device.",
   "display-label-after-photo-clear-icon" : "Display label after photo clear icon",
   "place-holder-display-label-after-photo-clear-icon" : "Clear Photo",
+  "display-unsupported-image-message" : "Display message for unsupported images",
+  "place-holder-unsupported-image-message" : "This image format cannot be previewed. Please select a different image.",
   "display-label-after-file-icon" : "Display label after file icon",
   "place-holder-display-label-after-file-icon" : "Upload File",
   "display-message-under-file-icon" : "Display message under file icon",
