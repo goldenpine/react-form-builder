@@ -224,9 +224,12 @@ export default class FormElementsEdit extends React.Component {
 
     return (
       <div>
-        <div className="clearfix">
-          <h4 className="float-start">{this.props.element.text}</h4>
-          <i className="float-end fas fa-times dismiss-edit" onClick={this.props.manualEditModeOff}></i>
+        <div className="d-flex align-items-center">
+          <h4 className="mb-0">{this.props.element.text}</h4>
+          <span className="form-text text-muted ms-2">
+            <IntlMessages id="use-emojis" />
+          </span>
+          <i className="fas fa-times dismiss-edit ms-auto" onClick={this.props.manualEditModeOff}></i>
         </div>
         { this.props.element.hasOwnProperty('content') &&
           <div className="mb-3">
@@ -760,7 +763,7 @@ export default class FormElementsEdit extends React.Component {
           <>
             {canHaveOptionValue && (
               <p className="form-text text-muted">
-                Leave the <strong>Value</strong> blank to automatically generate it from the name (spaces are replaced with "_").
+                <IntlMessages id="options-tip"></IntlMessages>
               </p>
             )}
             <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}

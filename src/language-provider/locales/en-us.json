@@ -1,4 +1,5 @@
 {
+  "use-emojis": "Press Win + . or Ctrl + Cmd + Space for emojis!",
   "display-label": "Display Label (cannot be empty, must be unique even if hidden)",
   "choose-file": "Choose file",
   "choose-file-type": "Choose file type",
@@ -31,6 +32,7 @@
   "description": "Description",
   "correct-answer" : "Correct Answer",
   "populate-options-from-api" : "Populate Options from API",
+  "options-tip": "Leave Value blank to auto-generate it from the name (spaces become '_'; emojis are supported).",
   "minimum-number-of-selections" : "The minimum number of options a customer must select",
   "populate" : "Populate",
   "pdf" : "PDF",
