@@ -226,7 +226,7 @@ export default class FormElementsEdit extends React.Component {
       <div>
         <div className="d-flex align-items-center">
           <h4 className="mb-0">{this.props.element.text}</h4>
-          <span className="text-muted medium ms-2">
+          <span className="form-text text-muted ms-2">
             <IntlMessages id="use-emojis" />
           </span>
           <i className="fas fa-times dismiss-edit ms-auto" onClick={this.props.manualEditModeOff}></i>
@@ -762,7 +762,7 @@ export default class FormElementsEdit extends React.Component {
         { this.props.element.hasOwnProperty('options') && (
           <>
             {canHaveOptionValue && (
-              <p className="medium text-muted">
+              <p className="form-text text-muted">
                 <IntlMessages id="options-tip"></IntlMessages>
               </p>
             )}
