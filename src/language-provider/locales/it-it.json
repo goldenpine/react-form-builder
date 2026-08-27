@@ -75,6 +75,8 @@
   "options" : "Opzioni",
   "value" : "Valore",
   "correct" : "Corretto",
+  "default" : "Predefinito",
+  "clear" : "Cancella",
 
   "dismiss" : "Scarta",
 

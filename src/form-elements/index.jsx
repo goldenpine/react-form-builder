@@ -1355,6 +1355,8 @@ class RadioButtons extends React.Component {
                 self.props.defaultValue !== undefined &&
                 (self.props.defaultValue.indexOf(option.key) > -1 ||
                   self.props.defaultValue.indexOf(option.value) > -1);
+            } else { // Then on builder canvas, it can mark the default one whenever users set/change the default.
+                props.checked = option.default === true;
             }
             if (this.props.read_only) {
               props.disabled = 'disabled';

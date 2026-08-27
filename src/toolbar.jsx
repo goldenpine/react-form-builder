@@ -154,6 +154,7 @@ class Toolbar extends React.Component {
       {
         key: 'RadioButtons',
         canHaveAnswer: true,
+        canHaveDefault: true,
         name: intl.formatMessage({ id: 'multiple-choice' }),
         icon: 'far fa-dot-circle',
         label: intl.formatMessage({ id: 'place-holder-label' }),
@@ -427,6 +428,7 @@ class Toolbar extends React.Component {
     }
     elementOptions.canHaveOptionCorrect = item.canHaveOptionCorrect !== false;
     elementOptions.canHaveOptionValue = item.canHaveOptionValue !== false;
+    elementOptions.canHaveOptionDefault = item.canHaveDefault == true; //Only implemented on Radio Buttons, so by default it's not enabled for those options elements.
     elementOptions.canPopulateFromApi = item.canPopulateFromApi !== false;
 
     if (item.class_name) {

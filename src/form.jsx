@@ -95,7 +95,15 @@ class ReactForm extends React.Component {
         defaultChecked.push(option.key);
       }
     });
-    return defaultChecked;
+    if (defaultChecked.length > 0) {
+      return defaultChecked;
+    }
+
+    // Add the below code to support user defined default value. Currently only Radio Buttons support this feature.
+    const optionDefaults = item.options
+      .filter(option => option.default === true)
+      .map(option => option.key);
+    return optionDefaults;
   }
 
   _getItemValue(item, ref, trimValue) {
@@ -458,7 +466,9 @@ class ReactForm extends React.Component {
       key={`form_${item.id}`}
       data={item}
       read_only={this.props.read_only}
-      defaultValue={this._getDefaultValue(item)}
+      defaultValue={item.element === 'RadioButtons'
+        ? this._optionsDefaultValue(item)
+        : this._getDefaultValue(item)}
       html_copy_mode={this.props.html_copy_mode}
       />);
   }
