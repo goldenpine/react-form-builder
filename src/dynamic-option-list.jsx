@@ -54,6 +54,28 @@
      this.props.updateElement.call(this.props.preview, this_element);
    }
 
+   editOptionDefault(option_index) {
+     const this_element = this.state.element;
+     this_element.options = this_element.options.map((option, index) => ({
+       ...option,
+       default: index === option_index,
+     }));
+     this.setState({ element: this_element });
+     this.props.updateElement.call(this.props.preview, this_element);
+   }
+
+   clearOptionDefault() {
+      const this_element = this.state.element;
+
+      this_element.options = this_element.options.map(option => ({
+        ...option,
+        default: false,
+      }));
+
+      this.setState({ element: this_element });
+      this.props.updateElement.call(this.props.preview, this_element);
+   }
+
    updateOption() {
      const this_element = this.state.element;
      // to prevent ajax calls with no change
@@ -85,9 +107,23 @@
          <ul>
            <li>
              <div className="row">
-               <div className="col-sm-6"><b><IntlMessages id='options' /></b></div>
+               <div className="col-sm-5"><b><IntlMessages id='options' /></b></div>
                { this.props.canHaveOptionValue &&
                <div className="col-sm-2"><b><IntlMessages id='value' /></b></div> }
+               { this.props.canHaveOptionDefault &&
+               <div className="col-sm-1"><b><IntlMessages id='default' /></b>
+                  {this.state.element.options.some(
+                    option => option.default === true
+                    ) && (
+                      <button
+                          type="button"
+                          className="btn btn-link btn-sm p-0 ms-1"
+                          onClick={this.clearOptionDefault.bind(this)}
+                        >
+                          <IntlMessages id='clear' />
+                      </button>
+                  )}
+               </div> }
                { this.props.canHaveOptionValue && this.props.canHaveOptionCorrect &&
                <div className="col-sm-4"><b><IntlMessages id='correct' /></b></div> }
              </div>
@@ -99,16 +135,20 @@
                return (
                  <li className="clearfix" key={this_key}>
                    <div className="row">
-                     <div className="col-sm-6">
+                     <div className="col-sm-5">
                        <input tabIndex={index + 1} className="form-control" style={{ width: '100%' }} type="text" name={`text_${index}`} placeholder="Option text" value={option.text} onBlur={this.updateOption.bind(this)} onChange={this.editOption.bind(this, index)} />
                      </div>
                      { this.props.canHaveOptionValue &&
                      <div className="col-sm-2">
                        <input className="form-control" type="text" name={`value_${index}`} value={val} onChange={this.editValue.bind(this, index)} />
                      </div> }
+                     { this.props.canHaveOptionDefault &&
+                     <div className="col-sm-1">
+                       <input className="form-check-input" type="radio" name="default-option" onChange={this.editOptionDefault.bind(this, index)} checked={option.default === true} />
+                     </div> }
                      { this.props.canHaveOptionValue && this.props.canHaveOptionCorrect &&
                      <div className="col-sm-1">
-                       <input className="form-control" type="checkbox" value="1" onChange={this.editOptionCorrect.bind(this, index)} checked={option.hasOwnProperty('correct')} />
+                       <input className="form-check-input" type="checkbox" value="1" onChange={this.editOptionCorrect.bind(this, index)} checked={option.hasOwnProperty('correct')} />
                      </div> }
                      <div className="col-sm-3">
                        <div className="dynamic-options-actions-buttons">

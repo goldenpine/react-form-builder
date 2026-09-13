@@ -75,6 +75,8 @@
   "options" : "Tùy chọn",
   "value" : "Giá trị",
   "correct" : "Đúng",
+  "default" : "Mặc định",
+  "clear" : "Xóa",
 
   "dismiss" : "Bỏ qua",
 

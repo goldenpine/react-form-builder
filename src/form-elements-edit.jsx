@@ -200,7 +200,7 @@ export default class FormElementsEdit extends React.Component {
     const this_checked_alternate_form = this.props.element.hasOwnProperty('alternateForm') ? this.props.element.alternateForm : false;
 
     const {
-      canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue,
+      canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue, canHaveOptionDefault,
     } = this.props.element;
     const canHaveImageSize = (this.state.element.element === 'Image' || this.state.element.element === 'Camera');
     const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
@@ -768,6 +768,7 @@ export default class FormElementsEdit extends React.Component {
             )}
             <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}
               canHaveOptionCorrect={canHaveOptionCorrect}
+              canHaveOptionDefault={canHaveOptionDefault}
               canHaveOptionValue={canHaveOptionValue}
               data={this.props.preview.state.data}
               updateElement={this.props.updateElement}

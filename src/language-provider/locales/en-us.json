@@ -75,6 +75,8 @@
   "options" : "Options",
   "value" : "Value",
   "correct" : "Correct",
+  "default" : "Default",
+  "clear" : "Clear",
 
   "dismiss" : "Dismiss",
 
