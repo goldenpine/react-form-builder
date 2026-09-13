@@ -28,6 +28,17 @@ const phoneCountryOptions = defaultCountries
   })
   .sort((a, b) => a.name.localeCompare(b.name));
 
+const defaultOutlinedButtonStyles = {
+  color: '#0d6efd',
+  borderColor: '#0d6efd',
+  background: '#fff',
+  activeColor: '#fff',
+  activeBackground: '#0d6efd',
+  activeBorderColor: '#0d6efd',
+  buttonWidth: 'auto',
+  borderRadius: '12px',
+};
+
 const toolbar = {
   options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
   inline: {
@@ -77,6 +88,41 @@ export default class FormElementsEdit extends React.Component {
       if (targProperty === 'checked') { this.updateElement(); }
     });
   }
+
+  handleOutlinedChange = (e) => {
+    const this_element = this.state.element;
+    this_element.outlined = e.target.checked;
+
+    if (this_element.outlined) {
+      this_element.outlinedButtonStyles = {
+        ...defaultOutlinedButtonStyles,
+        ...(this_element.outlinedButtonStyles || {}),
+      };
+    }
+
+    this.setState({
+      element: this_element,
+      dirty: true,
+    }, () => {
+      this.updateElement();
+    });
+  };
+
+  handleOutlinedStyleChange = (property, e) => {
+    const this_element = this.state.element;
+    this_element.outlinedButtonStyles = {
+      ...defaultOutlinedButtonStyles,
+      ...(this_element.outlinedButtonStyles || {}),
+      [property]: property === 'borderRadius' ? `${e.target.value}px` : e.target.value,
+    };
+
+    this.setState({
+      element: this_element,
+      dirty: true,
+    }, () => {
+      this.updateElement();
+    });
+  };
 
   // Instead of using editElementProp for the camera layout change, we have a separate handler to immediately update the element on change without waiting for blur, as it's a radio button and we want the change to be reflected immediately in the UI.
   handleUploadLayoutChange = (e) => {
@@ -193,6 +239,11 @@ export default class FormElementsEdit extends React.Component {
     const this_show_time_select_only = this.props.element.hasOwnProperty('showTimeSelectOnly') ? this.props.element.showTimeSelectOnly : false;
     const this_show_time_input = this.props.element.hasOwnProperty('showTimeInput') ? this.props.element.showTimeInput : false;
     const this_checked_inline = this.props.element.hasOwnProperty('inline') ? this.props.element.inline : false;
+    const this_checked_outlined = this.props.element.hasOwnProperty('outlined') ? this.props.element.outlined : false;
+    const outlinedButtonStyles = {
+      ...defaultOutlinedButtonStyles,
+      ...(this.props.element.outlinedButtonStyles || {}),
+    };
     const this_checked_bold = this.props.element.hasOwnProperty('bold') ? this.props.element.bold : false;
     const this_checked_italic = this.props.element.hasOwnProperty('italic') ? this.props.element.italic : false;
     const this_checked_center = this.props.element.hasOwnProperty('center') ? this.props.element.center : false;
@@ -200,7 +251,7 @@ export default class FormElementsEdit extends React.Component {
     const this_checked_alternate_form = this.props.element.hasOwnProperty('alternateForm') ? this.props.element.alternateForm : false;
 
     const {
-      canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue, canHaveOptionDefault,
+      canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOutlined, canHaveOptionCorrect, canHaveOptionValue, canHaveOptionDefault,
     } = this.props.element;
     const canHaveImageSize = (this.state.element.element === 'Image' || this.state.element.element === 'Camera');
     const canHaveUploadLayout = ( this.state.element.element === 'Camera' || this.state.element.element === 'FileUpload' );
@@ -362,6 +413,71 @@ export default class FormElementsEdit extends React.Component {
                 <label className="form-check-label" htmlFor="display-horizontal">
                 <IntlMessages id="display-horizontal" />
                 </label>
+              </div>
+            }
+            { this.state.element.element === 'RadioButtons' && canHaveOutlined &&
+              <div className="form-check">
+                <input id="outlined-radio-buttons" className="form-check-input" type="checkbox" checked={this_checked_outlined} value={true} onChange={this.handleOutlinedChange} />
+                <label className="form-check-label" htmlFor="outlined-radio-buttons">
+                <IntlMessages id="outlined-radio-buttons" />
+                </label>
+              </div>
+            }
+            { this.state.element.element === 'RadioButtons' && canHaveOutlined && this_checked_outlined &&
+              <div className="ms-4 mb-3">
+                <div className="row g-2">
+                  {[
+                    ['color', 'Text color'],
+                    ['borderColor', 'Border color'],
+                    ['background', 'Background color'],
+                    ['activeColor', 'Active text color'],
+                    ['activeBackground', 'Active background'],
+                    ['activeBorderColor', 'Active border color'],
+                  ].map(([property, label]) => (
+                    <div className="col-sm-6" key={property}>
+                      <label className="form-label" htmlFor={`radio-button-${property}`}>
+                        {label}
+                      </label>
+                      <input
+                        id={`radio-button-${property}`}
+                        type="color"
+                        className="form-control form-control-color"
+                        value={outlinedButtonStyles[property]}
+                        title={label}
+                        onChange={this.handleOutlinedStyleChange.bind(this, property)}
+                      />
+                    </div>
+                  ))}
+                  <div className="col-sm-6">
+                    <label className="form-label" htmlFor="radio-button-width">
+                      Button width
+                    </label>
+                    <select
+                      id="radio-button-width"
+                      className="form-control"
+                      value={outlinedButtonStyles.buttonWidth}
+                      onChange={this.handleOutlinedStyleChange.bind(this, 'buttonWidth')}
+                    >
+                      <option value="auto">Auto</option>
+                      <option value="equal">Equal</option>
+                      <option value="full">Full width</option>
+                    </select>
+                  </div>
+                  <div className="col-sm-6">
+                    <label className="form-label" htmlFor="radio-button-border-radius">
+                      Border radius (px)
+                    </label>
+                    <input
+                      id="radio-button-border-radius"
+                      type="number"
+                      min="0"
+                      step="1"
+                      className="form-control"
+                      value={parseInt(outlinedButtonStyles.borderRadius, 10) || 0}
+                      onChange={this.handleOutlinedStyleChange.bind(this, 'borderRadius')}
+                    />
+                  </div>
+                </div>
               </div>
             }
           </div>

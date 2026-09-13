@@ -1320,6 +1320,18 @@ class RadioButtons extends React.Component {
   render() {
     const self = this;
     const labelHidden = this.props.data.labelHidden || false;
+    const outlined = this.props.data.outlined || false;
+    const outlinedButtonStyles = this.props.data.outlinedButtonStyles || {};
+    const buttonWidth = outlinedButtonStyles.buttonWidth;
+    const outlinedGroupStyle = outlined && buttonWidth !== 'auto' ? {
+      display: buttonWidth === 'equal' ? 'grid' : 'flex',
+      flexDirection: buttonWidth === 'full' ? 'column' : undefined,
+      gap: '0.5rem',
+      gridTemplateColumns: buttonWidth === 'equal'
+        ? `repeat(${this.props.data.options.length}, minmax(0, 1fr))`
+        : undefined,
+      width: '100%',
+    } : undefined;
 
     let classNames = 'form-check';
     if (this.props.data.inline) {
@@ -1343,6 +1355,12 @@ class RadioButtons extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
+          <div
+            className={outlined ? 'btn-group' : ''}
+            style={outlinedGroupStyle}
+            role={outlined ? 'group' : undefined}
+            aria-label={outlined ? this.props.data.text : undefined}
+          >
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -1364,19 +1382,46 @@ class RadioButtons extends React.Component {
             }
 
             return (
-              <div className={classNames} key={this_key}>
+              <div
+                className={outlined
+                  ? (buttonWidth === 'full'
+                    ? 'w-100 mb-2'
+                    : buttonWidth === 'auto'
+                      ? 'd-inline-block me-2 mb-2'
+                      : 'mb-2')
+                  : classNames}
+                style={outlined && buttonWidth !== 'auto' ? {
+                  minWidth: 0,
+                  width: '100%',
+                } : undefined}
+                key={this_key}
+              >
                 <input
                   id={`fid_${this_key}`}
-                  className="form-check-input"
+                  className={outlined ? 'btn-check' : 'form-check-input'}
+                  autoComplete={outlined ? 'off' : undefined}
                   ref={(c) => {
                     if (c && self.props.mutable) {
                       self.options[`child_ref_${option.key}`] = c;
                     }
-                  }}
+                  }} 
                   {...props}
                 />
                 <label
-                  className="form-check-label"
+                  className={outlined ? 'btn sf-radio-button' : 'form-check-label'}
+                  style={outlined ? {
+                    width: buttonWidth === 'auto' ? undefined : '100%',
+                    '--bs-btn-color': outlinedButtonStyles.color,
+                    '--bs-btn-bg': outlinedButtonStyles.background,
+                    '--bs-btn-border-color': outlinedButtonStyles.borderColor,
+                    '--bs-btn-hover-color': outlinedButtonStyles.activeColor,
+                    '--bs-btn-hover-bg': outlinedButtonStyles.activeBackground,
+                    '--bs-btn-hover-border-color': outlinedButtonStyles.activeBorderColor,
+                    '--bs-btn-active-color': outlinedButtonStyles.activeColor,
+                    '--bs-btn-active-bg': outlinedButtonStyles.activeBackground,
+                    '--bs-btn-active-border-color': outlinedButtonStyles.activeBorderColor,
+                    '--bs-btn-border-radius': outlinedButtonStyles.borderRadius,
+                  } : undefined}
                   htmlFor={`fid_${this_key}`}
                 >
                   {option.text}
@@ -1384,6 +1429,7 @@ class RadioButtons extends React.Component {
               </div>
             );
           })}
+          </div>
         </div>
       </div>
     );

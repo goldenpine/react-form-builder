@@ -16,6 +16,7 @@
   "show-time-select-only": "Visualizza solo orario",
   "show-time-input": "Visualizza input orario",
   "display-horizontal": "Visualizza orizzontale",
+  "outlined-radio-buttons": "Stile pulsante con contorno",
   "variable-key": "Chiave variabile",
   "variable-key-desc": "Ciò fornirà all'elemento una chiave che può essere utilizzata per sostituire il contenuto con un valore di runtime",
   "print-options": "Opzioni di stampa",
