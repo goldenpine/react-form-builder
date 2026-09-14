@@ -1381,6 +1381,8 @@ class RadioButtons extends React.Component {
               props.disabled = 'disabled';
             }
 
+            let wasCheckedBeforeClick = false;
+
             return (
               <div
                 className={outlined
@@ -1394,6 +1396,19 @@ class RadioButtons extends React.Component {
                   minWidth: 0,
                   width: '100%',
                 } : undefined}
+                onMouseDown={self.props.mutable && !this.props.read_only ? () => {
+                    const optionInput = self.options[`child_ref_${option.key}`];
+                  wasCheckedBeforeClick = !!optionInput?.checked;
+                } : undefined}
+                onClick={self.props.mutable && !this.props.read_only ? (event) => {
+                  if (!wasCheckedBeforeClick) return;
+
+                  event.preventDefault();
+                  const optionInput = self.options[`child_ref_${option.key}`];
+                  if (optionInput) optionInput.checked = false;
+                  wasCheckedBeforeClick = false;
+                  self.props.handleChange?.(event);
+                  } : undefined}
                 key={this_key}
               >
                 <input
@@ -1414,9 +1429,9 @@ class RadioButtons extends React.Component {
                     '--bs-btn-color': outlinedButtonStyles.color,
                     '--bs-btn-bg': outlinedButtonStyles.background,
                     '--bs-btn-border-color': outlinedButtonStyles.borderColor,
-                    '--bs-btn-hover-color': outlinedButtonStyles.activeColor,
-                    '--bs-btn-hover-bg': outlinedButtonStyles.activeBackground,
-                    '--bs-btn-hover-border-color': outlinedButtonStyles.activeBorderColor,
+                    '--bs-btn-hover-color': outlinedButtonStyles.hoverColor,
+                    '--bs-btn-hover-bg': outlinedButtonStyles.hoverBackground,
+                    '--bs-btn-hover-border-color': outlinedButtonStyles.hoverBorderColor,
                     '--bs-btn-active-color': outlinedButtonStyles.activeColor,
                     '--bs-btn-active-bg': outlinedButtonStyles.activeBackground,
                     '--bs-btn-active-border-color': outlinedButtonStyles.activeBorderColor,

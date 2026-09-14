@@ -29,9 +29,12 @@ const phoneCountryOptions = defaultCountries
   .sort((a, b) => a.name.localeCompare(b.name));
 
 const defaultOutlinedButtonStyles = {
-  color: '#0d6efd',
-  borderColor: '#0d6efd',
+  color: '#404d5b',
+  borderColor: '#dee2e6',
   background: '#fff',
+  hoverColor: '#0d6efd',
+  hoverBackground: '#cfe2ff',
+  hoverBorderColor: '#0d6efd',
   activeColor: '#fff',
   activeBackground: '#0d6efd',
   activeBorderColor: '#0d6efd',
@@ -426,28 +429,6 @@ export default class FormElementsEdit extends React.Component {
             { this.state.element.element === 'RadioButtons' && canHaveOutlined && this_checked_outlined &&
               <div className="ms-4 mb-3">
                 <div className="row g-2">
-                  {[
-                    ['color', 'Text color'],
-                    ['borderColor', 'Border color'],
-                    ['background', 'Background color'],
-                    ['activeColor', 'Active text color'],
-                    ['activeBackground', 'Active background'],
-                    ['activeBorderColor', 'Active border color'],
-                  ].map(([property, label]) => (
-                    <div className="col-sm-6" key={property}>
-                      <label className="form-label" htmlFor={`radio-button-${property}`}>
-                        {label}
-                      </label>
-                      <input
-                        id={`radio-button-${property}`}
-                        type="color"
-                        className="form-control form-control-color"
-                        value={outlinedButtonStyles[property]}
-                        title={label}
-                        onChange={this.handleOutlinedStyleChange.bind(this, property)}
-                      />
-                    </div>
-                  ))}
                   <div className="col-sm-6">
                     <label className="form-label" htmlFor="radio-button-width">
                       Button width
@@ -477,6 +458,31 @@ export default class FormElementsEdit extends React.Component {
                       onChange={this.handleOutlinedStyleChange.bind(this, 'borderRadius')}
                     />
                   </div>
+                  {[
+                    ['color', 'Text color'],
+                    ['borderColor', 'Border color'],
+                    ['background', 'Background color'],
+                    ['hoverColor', 'Hover text color'],
+                    ['hoverBackground', 'Hover background'],
+                    ['hoverBorderColor', 'Hover border color'],
+                    ['activeColor', 'Active text color'],
+                    ['activeBackground', 'Active background'],
+                    ['activeBorderColor', 'Active border color'],
+                  ].map(([property, label]) => (
+                    <div className="col-sm-6" key={property}>
+                      <label className="form-label" htmlFor={`radio-button-${property}`}>
+                        {label}
+                      </label>
+                      <input
+                        id={`radio-button-${property}`}
+                        type="color"
+                        className="form-control form-control-color"
+                        value={outlinedButtonStyles[property]}
+                        title={label}
+                        onChange={this.handleOutlinedStyleChange.bind(this, property)}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             }
