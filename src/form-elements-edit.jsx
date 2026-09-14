@@ -39,7 +39,7 @@ const defaultOutlinedButtonStyles = {
   activeBackground: '#0d6efd',
   activeBorderColor: '#0d6efd',
   buttonWidth: 'auto',
-  borderRadius: '12px',
+  borderRadius: '10px',
 };
 
 const toolbar = {

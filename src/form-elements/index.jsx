@@ -1323,13 +1323,12 @@ class RadioButtons extends React.Component {
     const outlined = this.props.data.outlined || false;
     const outlinedButtonStyles = this.props.data.outlinedButtonStyles || {};
     const buttonWidth = outlinedButtonStyles.buttonWidth;
-    const outlinedGroupStyle = outlined && buttonWidth !== 'auto' ? {
+    const outlinedGroupStyle = outlined ? {
       display: buttonWidth === 'equal' ? 'grid' : 'flex',
       flexDirection: buttonWidth === 'full' ? 'column' : undefined,
+      flexWrap: buttonWidth === 'auto' ? 'wrap' : undefined,
       gap: '0.5rem',
-      gridTemplateColumns: buttonWidth === 'equal'
-        ? `repeat(${this.props.data.options.length}, minmax(0, 1fr))`
-        : undefined,
+      '--sf-radio-option-count': this.props.data.options.length,
       width: '100%',
     } : undefined;
 
@@ -1356,7 +1355,7 @@ class RadioButtons extends React.Component {
             ].filter(Boolean).join(" ")}
           />
           <div
-            className={outlined ? 'btn-group' : ''}
+            className={outlined ? `btn-group sf-radio-group sf-radio-group-${buttonWidth}` : ''}
             style={outlinedGroupStyle}
             role={outlined ? 'group' : undefined}
             aria-label={outlined ? this.props.data.text : undefined}
