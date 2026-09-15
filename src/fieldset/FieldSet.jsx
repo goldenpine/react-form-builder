@@ -71,7 +71,7 @@ export default function FieldSetBase(props) {
     <div style={{ ...props.style }} className={baseClasses}>
       <ComponentHeader {...props} isFieldSet={true} />
       <div>
-        <ComponentLabel {...props} />
+        {!props.data.labelHidden && <ComponentLabel {...props} />}
         <div className="row" data-field-name={props.data.field_name}>
           {
             childItems?.map((x, i) => (
