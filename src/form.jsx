@@ -229,8 +229,8 @@ class ReactForm extends React.Component {
 
   _collectFormData(data, trimValue) {
     const formData = [];
-    // only collect visible items (respect conditional logic)
-    (data || []).filter(i => this._evaluateCondition(i)).forEach(item => {
+    // only collect visible items (respect conditional logic. 
+    (data || []).filter(i => this._isItemVisible(i)).forEach(item => {
       const item_data = this._collect(item, trimValue);
       if (item_data) {
         formData.push(item_data);
@@ -307,7 +307,7 @@ class ReactForm extends React.Component {
     }
 
     // apply conditional visibility filtering
-    data_items = data_items.filter(i => this._evaluateCondition(i));
+    data_items = data_items.filter(i => this._isItemVisible(i));
 
     data_items.forEach(item => {
       if (item.element === 'Signature') {
@@ -448,6 +448,37 @@ class ReactForm extends React.Component {
     return ok;
   }
 
+  /*
+   * Checks if an item is visible based on its conditional logic and parent containers.
+   */
+  _isItemVisible(item) {
+    if (!item) return false;
+
+    // First evaluate the item's own conditional logic.
+    if (!this._evaluateCondition(item)) {
+      return false;
+    }
+
+    // Then check all parent containers.
+    let parentId = item.parentId;
+
+    while (parentId) {
+      const parent = this.getDataById(parentId);
+
+      if (!parent) {
+        break;
+      }
+
+      if (!this._evaluateCondition(parent)) {
+        return false;
+      }
+
+      parentId = parent.parentId;
+    }
+
+    return true;
+  }
+
   /* 
    * Also note that skip_conditional_logic works without being forwarded 
    * because it is consumed directly by ReactForm._evaluateCondition(). 
@@ -475,7 +506,7 @@ class ReactForm extends React.Component {
 
   getContainerElement(item, Element) {
     // When react-form-builder is used in a React app, adding a Fieldset to the canvas will cause the form to crash
-    // because its childItems is undefined. So the below code is adjusted to prevent the crash by using an empty array when it's undefined.
+    // because its childItems is undefined. So "|| []" is added to prevent the crash by using an empty array when it's undefined.
     const controls = (item.childItems || []).map(x => {
       if (!x) return <div>&nbsp;</div>;
       const child = this.getDataById(x);
@@ -545,6 +576,9 @@ class ReactForm extends React.Component {
       }
     });
 
+    // For rendering, we only want to show items that are visible based on conditional logic.
+    // We first check the top level elements, and then we check the child elements of any container elements (MultiColumnRow, TwoColumnRow, ThreeColumnRow, FieldSet).
+    // so use the _evaluateCondition() in those two stpes instead of _isItemVisible() to avoid checking the parent containers again.
     const items = data_items.filter(x => !x.parentId && this._evaluateCondition(x)).map(item => {
       if (!item) return null;
       switch (item.element) {
