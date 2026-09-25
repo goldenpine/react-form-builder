@@ -17,6 +17,7 @@
   "show-time-input": "Hiển thị đầu vào thời gian",
   "display-horizontal": "Hiển thị theo chiều ngang",
   "enable-search": "Bật tìm kiếm",
+  "enable-search-help": "Cho phép khách hàng tìm kiếm tùy chọn bằng cách gõ. Hữu ích cho danh sách thả xuống có nhiều lựa chọn.",
   "no-results-message": "Thông báo không có kết quả",
   "outlined-radio-buttons": "Kiểu nút có viền",
   "variable-key": "Khóa tham chiếu",

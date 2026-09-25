@@ -876,8 +876,14 @@ export default class FormElementsEdit extends React.Component {
           <div className="form-check">
             <input id="enable-dropdown-search" className="form-check-input" type="checkbox" checked={this_checked_searchable} onChange={this.editElementProp.bind(this, 'searchable', 'checked')} />
             <label className="form-check-label" htmlFor="enable-dropdown-search">
-            <IntlMessages id="enable-search" defaultMessage="Enable search" />
+              <IntlMessages id="enable-search" defaultMessage="Enable search" />
             </label>
+            <div className="form-text">
+              <IntlMessages
+                id="enable-search-help"
+                defaultMessage="Allow customers to search options by typing. Useful for dropdowns with many choices."
+              />
+            </div>            
           </div>
         }
         { this.state.element.element === 'Dropdown' && this_checked_searchable &&

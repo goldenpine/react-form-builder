@@ -17,6 +17,7 @@
   "show-time-input": "Visualizza input orario",
   "display-horizontal": "Visualizza orizzontale",
   "enable-search": "Abilita ricerca",
+  "enable-search-help": "Consente ai clienti di cercare le opzioni digitando. Utile per menu a discesa con molte scelte.",
   "no-results-message": "Messaggio nessun risultato",
   "outlined-radio-buttons": "Stile pulsante con contorno",
   "variable-key": "Chiave variabile",
