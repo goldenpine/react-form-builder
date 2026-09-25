@@ -127,7 +127,11 @@ export default class FormElementsEdit extends React.Component {
     });
   };
 
-  // Instead of using editElementProp for the camera layout change, we have a separate handler to immediately update the element on change without waiting for blur, as it's a radio button and we want the change to be reflected immediately in the UI.
+  /* Instead of using editElementProp for the camera layout change, 
+     we have a separate handler to immediately update the element on change 
+     without waiting for blur, as it's a radio button and we want the change 
+     to be reflected immediately in the UI.
+  */
   handleUploadLayoutChange = (e) => {
     const this_element = this.state.element;
     this_element["upload_layout"] = e.target["value"];
@@ -252,7 +256,7 @@ export default class FormElementsEdit extends React.Component {
     const this_checked_center = this.props.element.hasOwnProperty('center') ? this.props.element.center : false;
     const this_checked_page_break = this.props.element.hasOwnProperty('pageBreakBefore') ? this.props.element.pageBreakBefore : false;
     const this_checked_alternate_form = this.props.element.hasOwnProperty('alternateForm') ? this.props.element.alternateForm : false;
-
+    const this_checked_searchable = this.props.element.hasOwnProperty('searchable') ? this.props.element.searchable : false;
     const {
       canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOutlined, canHaveOptionCorrect, canHaveOptionValue, canHaveOptionDefault,
     } = this.props.element;
@@ -866,6 +870,29 @@ export default class FormElementsEdit extends React.Component {
           <div className="mb-3">
             <label className="control-label" htmlFor="correctAnswer"><IntlMessages id="correct-answer" /></label>
             <input id="correctAnswer" type="text" className="form-control" defaultValue={this.props.element.correct} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'correct', 'value')} />
+          </div>
+        }
+        { this.state.element.element === 'Dropdown' &&
+          <div className="form-check">
+            <input id="enable-dropdown-search" className="form-check-input" type="checkbox" checked={this_checked_searchable} onChange={this.editElementProp.bind(this, 'searchable', 'checked')} />
+            <label className="form-check-label" htmlFor="enable-dropdown-search">
+            <IntlMessages id="enable-search" defaultMessage="Enable search" />
+            </label>
+          </div>
+        }
+        { this.state.element.element === 'Dropdown' && this_checked_searchable &&
+          <div className="mb-3">
+            <label className="control-label" htmlFor="dropdown-no-results-message">
+            <IntlMessages id="no-results-message" defaultMessage="No results message" />
+            </label>
+            <input
+              id="dropdown-no-results-message"
+              type="text"
+              className="form-control"
+              defaultValue={this.props.element.no_results_message || 'No results found'}
+              onBlur={this.updateElement.bind(this)}
+              onChange={this.editElementProp.bind(this, 'no_results_message', 'value')}
+            />
           </div>
         }
         { this.props.element.canPopulateFromApi && this.props.element.hasOwnProperty('options') &&

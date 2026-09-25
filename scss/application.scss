@@ -13,6 +13,7 @@
 @use 'react-draft';
 
 @use 'react-international-phone';
+@use '../node_modules/tom-select/dist/css/tom-select.default.css';
 
 // Form builder styles
 @use 'form-builder';

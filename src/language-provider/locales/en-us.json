@@ -16,6 +16,8 @@
   "show-time-select-only": "Show Time Select Only",
   "show-time-input": "Show Time Input",
   "display-horizontal": "Display horizontal",
+  "enable-search": "Enable search",
+  "no-results-message": "No results message",
   "outlined-radio-buttons": "Outlined button style",
   "variable-key": "Variable Key",
   "variable-key-desc": "This will give the element a key that can be used to replace the content with a runtime value",

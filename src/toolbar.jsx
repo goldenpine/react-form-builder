@@ -132,6 +132,8 @@ class Toolbar extends React.Component {
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'dropdown_',
         options: [],
+        searchable: false,
+        no_results_message: 'No results found',
       },
       {
         key: 'Tags',

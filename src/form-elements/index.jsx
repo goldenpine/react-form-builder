@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch';
 import { saveAs } from 'file-saver';
 import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
+import TomSelect from 'tom-select';
 import SignaturePad from 'react-signature-canvas';
 import ReactBootstrapSlider from '@goldenpine/react-bootstrap-slider';
 
@@ -1034,7 +1035,71 @@ class Dropdown extends React.Component {
   constructor(props) {
     super(props);
     this.inputField = React.createRef();
+    this.tomSelect = null;
   }
+
+  componentDidMount() {
+    this.initializeTomSelect();
+  }
+
+  componentDidUpdate(prevProps) {
+    const optionsChanged =
+      JSON.stringify(prevProps.data.options) !==
+      JSON.stringify(this.props.data.options);
+    const defaultValueChanged =
+      prevProps.defaultValue !== this.props.defaultValue;
+    const readOnlyChanged =
+      prevProps.read_only !== this.props.read_only;
+    const shouldBeSearchable =
+      this.props.data.searchable === true;
+
+    //Configuration says searchable? vs Is TomSelect actually active?
+    const searchableStateChanged =
+      shouldBeSearchable !== !!this.tomSelect;
+    
+    if (
+      optionsChanged ||
+      defaultValueChanged ||
+      readOnlyChanged ||
+      searchableStateChanged 
+    ) {
+      this.destroyTomSelect();
+      this.initializeTomSelect();
+    } 
+  }
+
+  componentWillUnmount() {
+    this.destroyTomSelect();
+  }
+
+  initializeTomSelect = () => {
+    const noResultsMessage =
+      this.props.data.no_results_message || 'No results found';
+
+    if (!this.inputField.current || this.props.data.searchable !== true) {
+      return;
+    }
+
+    this.tomSelect = new TomSelect(this.inputField.current, {
+      create: false,
+      searchField: ['text'],
+      maxOptions: null,
+      allowEmptyOption: true,
+      render: {
+        // Override the "No results found" block
+        no_results: function(data, escape) {
+          return `<div class="no-results">${escape(noResultsMessage)}</div>`;
+        }
+      }      
+    });
+  };
+
+  destroyTomSelect = () => {
+    if (this.tomSelect) {
+      this.tomSelect.destroy();
+      this.tomSelect = null;
+    }
+  };
 
   render() {
     const props = {};
@@ -1068,7 +1133,7 @@ class Dropdown extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <select {...props}>
+          <select {...props} ref={this.inputField}>
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
               return (
