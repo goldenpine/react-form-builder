@@ -1076,7 +1076,9 @@ class Dropdown extends React.Component {
     const noResultsMessage =
       this.props.data.no_results_message || 'No results found';
 
-    if (!this.inputField.current || this.props.data.searchable !== true) {
+    if (!this.inputField.current ||
+        this.props.data.searchable !== true ||
+        this.props.html_copy_mode === true) {
       return;
     }
 
