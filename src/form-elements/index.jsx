@@ -1133,7 +1133,12 @@ class Dropdown extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <select {...props} ref={this.inputField}>
+          <select
+            {...props}
+            ref={this.inputField}
+            data-searchable={this.props.data.searchable === true ? 'true' : 'false'}
+            data-no-results-message={this.props.data.no_results_message || 'No results found'}
+          >
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
               return (
