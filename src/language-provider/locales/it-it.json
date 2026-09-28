@@ -21,6 +21,7 @@
   "no-results-message": "Messaggio nessun risultato",
   "include-empty-option": "Aggiungi un'opzione senza valore",
   "include-empty-option-help": "Se disabilitata, la prima opzione dell'elenco verrà selezionata per impostazione predefinita.",
+  "empty-option-label": "Testo dell'opzione senza valore",
   "outlined-radio-buttons": "Stile pulsante con contorno",
   "variable-key": "Chiave variabile",
   "variable-key-desc": "Ciò fornirà all'elemento una chiave che può essere utilizzata per sostituire il contenuto con un valore di runtime",

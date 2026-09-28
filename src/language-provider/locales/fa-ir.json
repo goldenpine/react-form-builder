@@ -21,6 +21,7 @@
   "no-results-message": "پیام بدون نتیجه",
   "include-empty-option": "افزودن گزینه بدون مقدار",
   "include-empty-option-help": "اگر غیرفعال باشد، اولین گزینه فهرست به‌طور پیش‌فرض انتخاب می‌شود.",
+  "empty-option-label": "متن گزینه بدون مقدار",
   "outlined-radio-buttons": "سبک دکمه حاشیه‌دار",
   "variable-key": "کلید متغیر",
   "variable-key-desc": "این عنصر را به کلیدی تبدیل می‌کند که می‌تواند با یک مقدار زمان اجرا جایگزین شود",
