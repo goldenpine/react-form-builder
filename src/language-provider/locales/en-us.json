@@ -19,6 +19,8 @@
   "enable-search": "Enable search",
   "enable-search-help": "Allow customers to search options by typing. Useful for dropdowns with many choices.",
   "no-results-message": "No results message",
+  "include-empty-option": "Add no-value option",
+  "include-empty-option-help": "If disabled, the first option in the list will be selected by default.",
   "outlined-radio-buttons": "Outlined button style",
   "variable-key": "Variable Key",
   "variable-key-desc": "This will give the element a key that can be used to replace the content with a runtime value",

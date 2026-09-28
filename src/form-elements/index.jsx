@@ -1036,6 +1036,20 @@ class Dropdown extends React.Component {
     super(props);
     this.inputField = React.createRef();
     this.tomSelect = null;
+    // selectVersion is used to force remount the <select> element 
+    // when Tom Select is destroyed, to let React manage it again.
+    this.state = {
+      selectVersion: 0,
+    };
+
+    this.lastIncludeEmptyOption =
+      props.data.include_empty_option === true;
+
+    this.lastEmptyOptionLabel =
+      props.data.empty_option_label || '-- Select an option --';
+
+    this.lastOptions =
+      JSON.stringify(props.data.options || []);
   }
 
   componentDidMount() {
@@ -1043,29 +1057,87 @@ class Dropdown extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    const includeEmptyOption =
+      this.props.data.include_empty_option === true;
+
+    const emptyOptionLabel =
+      this.props.data.empty_option_label ||
+      '-- Select an option --';
+
+    const options =
+      JSON.stringify(this.props.data.options || []);
+
+    const emptyOptionChanged =
+      includeEmptyOption !== this.lastIncludeEmptyOption ||
+      emptyOptionLabel !== this.lastEmptyOptionLabel;
+
     const optionsChanged =
-      JSON.stringify(prevProps.data.options) !==
-      JSON.stringify(this.props.data.options);
-    const defaultValueChanged =
-      prevProps.defaultValue !== this.props.defaultValue;
-    const readOnlyChanged =
-      prevProps.read_only !== this.props.read_only;
+      options !== this.lastOptions;
+
     const shouldBeSearchable =
       this.props.data.searchable === true;
 
-    //Configuration says searchable? vs Is TomSelect actually active?
-    const searchableStateChanged =
-      shouldBeSearchable !== !!this.tomSelect;
-    
-    if (
-      optionsChanged ||
-      defaultValueChanged ||
-      readOnlyChanged ||
-      searchableStateChanged 
-    ) {
-      this.destroyTomSelect();
+    /*
+    * Search has just been enabled.
+    */
+    if (shouldBeSearchable && !this.tomSelect) {
       this.initializeTomSelect();
-    } 
+    }
+
+    /*
+    * Search has just been disabled.
+    */
+    else if (!shouldBeSearchable && this.tomSelect) {
+      /*
+      * Tom Select restores revertSettings.innerHTML during destroy().
+      * Replace its original snapshot with the latest <select> HTML
+      * so disabling search does not restore stale options.
+      */
+      this.tomSelect.revertSettings.innerHTML =
+        this.inputField.current.innerHTML;
+
+      this.destroyTomSelect();
+
+      /*
+      * Tom Select's destroy() restores innerHTML itself, which replaces
+      * React-managed <option> nodes. Remount the native <select> so React
+      * owns its DOM again.
+      */
+      this.setState(prevState => ({
+        selectVersion: prevState.selectVersion + 1,
+      }));
+    }
+    /*
+    * Tom Select is already active.
+    * Let React update the underlying <select>, then synchronize
+    * Tom Select with it instead of destroying/recreating it.
+    */
+    else if (
+      this.tomSelect &&
+      (emptyOptionChanged || optionsChanged)
+    ) {
+      this.tomSelect.settings.allowEmptyOption =
+        includeEmptyOption;
+
+      this.tomSelect.sync();
+
+      if (!this.props.mutable) {
+        if (includeEmptyOption) {
+          this.tomSelect.setValue('', true);
+        } else if (
+          this.props.data.options &&
+          this.props.data.options.length > 0
+        ) {
+          this.tomSelect.setValue(
+            this.props.data.options[0].value,
+            true
+          );
+        }
+      }
+    }
+    this.lastIncludeEmptyOption = includeEmptyOption;
+    this.lastEmptyOptionLabel = emptyOptionLabel;
+    this.lastOptions = options;
   }
 
   componentWillUnmount() {
@@ -1086,7 +1158,7 @@ class Dropdown extends React.Component {
       create: false,
       searchField: ['text'],
       maxOptions: null,
-      allowEmptyOption: true,
+      allowEmptyOption: this.props.data.include_empty_option === true,
       render: {
         // Override the "No results found" block
         no_results: function(data, escape) {
@@ -1107,11 +1179,25 @@ class Dropdown extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    //props.required = this.props.data.required === true;
     const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
+    } else {
+      // Builder canvas preview:
+      // explicitly show the configured initial option.
+      if (this.props.data.include_empty_option === true) {
+        props.value = '';
+      } else if (
+        this.props.data.options &&
+        this.props.data.options.length > 0
+      ) {
+        props.value = this.props.data.options[0].value;
+      }
+
+      props.readOnly = true;
     }
 
     if (this.props.read_only) {
@@ -1136,11 +1222,21 @@ class Dropdown extends React.Component {
             ].filter(Boolean).join(" ")}
           />
           <select
+            key={`dropdown-${this.state.selectVersion}`}
             {...props}
             ref={this.inputField}
+            //required={this.props.data.required === true} //Handled by the form validation, not the select element itself.
             data-searchable={this.props.data.searchable === true ? 'true' : 'false'}
             data-no-results-message={this.props.data.no_results_message || 'No results found'}
           >
+            <option
+              value=""
+              key="dropdown_empty_option"
+              hidden={this.props.data.include_empty_option !== true}
+              disabled={this.props.data.include_empty_option !== true}
+            >
+              {this.props.data.empty_option_label || '-- Select an option --'}
+            </option>
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
               return (

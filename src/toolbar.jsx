@@ -134,6 +134,8 @@ class Toolbar extends React.Component {
         options: [],
         searchable: false,
         no_results_message: 'No results found',
+        include_empty_option: true,
+        empty_option_label: '-- Select an option --',
       },
       {
         key: 'Tags',
@@ -492,6 +494,11 @@ class Toolbar extends React.Component {
     }
 
     if (item.defaultValue) { elementOptions.defaultValue = item.defaultValue; }
+
+    if (elementKey === 'Dropdown') {
+      elementOptions.include_empty_option = item.include_empty_option == true;
+      elementOptions.empty_option_label = item.empty_option_label || '-- Select an option --';
+    }
 
     if (item.field_name) { elementOptions.field_name = item.field_name + ID.uuid(); }
 

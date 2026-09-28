@@ -19,6 +19,8 @@
   "enable-search": "Abilita ricerca",
   "enable-search-help": "Consente ai clienti di cercare le opzioni digitando. Utile per menu a discesa con molte scelte.",
   "no-results-message": "Messaggio nessun risultato",
+  "include-empty-option": "Aggiungi un'opzione senza valore",
+  "include-empty-option-help": "Se disabilitata, la prima opzione dell'elenco verrà selezionata per impostazione predefinita.",
   "outlined-radio-buttons": "Stile pulsante con contorno",
   "variable-key": "Chiave variabile",
   "variable-key-desc": "Ciò fornirà all'elemento una chiave che può essere utilizzata per sostituire il contenuto con un valore di runtime",

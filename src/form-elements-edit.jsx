@@ -257,6 +257,7 @@ export default class FormElementsEdit extends React.Component {
     const this_checked_page_break = this.props.element.hasOwnProperty('pageBreakBefore') ? this.props.element.pageBreakBefore : false;
     const this_checked_alternate_form = this.props.element.hasOwnProperty('alternateForm') ? this.props.element.alternateForm : false;
     const this_checked_searchable = this.props.element.hasOwnProperty('searchable') ? this.props.element.searchable : false;
+    const this_checked_empty_option = this.props.element.hasOwnProperty('include_empty_option') ? this.props.element.include_empty_option : false;
     const {
       canHavePageBreakBefore, canHaveAlternateForm, canHaveDisplayHorizontal, canHaveOutlined, canHaveOptionCorrect, canHaveOptionValue, canHaveOptionDefault,
     } = this.props.element;
@@ -901,6 +902,37 @@ export default class FormElementsEdit extends React.Component {
             />
           </div>
         }
+        { this.state.element.element === 'Dropdown' &&
+          <>
+            <div className="form-check">
+              <input id="enable-dropdown-empty-option" className="form-check-input" type="checkbox" checked={this_checked_empty_option} onChange={this.editElementProp.bind(this, 'include_empty_option', 'checked')} />
+              <label className="form-check-label" htmlFor="enable-dropdown-empty-option">
+                <IntlMessages id="include-empty-option" defaultMessage="Add no-value option" />
+              </label>
+              <div className="form-text">
+                <IntlMessages
+                  id="include-empty-option-help"
+                  defaultMessage="If disabled, the first option in the list will be selected by default."
+                />
+            </div>                 
+            </div>
+            {this_checked_empty_option &&
+              <div className="mb-3">
+                <label className="control-label" htmlFor="dropdown-empty-option-label">
+                  <IntlMessages id="empty-option-label" defaultMessage="No-value option text" />
+                </label>
+                <input
+                  id="dropdown-empty-option-label"
+                  type="text"
+                  className="form-control"
+                  defaultValue={this.props.element.empty_option_label || '-- Select an option --'}
+                  onBlur={this.updateElement.bind(this)}
+                  onChange={this.editElementProp.bind(this, 'empty_option_label', 'value')}
+                />
+              </div>
+            }
+          </>
+        }        
         { this.props.element.canPopulateFromApi && this.props.element.hasOwnProperty('options') &&
           <div className="mb-3">
             <label className="control-label" htmlFor="optionsApiUrl"><IntlMessages id="populate-options-from-api" /></label>
