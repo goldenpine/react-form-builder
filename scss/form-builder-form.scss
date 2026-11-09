@@ -35,6 +35,7 @@
   .floating-input-wrapper .fb-placeholder{
     position:absolute;
     left:.75rem;
+    right:.75rem;
     top:50%;
     transform:translateY(-50%);
     transition:all .15s ease;
@@ -371,5 +372,14 @@
     .rfb-international-phone
       .react-international-phone-country-selector-dropdown__list-item {
     padding: 0.2rem 0.75rem;
+  }
+
+  /* Adjust the style of Tom Select dropdown to match other inputs */
+  :is(.ts-control .item, .ts-control input, .ts-dropdown){
+    font-size: 1rem;
+  }
+  .ts-wrapper .ts-dropdown .option.active {
+    background-color: var(--bs-primary);
+    color: var(--bs-white) ;
   }
 }

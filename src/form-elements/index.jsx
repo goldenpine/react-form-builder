@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch';
 import { saveAs } from 'file-saver';
 import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
+import TomSelect from 'tom-select';
 import SignaturePad from 'react-signature-canvas';
 import ReactBootstrapSlider from '@goldenpine/react-bootstrap-slider';
 
@@ -1034,17 +1035,169 @@ class Dropdown extends React.Component {
   constructor(props) {
     super(props);
     this.inputField = React.createRef();
+    this.tomSelect = null;
+    // selectVersion is used to force remount the <select> element 
+    // when Tom Select is destroyed, to let React manage it again.
+    this.state = {
+      selectVersion: 0,
+    };
+
+    this.lastIncludeEmptyOption =
+      props.data.include_empty_option === true;
+
+    this.lastEmptyOptionLabel =
+      props.data.empty_option_label || '-- Select an option --';
+
+    this.lastOptions =
+      JSON.stringify(props.data.options || []);
   }
+
+  componentDidMount() {
+    this.initializeTomSelect();
+  }
+
+  componentDidUpdate(prevProps) {
+    const includeEmptyOption =
+      this.props.data.include_empty_option === true;
+
+    const emptyOptionLabel =
+      this.props.data.empty_option_label ||
+      '-- Select an option --';
+
+    const options =
+      JSON.stringify(this.props.data.options || []);
+
+    const emptyOptionChanged =
+      includeEmptyOption !== this.lastIncludeEmptyOption ||
+      emptyOptionLabel !== this.lastEmptyOptionLabel;
+
+    const optionsChanged =
+      options !== this.lastOptions;
+
+    const shouldBeSearchable =
+      this.props.data.searchable === true;
+
+    /*
+    * Search has just been enabled.
+    */
+    if (shouldBeSearchable && !this.tomSelect) {
+      this.initializeTomSelect();
+    }
+
+    /*
+    * Search has just been disabled.
+    */
+    else if (!shouldBeSearchable && this.tomSelect) {
+      /*
+      * Tom Select restores revertSettings.innerHTML during destroy().
+      * Replace its original snapshot with the latest <select> HTML
+      * so disabling search does not restore stale options.
+      */
+      this.tomSelect.revertSettings.innerHTML =
+        this.inputField.current.innerHTML;
+
+      this.destroyTomSelect();
+
+      /*
+      * Tom Select's destroy() restores innerHTML itself, which replaces
+      * React-managed <option> nodes. Remount the native <select> so React
+      * owns its DOM again.
+      */
+      this.setState(prevState => ({
+        selectVersion: prevState.selectVersion + 1,
+      }));
+    }
+    /*
+    * Tom Select is already active.
+    * Let React update the underlying <select>, then synchronize
+    * Tom Select with it instead of destroying/recreating it.
+    */
+    else if (
+      this.tomSelect &&
+      (emptyOptionChanged || optionsChanged)
+    ) {
+      this.tomSelect.settings.allowEmptyOption =
+        includeEmptyOption;
+
+      this.tomSelect.sync();
+
+      if (!this.props.mutable) {
+        if (includeEmptyOption) {
+          this.tomSelect.setValue('', true);
+        } else if (
+          this.props.data.options &&
+          this.props.data.options.length > 0
+        ) {
+          this.tomSelect.setValue(
+            this.props.data.options[0].value,
+            true
+          );
+        }
+      }
+    }
+    this.lastIncludeEmptyOption = includeEmptyOption;
+    this.lastEmptyOptionLabel = emptyOptionLabel;
+    this.lastOptions = options;
+  }
+
+  componentWillUnmount() {
+    this.destroyTomSelect();
+  }
+
+  initializeTomSelect = () => {
+    const noResultsMessage =
+      this.props.data.no_results_message || 'No results found';
+
+    if (!this.inputField.current ||
+        this.props.data.searchable !== true ||
+        this.props.html_copy_mode === true) {
+      return;
+    }
+
+    this.tomSelect = new TomSelect(this.inputField.current, {
+      create: false,
+      searchField: ['text'],
+      maxOptions: null,
+      allowEmptyOption: this.props.data.include_empty_option === true,
+      render: {
+        // Override the "No results found" block
+        no_results: function(data, escape) {
+          return `<div class="no-results">${escape(noResultsMessage)}</div>`;
+        }
+      }      
+    });
+  };
+
+  destroyTomSelect = () => {
+    if (this.tomSelect) {
+      this.tomSelect.destroy();
+      this.tomSelect = null;
+    }
+  };
 
   render() {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    //props.required = this.props.data.required === true;
     const labelHidden = this.props.data.labelHidden || false;
 
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
+    } else {
+      // Builder canvas preview:
+      // explicitly show the configured initial option.
+      if (this.props.data.include_empty_option === true) {
+        props.value = '';
+      } else if (
+        this.props.data.options &&
+        this.props.data.options.length > 0
+      ) {
+        props.value = this.props.data.options[0].value;
+      }
+
+      props.readOnly = true;
     }
 
     if (this.props.read_only) {
@@ -1068,7 +1221,22 @@ class Dropdown extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
-          <select {...props}>
+          <select
+            key={`dropdown-${this.state.selectVersion}`}
+            {...props}
+            ref={this.inputField}
+            //required={this.props.data.required === true} //Handled by the form validation, not the select element itself.
+            data-searchable={this.props.data.searchable === true ? 'true' : 'false'}
+            data-no-results-message={this.props.data.no_results_message || 'No results found'}
+          >
+            <option
+              value=""
+              key="dropdown_empty_option"
+              hidden={this.props.data.include_empty_option !== true}
+              disabled={this.props.data.include_empty_option !== true}
+            >
+              {this.props.data.empty_option_label || '-- Select an option --'}
+            </option>
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
               return (
@@ -1320,6 +1488,17 @@ class RadioButtons extends React.Component {
   render() {
     const self = this;
     const labelHidden = this.props.data.labelHidden || false;
+    const outlined = this.props.data.outlined || false;
+    const outlinedButtonStyles = this.props.data.outlinedButtonStyles || {};
+    const buttonWidth = outlinedButtonStyles.buttonWidth;
+    const outlinedGroupStyle = outlined ? {
+      display: buttonWidth === 'equal' ? 'grid' : 'flex',
+      flexDirection: buttonWidth === 'full' ? 'column' : undefined,
+      flexWrap: buttonWidth === 'auto' ? 'wrap' : undefined,
+      gap: '0.5rem',
+      '--sf-radio-option-count': this.props.data.options.length,
+      width: '100%',
+    } : undefined;
 
     let classNames = 'form-check';
     if (this.props.data.inline) {
@@ -1343,6 +1522,12 @@ class RadioButtons extends React.Component {
               labelHidden ? "d-none" : ""
             ].filter(Boolean).join(" ")}
           />
+          <div
+            className={outlined ? `btn-group sf-radio-group sf-radio-group-${buttonWidth}` : ''}
+            style={outlinedGroupStyle}
+            role={outlined ? 'group' : undefined}
+            aria-label={outlined ? this.props.data.text : undefined}
+          >
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -1363,20 +1548,62 @@ class RadioButtons extends React.Component {
               props.disabled = 'disabled';
             }
 
+            let wasCheckedBeforeClick = false;
+
             return (
-              <div className={classNames} key={this_key}>
+              <div
+                className={outlined
+                  ? (buttonWidth === 'full'
+                    ? 'w-100 mb-2'
+                    : buttonWidth === 'auto'
+                      ? 'd-inline-block me-2 mb-2'
+                      : 'mb-2')
+                  : classNames}
+                style={outlined && buttonWidth !== 'auto' ? {
+                  minWidth: 0,
+                  width: '100%',
+                } : undefined}
+                onMouseDown={self.props.mutable && !this.props.read_only ? () => {
+                    const optionInput = self.options[`child_ref_${option.key}`];
+                  wasCheckedBeforeClick = !!optionInput?.checked;
+                } : undefined}
+                onClick={self.props.mutable && !this.props.read_only ? (event) => {
+                  if (!wasCheckedBeforeClick) return;
+
+                  event.preventDefault();
+                  const optionInput = self.options[`child_ref_${option.key}`];
+                  if (optionInput) optionInput.checked = false;
+                  wasCheckedBeforeClick = false;
+                  self.props.handleChange?.(event);
+                  } : undefined}
+                key={this_key}
+              >
                 <input
                   id={`fid_${this_key}`}
-                  className="form-check-input"
+                  className={outlined ? 'btn-check' : 'form-check-input'}
+                  autoComplete={outlined ? 'off' : undefined}
                   ref={(c) => {
                     if (c && self.props.mutable) {
                       self.options[`child_ref_${option.key}`] = c;
                     }
-                  }}
+                  }} 
                   {...props}
                 />
                 <label
-                  className="form-check-label"
+                  className={outlined ? 'btn sf-radio-button' : 'form-check-label'}
+                  style={outlined ? {
+                    width: buttonWidth === 'auto' ? undefined : '100%',
+                    '--bs-btn-color': outlinedButtonStyles.color,
+                    '--bs-btn-bg': outlinedButtonStyles.background,
+                    '--bs-btn-border-color': outlinedButtonStyles.borderColor,
+                    '--bs-btn-hover-color': outlinedButtonStyles.hoverColor,
+                    '--bs-btn-hover-bg': outlinedButtonStyles.hoverBackground,
+                    '--bs-btn-hover-border-color': outlinedButtonStyles.hoverBorderColor,
+                    '--bs-btn-active-color': outlinedButtonStyles.activeColor,
+                    '--bs-btn-active-bg': outlinedButtonStyles.activeBackground,
+                    '--bs-btn-active-border-color': outlinedButtonStyles.activeBorderColor,
+                    '--bs-btn-border-radius': outlinedButtonStyles.borderRadius,
+                  } : undefined}
                   htmlFor={`fid_${this_key}`}
                 >
                   {option.text}
@@ -1384,6 +1611,7 @@ class RadioButtons extends React.Component {
               </div>
             );
           })}
+          </div>
         </div>
       </div>
     );

@@ -132,6 +132,10 @@ class Toolbar extends React.Component {
         label: intl.formatMessage({ id: 'place-holder-label' }),
         field_name: 'dropdown_',
         options: [],
+        searchable: false,
+        no_results_message: 'No results found',
+        include_empty_option: true,
+        empty_option_label: '-- Select an option --',
       },
       {
         key: 'Tags',
@@ -155,6 +159,7 @@ class Toolbar extends React.Component {
         key: 'RadioButtons',
         canHaveAnswer: true,
         canHaveDefault: true,
+        canHaveOutlined: true,
         name: intl.formatMessage({ id: 'multiple-choice' }),
         icon: 'far fa-dot-circle',
         label: intl.formatMessage({ id: 'place-holder-label' }),
@@ -426,6 +431,7 @@ class Toolbar extends React.Component {
     if (elementOptions.canHaveDisplayHorizontal) {
       elementOptions.inline = item.inline;
     }
+    elementOptions.canHaveOutlined = item.canHaveOutlined === true;
     elementOptions.canHaveOptionCorrect = item.canHaveOptionCorrect !== false;
     elementOptions.canHaveOptionValue = item.canHaveOptionValue !== false;
     elementOptions.canHaveOptionDefault = item.canHaveDefault == true; //Only implemented on Radio Buttons, so by default it's not enabled for those options elements.
@@ -488,6 +494,11 @@ class Toolbar extends React.Component {
     }
 
     if (item.defaultValue) { elementOptions.defaultValue = item.defaultValue; }
+
+    if (elementKey === 'Dropdown') {
+      elementOptions.include_empty_option = item.include_empty_option == true;
+      elementOptions.empty_option_label = item.empty_option_label || '-- Select an option --';
+    }
 
     if (item.field_name) { elementOptions.field_name = item.field_name + ID.uuid(); }
 
