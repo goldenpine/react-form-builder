@@ -2,7 +2,7 @@
 // eslint-disable-next-line max-classes-per-file
 import fetch from 'isomorphic-fetch';
 import { saveAs } from 'file-saver';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Select from 'react-select';
 import TomSelect from 'tom-select';
 import SignaturePad from 'react-signature-canvas';
@@ -263,8 +263,21 @@ const FloatingPlaceholderInput = ({
   // In the correspoding plain js file, the brwoser's autofill is detected by listening to 'animationstart' event with a specific animation name.
 
   // remove placeholder attribute from actual input to avoid duplicate text
-  const { placeholder: ignoredPlaceholder, ...restProps } =
+  const { placeholder: ignoredPlaceholder, ref: inputRef, ...restProps } =
     inputProps;
+  
+  // Fixed ref forwarding when this wrapper is used. 
+  // It now gives the DOM input ref to both the wrapper and its parent field, 
+  // so the edit flow can read existing text, email, and phone values 
+  // instead of collecting them as empty strings.  
+  const setInputRef = useCallback((element) => {
+    ref.current = element;
+    if (typeof inputRef === 'function') {
+      inputRef(element);
+    } else if (inputRef) {
+      inputRef.current = element;
+    }
+  }, [inputRef]);
 
   return (
     <FloatingPlaceholderWrapper
@@ -275,7 +288,7 @@ const FloatingPlaceholderInput = ({
     >
       <Tag
         {...restProps}
-        ref={ref}
+        ref={setInputRef}
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
