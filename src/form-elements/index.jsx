@@ -1070,6 +1070,17 @@ class Dropdown extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (
+      this.tomSelect &&
+      prevProps.read_only !== this.props.read_only
+    ) {
+      if (this.props.read_only) {
+        this.tomSelect.disable();
+      } else {
+        this.tomSelect.enable();
+      }
+    }
+
     const includeEmptyOption =
       this.props.data.include_empty_option === true;
 

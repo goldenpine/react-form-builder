@@ -492,13 +492,23 @@ class ReactForm extends React.Component {
       return this.getCustomElement(item);
     }
     const Input = FormElements[item.element];
+    /*
+     * If the whole form is read-only (this.props.read_only), every field is read-only.
+     * Otherwise, fields with item.readOnly are read-only—except Dropdowns with search enabled, which remain editable.
+     * That way, when a submission switched from readonly to edit mode,
+     * the dropdown with search enabled can be editable as well.
+     */
+    const readOnly = this.props.read_only ||
+      (item.element !== 'Dropdown' || item.searchable !== true) && item.readOnly;
     return (<Input
       handleChange={this.handleChange}
       ref={c => this.inputs[item.field_name] = c}
       mutable={true}
-      key={`form_${item.id}`}
+      key={item.element === 'Dropdown' && item.searchable === true
+        ? `form_${item.id}-${readOnly}`
+        : `form_${item.id}`}
       data={item}
-      read_only={this.props.read_only}
+      read_only={readOnly}
       defaultValue={item.element === 'RadioButtons'
         ? this._optionsDefaultValue(item)
         : this._getDefaultValue(item)}
