@@ -184,7 +184,11 @@ export default class StarRating extends React.Component {
   // Fixed shouldComponentUpdate to prevent infinite loops
   shouldComponentUpdate(nextProps, nextState) {
     // Don't trigger a state update from this method!
-    if (nextProps.rating !== this.props.rating) {
+    if (
+      nextProps.rating !== this.props.rating ||
+      nextProps.disabled !== this.props.disabled ||
+      nextProps.editing !== this.props.editing
+    ) {
       return true;
     }
 
