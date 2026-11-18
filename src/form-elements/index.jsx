@@ -779,24 +779,17 @@ class InternationalPhoneNumber extends React.Component {
   handleChange = (phone, metadata) => {
     const value = phone || '';
 
-    this.setState(
-      {
-        value,
-      },
-      () => {
-        //this.dispatchNativeChangeEvents();
+    this.setState({value});
 
-        if (typeof this.props.handleChange === 'function') {
-          this.props.handleChange({
-            target: {
-              name: this.props.data.field_name,
-              value,
-            },
-            phoneMetadata: metadata,
-          });
-        }
-      }
-    );
+    if (typeof this.props.handleChange === 'function') {
+      this.props.handleChange({
+        target: {
+          name: this.props.data.field_name,
+          value,
+        },
+        phoneMetadata: metadata,
+      });
+    }
   };
 
   render() {
