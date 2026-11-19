@@ -288,20 +288,11 @@ class ReactForm extends React.Component {
     }
   }
 
-  handleChange(event) {
+  handleChange() {
     // Call submit function on change
     if (this.props.onChange) {
       const { onChange } = this.props;
       const data = this._collectFormData(this.props.data, false);
-      // use the exact phone value from the International Phone Number change event 
-      // instead of relying only on a value read back from component state. 
-      // That should let the first keystroke mark the submission dirty and keep the final digit when saving.
-      if (event && event.phoneMetadata && event.target && event.target.name) {
-        const changedItem = data.find(item => item.name === event.target.name);
-        if (changedItem) {
-          changedItem.value = event.target.value;
-        }
-      }
       onChange(data);
     }
     // re-render to apply conditional logic visibility
