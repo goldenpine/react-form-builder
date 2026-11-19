@@ -720,8 +720,6 @@ class InternationalPhoneNumber extends React.Component {
     };
 
     this.phoneWrapper = React.createRef();
-    this.inputField = React.createRef(); // Required by react-form-builder2 collector
-    this.isInternalChange = false;
   }
 
   componentDidUpdate(prevProps) {
@@ -739,41 +737,59 @@ class InternationalPhoneNumber extends React.Component {
     }
   }
 
-  notifyFormChange = (value, metadata) => {
-    if (typeof this.props.handleChange === 'function') {
-      this.props.handleChange({
-        target: {
-          name: this.props.data.field_name,
-          value,
-        },
-        phoneMetadata: metadata,
-      });
+  dispatchNativeChangeEvents = () => {
+    if (!this.phoneWrapper.current) {
+      return;
     }
 
-    // Notify react-form-builder2's native <form> onChange listener
-    const input = this.inputField.current;
-    if (input) {
-      this.isInternalChange = true;
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-      this.isInternalChange = false;
+    const input =
+      this.phoneWrapper.current.querySelector(
+        'input[type="tel"]'
+      );
+
+    if (!input) {
+      return;
     }
+
+    input.dispatchEvent(
+      new Event('input', {
+        bubbles: true,
+      })
+    );
+
+    input.dispatchEvent(
+      new Event('change', {
+        bubbles: true,
+      })
+    );
   };
-
+ 
   handleFocus = () => {
-    this.setState({ focused: true });
+    this.setState({
+      focused: true,
+    });
   };
 
   handleBlur = () => {
-    this.setState({ focused: false });
+    this.setState({
+      focused: false,
+    });
   };
 
   handleChange = (phone, metadata) => {
-    if (this.isInternalChange) return;
-
     const value = phone || '';
 
     this.setState({ value }, () => {
-      this.notifyFormChange(value, metadata);
+      if (typeof this.props.handleChange === 'function') {
+        this.props.handleChange({
+          target: {
+            name: this.props.data.field_name,
+            value,
+          },
+          phoneMetadata: metadata,
+        });
+      }
+      this.dispatchNativeChangeEvents();
     });
   };
 
@@ -785,6 +801,7 @@ class InternationalPhoneNumber extends React.Component {
     } = this.props;
 
     const labelHidden = data.labelHidden || false;
+
     const hasRequiredLabel =
       data.hasOwnProperty('required') &&
       data.required === true &&
@@ -797,6 +814,7 @@ class InternationalPhoneNumber extends React.Component {
     );
 
     let baseClasses = 'SortableItem rfb-item';
+
     if (data.pageBreakBefore) {
       baseClasses += ' alwaysbreak';
     }
@@ -808,16 +826,30 @@ class InternationalPhoneNumber extends React.Component {
       navigator.language ||
       'en';
 
-    const localizedCountries = getLocalizedPhoneCountries(locale);
-    const countries = getAllowedPhoneCountries(
-      localizedCountries,
-      data.allow_countries
-    );
-    const defaultCountry = getValidDefaultCountry(
-      countries,
-      data.default_country
-    );
+    const localizedCountries =
+      getLocalizedPhoneCountries(locale);
 
+    const countries =
+      getAllowedPhoneCountries(
+        localizedCountries,
+        data.allow_countries
+      );
+
+    const defaultCountry =
+      getValidDefaultCountry(
+        countries,
+        data.default_country
+      );
+
+    /*
+     * Keep the component controlled in the generated form.
+     * In builder preview mode (Canvas??), an empty value is sufficient
+     * to display the selector and input.
+     * html_copy_mode is used to disable the value in the InternationalPhoneNumber element,
+     * when a hidden form is used to copy the HTML of the form for use in other contexts. 
+     * So the default country can be updated properly when users select a different default 
+     * country on Property Edit panel.
+     */
     const value =
       this.props.html_copy_mode === true
         ? ''
@@ -825,12 +857,18 @@ class InternationalPhoneNumber extends React.Component {
           ? this.state.value
           : '';
 
+    // There is a reported library issue where switching between custom country lists 
+    // during the same component session can cause a fatal internal indexing error. 
+    // A documented workaround is to remount PhoneInput by changing its React key
     const countriesKey = countries
       .map(countryData => parseCountry(countryData).iso2)
       .join('-');
 
     return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
+      <div
+        style={{ ...this.props.style }}
+        className={baseClasses}
+      >
         <ComponentHeader {...this.props} />
 
         <div className="mb-3">
@@ -851,10 +889,18 @@ class InternationalPhoneNumber extends React.Component {
             focused={this.state.focused}
             className="floating-international-phone"
             onClick={() => {
-              this.inputField.current?.focus();
+              const input =
+                this.phoneWrapper.current?.querySelector(
+                  'input[type="tel"]'
+                );
+
+              input?.focus();
             }}
           >
-            <div ref={this.phoneWrapper} className="rfb-international-phone">
+            <div
+              ref={this.phoneWrapper}
+              className="rfb-international-phone"
+            >
               <PhoneInput
                 key={`${countriesKey}-${defaultCountry}`}
                 defaultCountry={defaultCountry}
@@ -866,7 +912,6 @@ class InternationalPhoneNumber extends React.Component {
                 name={data.field_name}
                 required={data.required === true}
                 disabled={readOnly}
-                inputRef={this.inputField}
                 inputProps={{
                   'data-field-name': data.field_name,
                   'data-message-invalid-phone-number':
