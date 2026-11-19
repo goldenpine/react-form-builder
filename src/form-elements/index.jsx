@@ -736,7 +736,7 @@ class InternationalPhoneNumber extends React.Component {
       });
     }
   }
-/*
+
   dispatchNativeChangeEvents = () => {
     if (!this.phoneWrapper.current) {
       return;
@@ -763,7 +763,7 @@ class InternationalPhoneNumber extends React.Component {
       })
     );
   };
- */
+ 
   handleFocus = () => {
     this.setState({
       focused: true,
@@ -779,17 +779,18 @@ class InternationalPhoneNumber extends React.Component {
   handleChange = (phone, metadata) => {
     const value = phone || '';
 
-    this.setState({value});
-
-    if (typeof this.props.handleChange === 'function') {
-      this.props.handleChange({
-        target: {
-          name: this.props.data.field_name,
-          value,
-        },
-        phoneMetadata: metadata,
-      });
-    }
+    this.setState({ value }, () => {
+      if (typeof this.props.handleChange === 'function') {
+        this.props.handleChange({
+          target: {
+            name: this.props.data.field_name,
+            value,
+          },
+          phoneMetadata: metadata,
+        });
+      }
+      this.dispatchNativeChangeEvents();
+    });
   };
 
   render() {

@@ -296,13 +296,18 @@ class ReactForm extends React.Component {
       // use the exact phone value from the International Phone Number change event 
       // instead of relying only on a value read back from component state. 
       // That should let the first keystroke mark the submission dirty and keep the final digit when saving.
-      if (event && event.phoneMetadata && event.target && event.target.name) {
+      if (
+        event &&
+        Object.prototype.hasOwnProperty.call(event, 'phoneMetadata') &&
+        event.target &&
+        event.target.name
+      ) {
         const changedItem = data.find(item => item.name === event.target.name);
         if (changedItem) {
           changedItem.value = event.target.value;
         }
       }
-      onChange(data);
+      onChange(data, event);
     }
     // re-render to apply conditional logic visibility
     try { this.forceUpdate(); } catch (e) { /* ignore */ }
