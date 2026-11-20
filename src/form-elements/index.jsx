@@ -720,7 +720,6 @@ class InternationalPhoneNumber extends React.Component {
     };
 
     this.phoneWrapper = React.createRef();
-    this.inputField = React.createRef();
   }
 
   componentDidUpdate(prevProps) {
@@ -909,7 +908,6 @@ class InternationalPhoneNumber extends React.Component {
               className="rfb-international-phone"
             >
               <PhoneInput
-                ref={this.inputField}
                 key={`${countriesKey}-${defaultCountry}`}
                 defaultCountry={defaultCountry}
                 countries={countries}
