@@ -2,7 +2,7 @@ import React from 'react';
 import {
   ReactFormGenerator,
   ElementStore,
-} from '@threehippies/react-form-builder';
+} from '@goldenpine/react-form-builder2';
 
 export default class Demobar extends React.Component {
   constructor(props) {

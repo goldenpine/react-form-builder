@@ -5,7 +5,7 @@ import {
   ReactFormBuilder,
   ElementStore,
   Registry,
-} from '@threehippies/react-form-builder';
+} from '@goldenpine/react-form-builder2';
 import DemoBar from './demobar';
 import * as variables from './variables';
 import { get, post } from './requests';

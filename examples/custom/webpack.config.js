@@ -1,3 +1,4 @@
+
 var path = require('path');
 
 module.exports = {
@@ -24,20 +25,58 @@ module.exports = {
   module: {
     rules: [
       {
-        exclude: /node_modules/,
-        test: /\.js|.jsx?$/,
+        test: /\.(js|jsx|mjs)$/,
+        exclude: function(filePath) {
+          const transpilePackages = [
+            'date-fns',
+            'tom-select',
+            'react-international-phone',
+            'react-signature-canvas'
+          ];
+
+          // Always transpile application source files
+          if (!filePath.includes(
+            path.sep + 'node_modules' + path.sep
+          )) {
+            return false;
+          }
+
+          // Transpile selected dependencies
+          return !transpilePackages.some(
+            packageName => filePath.includes(
+              path.sep + packageName + path.sep
+            )
+          );
+        },
         use: [
-          { loader: 'babel-loader' }
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      ie: '11'
+                    }
+                  }
+                ],
+                '@babel/preset-react'
+              ]
+            }
+          }
         ]
-      }, {
+      },
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto'
+      },      
+      {
         test: /\.css$/,
         use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader'
-          },
+          { loader: 'style-loader' },
+          { loader: 'css-loader' }
         ]
       }
     ]
