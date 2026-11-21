@@ -116,7 +116,6 @@ class ReactForm extends React.Component {
     } else if (item.element === 'Tags') {
       $item.value = ref.inputField.current.state.value;
     } else if (item.element === 'InternationalPhoneNumber') {
-      console.log('Collecting phone:', ref.state.value);
       $item.value = ref.state.value;
     } else if (item.element === 'DatePicker') {
       $item.value = ref.state.value;
