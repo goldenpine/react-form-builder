@@ -116,6 +116,7 @@ class ReactForm extends React.Component {
     } else if (item.element === 'Tags') {
       $item.value = ref.inputField.current.state.value;
     } else if (item.element === 'InternationalPhoneNumber') {
+      console.log('Collecting phone:', ref.state.value);
       $item.value = ref.state.value;
     } else if (item.element === 'DatePicker') {
       $item.value = ref.state.value;
@@ -288,16 +289,51 @@ class ReactForm extends React.Component {
     }
   }
 
-  handleChange() {
-    // Call submit function on change
-    if (this.props.onChange) {
-      const { onChange } = this.props;
-      const data = this._collectFormData(this.props.data, false);
-      onChange(data);
-    }
-    // re-render to apply conditional logic visibility
-    try { this.forceUpdate(); } catch (e) { /* ignore */ }
+handleChange(event) {
+
+console.log('ReactForm props:', {
+  onChange: this.props.onChange,
+  onChangeType: typeof this.props.onChange,
+  propKeys: Object.keys(this.props),
+});
+  
+  if (
+    event?.type === 'input' &&
+    event?.target?.name?.startsWith('international_phone_number_')
+  ) {
+    return;
   }
+
+  console.log('A: Entering handleChange', {
+    value: event?.target?.value,
+    hasOnChange: typeof this.props.onChange === 'function',
+  });
+
+  if (this.props.onChange) {
+    console.log('B: Before _collectFormData');
+
+    const data = this._collectFormData(this.props.data, false);
+
+    console.log('C: After _collectFormData', data);
+
+    console.log(
+      'D: Collected phone field',
+      data.filter(item =>
+        item.name?.startsWith('international_phone_number_')
+      )
+    );
+
+    this.props.onChange(data);
+
+    console.log('E: After props.onChange');
+  }
+
+  try {
+    this.forceUpdate();
+  } catch (e) {
+    console.error('forceUpdate failed:', e);
+  }
+}
 
   validateForm() {
     const errors = [];

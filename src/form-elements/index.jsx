@@ -785,8 +785,15 @@ class InternationalPhoneNumber extends React.Component {
       },
       () => {
         //this.dispatchNativeChangeEvents();
+  console.log('InternationalPhoneNumber notifying parent:', {
+    value,
+    hasHandleChange: typeof this.props.handleChange === 'function',
+  });        
 
         if (typeof this.props.handleChange === 'function') {
+
+console.log('Callback reference:', this.props.handleChange);
+console.trace('Calling phone handleChange');
           this.props.handleChange({
             target: {
               name: this.props.data.field_name,
@@ -906,6 +913,8 @@ class InternationalPhoneNumber extends React.Component {
             <div
               ref={this.phoneWrapper}
               className="rfb-international-phone"
+              onChange={(event) => event.stopPropagation()}
+              onInput={(event) => event.stopPropagation()}
             >
               <PhoneInput
                 key={`${countriesKey}-${defaultCountry}`}

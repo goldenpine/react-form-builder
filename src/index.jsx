@@ -96,6 +96,12 @@ class ReactFormBuilder extends React.Component {
 }
 
 function ReactFormGenerator(props) {
+
+  console.log('ReactFormGenerator props:', {
+    onChangeType: typeof props.onChange,
+    hasOnChange: Object.prototype.hasOwnProperty.call(props, 'onChange'),
+  });
+
   const language = props.locale ? props.locale : 'en';
   const currentAppLocale = AppLocale[language];
   return (
