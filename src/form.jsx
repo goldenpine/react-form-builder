@@ -289,49 +289,18 @@ class ReactForm extends React.Component {
     }
   }
 
-handleChange(event) {
+  handleChange(event) {
+    if (this.props.onChange) {
+      const data = this._collectFormData(this.props.data, false);
+      this.props.onChange(data);
+    }
 
-  // Filter out native input events from InternationalPhoneNumber to avoid duplicate calls to onChange
-  // since it already calls handleChange explicitly when the value changes. 
-  // Without this, the onChange callback is called with stale values of InternationalPhoneNumber.
-/*   if (
-    event?.type === 'input' &&
-    event?.target?.name?.startsWith('international_phone_number_')
-  ) {
-    return;
-  } */
-
-  console.log('A: Entering handleChange', {
-    type: event?.type,
-    value: event?.target?.value,
-    hasOnChange: typeof this.props.onChange === 'function',
-  });
-
-  if (this.props.onChange) {
-    console.log('B: Before _collectFormData');
-
-    const data = this._collectFormData(this.props.data, false);
-
-    console.log('C: After _collectFormData', data);
-
-    console.log(
-      'D: Collected phone field',
-      data.filter(item =>
-        item.name?.startsWith('international_phone_number_')
-      )
-    );
-
-    this.props.onChange(data);
-
-    console.log('E: After props.onChange');
+    try {
+      this.forceUpdate();
+    } catch (e) {
+      console.error('forceUpdate failed:', e);
+    }
   }
-
-  try {
-    this.forceUpdate();
-  } catch (e) {
-    console.error('forceUpdate failed:', e);
-  }
-}
 
   validateForm() {
     const errors = [];

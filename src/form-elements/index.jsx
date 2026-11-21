@@ -911,6 +911,8 @@ class InternationalPhoneNumber extends React.Component {
             <div
               ref={this.phoneWrapper}
               className="rfb-international-phone"
+               // Prevent the change event from bubbling up to the parent form,
+               // since we dispatch a custom change event with the latest normalized phone number in handleChange().
               onChange={(event) => event.stopPropagation()}
               onInput={(event) => event.stopPropagation()}
             >
