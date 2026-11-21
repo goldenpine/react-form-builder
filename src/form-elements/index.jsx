@@ -776,6 +776,12 @@ class InternationalPhoneNumber extends React.Component {
     });
   };
 
+  /*
+   * Use handleChange to notify the parent component of the new phone number value and metadata
+   * to replace native change events, which are not reliably dispatched with latest values. 
+   * InternationalPhoneNumber.handleChange() --> ReactForm.handleChange() in form.jsx
+   * --> ReactFormGenerator → handleFormChange() defined by where you use ReactFormGenerator, e.g. submission detail page in app.
+   */
   handleChange = (phone, metadata) => {
     const value = phone || '';
 
@@ -785,15 +791,7 @@ class InternationalPhoneNumber extends React.Component {
       },
       () => {
         //this.dispatchNativeChangeEvents();
-  console.log('InternationalPhoneNumber notifying parent:', {
-    value,
-    hasHandleChange: typeof this.props.handleChange === 'function',
-  });        
-
         if (typeof this.props.handleChange === 'function') {
-
-console.log('Callback reference:', this.props.handleChange);
-console.trace('Calling phone handleChange');
           this.props.handleChange({
             target: {
               name: this.props.data.field_name,
